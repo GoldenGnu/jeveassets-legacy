@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.io;
 
-import com.beimin.eveapi.utils.stationlist.Station;
+import com.beimin.eveapi.utils.stationlist.ApiStation;
 import java.io.IOException;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.log.Log;
@@ -56,13 +56,13 @@ public class LocalConquerableStationsReader extends AbstractXmlReader {
 		NodeList filterNodes = element.getElementsByTagName("station");
 		for (int a = 0; a < filterNodes.getLength(); a++){
 			Element currentNode = (Element) filterNodes.item(a);
-			Station station = parseStation(currentNode, settings);
+			ApiStation station = parseStation(currentNode, settings);
 			settings.getConquerableStations().put(station.getStationID(), station);
 			
 		}
 	}
-	private static Station parseStation(Element element, Settings settings){
-		Station station = new Station();
+	private static ApiStation parseStation(Element element, Settings settings){
+		ApiStation station = new ApiStation();
 		station.setCorporationID( AttributeGetters.getAttributeInteger(element, "corporationid"));
 		station.setCorporationName( AttributeGetters.getAttributeString(element, "corporationname"));
 		station.setSolarSystemID( AttributeGetters.getAttributeInteger(element, "solarsystemid"));

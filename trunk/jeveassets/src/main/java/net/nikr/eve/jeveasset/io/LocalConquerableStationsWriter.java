@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.io;
 
-import com.beimin.eveapi.utils.stationlist.Station;
+import com.beimin.eveapi.utils.stationlist.ApiStation;
 import java.util.Map;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.log.Log;
@@ -48,11 +48,11 @@ public class LocalConquerableStationsWriter extends AbstractXmlWriter {
 		}
 		Log.info("Conquerable stations saved");
 	}
-	private static void writeConquerableStations(Document xmldoc, Map<Integer, Station> conquerableStations){
+	private static void writeConquerableStations(Document xmldoc, Map<Integer, ApiStation> conquerableStations){
 		Element parentNode = xmldoc.getDocumentElement();
-		for (Map.Entry<Integer, Station> entry : conquerableStations.entrySet()){
+		for (Map.Entry<Integer, ApiStation> entry : conquerableStations.entrySet()){
 			Element node = xmldoc.createElementNS(null, "station");
-			Station station = entry.getValue();
+			ApiStation station = entry.getValue();
 			node.setAttributeNS(null, "corporationid", String.valueOf(station.getCorporationID()));
 			node.setAttributeNS(null, "corporationname", station.getCorporationName());
 			node.setAttributeNS(null, "solarsystemid", String.valueOf(station.getSolarSystemID()));

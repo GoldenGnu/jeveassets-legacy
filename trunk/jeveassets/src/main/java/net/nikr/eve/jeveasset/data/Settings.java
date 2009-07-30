@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.data;
 
-import com.beimin.eveapi.utils.stationlist.Station;
+import com.beimin.eveapi.utils.stationlist.ApiStation;
 import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Date;
@@ -67,7 +67,7 @@ public class Settings {
 	private Map<Integer, Items> items;
 	private Map<Integer, Marketstat> marketstats;
 	private Map<Integer, Location> locations;
-	private Map<Integer, Station> conquerableStations;
+	private Map<Integer, ApiStation> conquerableStations;
 	private Map<Long, String> corporations;
 	private Map<Integer, UserPrice> userPrices;
 	private List<Account> accounts;
@@ -89,7 +89,7 @@ public class Settings {
 		items = new HashMap<Integer, Items>();
 		locations = new HashMap<Integer, Location>();
 		marketstats = new HashMap<Integer, Marketstat>();
-		conquerableStations = new HashMap<Integer, Station>();
+		conquerableStations = new HashMap<Integer, ApiStation>();
 		assetFilters = new HashMap<String, List<AssetFilter>>();
 		accounts = new Vector<Account>();
 		corporations = new HashMap<Long, String>();
@@ -340,11 +340,11 @@ public class Settings {
 		this.marketstats = marketstats;
 	}
 
-	public Map<Integer, Station> getConquerableStations() {
+	public Map<Integer, ApiStation> getConquerableStations() {
 		return conquerableStations;
 	}
 
-	public void setConquerableStations(Map<Integer, Station> conquerableStations) {
+	public void setConquerableStations(Map<Integer, ApiStation> conquerableStations) {
 		this.conquerableStations = conquerableStations;
 	}
 

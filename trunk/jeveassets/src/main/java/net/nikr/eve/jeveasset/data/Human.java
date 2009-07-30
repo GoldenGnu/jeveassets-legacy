@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.data;
 
 import com.beimin.eveapi.ApiAuthorization;
-import com.beimin.eveapi.balance.AccountBalance;
+import com.beimin.eveapi.balance.ApiAccountBalance;
 import java.util.Date;
 import java.util.List;
 import java.util.Vector;
@@ -40,8 +40,8 @@ public class Human {
 	private Date assetNextUpdate;
 	private Date balanceNextUpdate;
 	private Account parentAccount;
-	private List<AccountBalance> accountBalances;
-	private List<AccountBalance> corporationAccountBalances;
+	private List<ApiAccountBalance> accountBalances;
+	private List<ApiAccountBalance> corporationAccountBalances;
 	
 	private List<EveAsset> assets;
 
@@ -56,8 +56,8 @@ public class Human {
 		this.balanceNextUpdate = balanceNextUpdate;
 		//Default
 		assets = new Vector<EveAsset>();
-		accountBalances = new  Vector<AccountBalance>();
-		corporationAccountBalances = new  Vector<AccountBalance>();
+		accountBalances = new  Vector<ApiAccountBalance>();
+		corporationAccountBalances = new  Vector<ApiAccountBalance>();
 	}
 
 	public Human(Account parentAccount, String name, long characterID, String corporation) {
@@ -69,13 +69,13 @@ public class Human {
 		assetNextUpdate = Settings.getGmtNow();
 		balanceNextUpdate = Settings.getGmtNow();
 		assets = new Vector<EveAsset>();
-		accountBalances = new  Vector<AccountBalance>();
-		corporationAccountBalances = new  Vector<AccountBalance>();
+		accountBalances = new  Vector<ApiAccountBalance>();
+		corporationAccountBalances = new  Vector<ApiAccountBalance>();
 		updateCorporationAssets = true;
 		showAssets = true;
 	}
 
-	public void setAccountBalances(List<AccountBalance> accountBalances) {
+	public void setAccountBalances(List<ApiAccountBalance> accountBalances) {
 		this.accountBalances = accountBalances;
 	}
 
@@ -95,7 +95,7 @@ public class Human {
 		this.corporation = corporation;
 	}
 
-	public void setCorporationAccountBalances(List<AccountBalance> corporationAccountBalances) {
+	public void setCorporationAccountBalances(List<ApiAccountBalance> corporationAccountBalances) {
 		this.corporationAccountBalances = corporationAccountBalances;
 	}
 
@@ -108,7 +108,7 @@ public class Human {
 	}
 
 
-	public List<AccountBalance> getAccountBalances() {
+	public List<ApiAccountBalance> getAccountBalances() {
 		return accountBalances;
 	}
 	
@@ -128,7 +128,7 @@ public class Human {
 		return characterID;
 	}
 
-	public List<AccountBalance> getCorporationAccountBalances() {
+	public List<ApiAccountBalance> getCorporationAccountBalances() {
 		return corporationAccountBalances;
 	}
 

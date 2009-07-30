@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.io;
 
 import com.beimin.eveapi.ApiError;
-import com.beimin.eveapi.balance.AccountBalance;
+import com.beimin.eveapi.balance.ApiAccountBalance;
 import com.beimin.eveapi.balance.Parser;
 import com.beimin.eveapi.balance.Response;
 import java.io.IOException;
@@ -54,7 +54,7 @@ public class EveApiAccountBalanceReader {
 				balanceResponse = balanceParser.getAccountBalance(Human.getApiAuthorization(human), bCorp);
 				human.setBalanceNextUpdate( balanceResponse.getCachedUntil() );
 				if (!balanceResponse.hasError()){
-					List<AccountBalance> accountBalances = new Vector<AccountBalance>(balanceResponse.getAccountBalances());
+					List<ApiAccountBalance> accountBalances = new Vector<ApiAccountBalance>(balanceResponse.getAccountBalances());
 					if (bCorp){
 						human.setCorporationAccountBalances(accountBalances);
 					} else {

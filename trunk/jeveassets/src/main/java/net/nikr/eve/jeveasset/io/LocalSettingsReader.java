@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.io;
 
-import com.beimin.eveapi.balance.AccountBalance;
+import com.beimin.eveapi.balance.ApiAccountBalance;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -293,7 +293,7 @@ public class LocalSettingsReader extends AbstractXmlReader {
 			
 			for (int b = 0; b < balanceNodes.getLength(); b++){
 				Element currentNode = (Element) balanceNodes.item(b);
-				AccountBalance AccountBalance = parseBalance(currentNode);
+				ApiAccountBalance AccountBalance = parseBalance(currentNode);
 				if (bCorp){
 					human.getCorporationAccountBalances().add(AccountBalance);
 				} else {
@@ -303,8 +303,8 @@ public class LocalSettingsReader extends AbstractXmlReader {
 			}
 		}
 	}
-	private static AccountBalance parseBalance(Element element){
-		AccountBalance accountBalance = new AccountBalance();
+	private static ApiAccountBalance parseBalance(Element element){
+		ApiAccountBalance accountBalance = new ApiAccountBalance();
 		int accountID = AttributeGetters.getAttributeInteger(element, "accountid");
 		int accountKey = AttributeGetters.getAttributeInteger(element, "accountkey");
 		double balance = AttributeGetters.getAttributeDouble(element, "balance");

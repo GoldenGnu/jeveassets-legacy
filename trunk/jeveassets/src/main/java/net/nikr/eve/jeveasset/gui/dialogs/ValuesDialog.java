@@ -25,7 +25,7 @@ import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
-import com.beimin.eveapi.balance.AccountBalance;
+import com.beimin.eveapi.balance.ApiAccountBalance;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -432,10 +432,10 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 				if (human.isShowAssets()){
 					if (!owners.contains(human.getName())){
 						owners.add(human.getName());
-						List<AccountBalance> accountBalances = human.getAccountBalances();
+						List<ApiAccountBalance> accountBalances = human.getAccountBalances();
 						double ownerTotalAccountBalance = 0;
 						for (int c = 0; c < accountBalances.size(); c++){
-							AccountBalance accountBalance = accountBalances.get(c);
+							ApiAccountBalance accountBalance = accountBalances.get(c);
 							totalAccountBalance = totalAccountBalance + accountBalance.getBalance();
 							ownerTotalAccountBalance = ownerTotalAccountBalance + accountBalance.getBalance();
 						}
@@ -443,10 +443,10 @@ public class ValuesDialog extends JDialogCentered implements ActionListener, Lis
 					}
 					if (human.isUpdateCorporationAssets() && !corps.contains(human.getCorporation())){
 						corps.add(human.getCorporation());
-						List<AccountBalance> corpAccountBalances = human.getCorporationAccountBalances();
+						List<ApiAccountBalance> corpAccountBalances = human.getCorporationAccountBalances();
 						double corpTotalAccountBalance = 0;
 						for (int c = 0; c < corpAccountBalances.size(); c++){
-							AccountBalance accountBalance = corpAccountBalances.get(c);
+							ApiAccountBalance accountBalance = corpAccountBalances.get(c);
 							totalAccountBalance = totalAccountBalance + accountBalance.getBalance();
 							corpTotalAccountBalance = corpTotalAccountBalance + accountBalance.getBalance();
 						}

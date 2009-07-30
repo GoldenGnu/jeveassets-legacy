@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.io;
 
 import com.beimin.eveapi.ApiError;
-import com.beimin.eveapi.asset.Asset;
+import com.beimin.eveapi.asset.ApiAsset;
 import com.beimin.eveapi.asset.Parser;
 import com.beimin.eveapi.asset.Response;
 import java.io.IOException;
@@ -55,7 +55,7 @@ public class EveApiAssetsReader {
 				assetResponse = assetParser.getAssets(Human.getApiAuthorization(human), bCorp);
 				human.setAssetNextUpdate( assetResponse.getCachedUntil() );
 				if (!assetResponse.hasError()){
-					List<Asset> assets = new Vector<Asset>(assetResponse.getAssets());
+					List<ApiAsset> assets = new Vector<ApiAsset>(assetResponse.getAssets());
 					//overwrite assets (if we are parsing the corp asset or will not parse the corp assets)
 					if (bCorp || !human.isUpdateCorporationAssets()){
 						human.setAssets( assetsToEveAssets(program.getSettings(), human, assets, bCorp) );
@@ -112,24 +112,24 @@ public class EveApiAssetsReader {
 		}
 	}
 
-	private static List<EveAsset> assetsToEveAssets(Settings setttings, Human human, List<Asset> assets, boolean bCorp){
+	private static List<EveAsset> assetsToEveAssets(Settings setttings, Human human, List<ApiAsset> assets, boolean bCorp){
 		List<EveAsset> eveAssets = new Vector<EveAsset>();
 		convertAll(setttings, human, assets, eveAssets, null, bCorp);
 		return eveAssets;
 	}
-	private static void convertAll(Settings setttings, Human human, List<Asset> assets, List<EveAsset> eveAssets, EveAsset parentEveAsset, boolean bCorp){
+	private static void convertAll(Settings setttings, Human human, List<ApiAsset> assets, List<EveAsset> eveAssets, EveAsset parentEveAsset, boolean bCorp){
 		for (int a = 0; a < assets.size(); a++){
-			Asset asset = assets.get(a);
+			ApiAsset asset = assets.get(a);
 			EveAsset eveAsset = assetToEveAsset(setttings, human, asset, parentEveAsset, bCorp);
 			if (parentEveAsset == null){
 				eveAssets.add(eveAsset);
 			} else {
 				parentEveAsset.addEveAsset(eveAsset);
 			}
-			convertAll(setttings, human, new Vector<Asset>(asset.getAssets()), eveAssets, eveAsset, bCorp);
+			convertAll(setttings, human, new Vector<ApiAsset>(asset.getAssets()), eveAssets, eveAsset, bCorp);
 		}
 	}
-	private static EveAsset assetToEveAsset(Settings setttings, Human human, Asset asset, EveAsset parentEveAsset, boolean bCorp){
+	private static EveAsset assetToEveAsset(Settings setttings, Human human, ApiAsset asset, EveAsset parentEveAsset, boolean bCorp){
 		String name = EveAsset.calcName(asset.getTypeID(), setttings); //OK
 		String group = EveAsset.calcGroup(asset.getTypeID(), setttings); //OK
 		String category = EveAsset.calcCategory(asset.getTypeID(), setttings); //OK

@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.io;
 
-import com.beimin.eveapi.balance.AccountBalance;
+import com.beimin.eveapi.balance.ApiAccountBalance;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -226,14 +226,14 @@ public class LocalSettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeAccountBalances(Document xmldoc, Element parentNode, List<AccountBalance> accountBalances, boolean bCorp){
+	private static void writeAccountBalances(Document xmldoc, Element parentNode, List<ApiAccountBalance> accountBalances, boolean bCorp){
 		Element node = xmldoc.createElementNS(null, "balances");
 		if (!accountBalances.isEmpty()){
 			node.setAttributeNS(null, "corp", String.valueOf(bCorp));
 			parentNode.appendChild(node);
 		}
 		for (int a = 0; a < accountBalances.size(); a++){
-			AccountBalance accountBalance = accountBalances.get(a);
+			ApiAccountBalance accountBalance = accountBalances.get(a);
 
 			Element childNode = xmldoc.createElementNS(null, "balance");
 			childNode.setAttributeNS(null, "accountid", String.valueOf(accountBalance.getAccountID()));

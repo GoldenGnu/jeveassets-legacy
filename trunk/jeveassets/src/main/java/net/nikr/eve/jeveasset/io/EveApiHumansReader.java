@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.io;
 
 import com.beimin.eveapi.ApiError;
-import com.beimin.eveapi.character.list.EveCharacter;
+import com.beimin.eveapi.character.list.ApiCharacter;
 import com.beimin.eveapi.character.list.Parser;
 import com.beimin.eveapi.character.list.Response;
 import java.io.IOException;
@@ -69,9 +69,9 @@ public class EveApiHumansReader {
 				characterListResponse = characterListParser.getEveCharacters(Human.getApiAuthorization(account));
 				account.setCharactersNextUpdate(characterListResponse.getCachedUntil());
 				if (!characterListResponse.hasError()){
-					List<EveCharacter> characters = new Vector<EveCharacter>(characterListResponse.getEveCharacters());
+					List<ApiCharacter> characters = new Vector<ApiCharacter>(characterListResponse.getEveCharacters());
 					for (int a = 0; a < characters.size(); a++){
-						EveCharacter eveCharacter = characters.get(a);
+						ApiCharacter eveCharacter = characters.get(a);
 						Log.info("	Updating: "+eveCharacter.getName()+":");
 						Human human = new Human(
 												account

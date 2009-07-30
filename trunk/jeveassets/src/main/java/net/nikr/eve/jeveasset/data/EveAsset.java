@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.data;
 
-import com.beimin.eveapi.utils.stationlist.Station;
+import com.beimin.eveapi.utils.stationlist.ApiStation;
 import java.util.List;
 import java.util.Vector;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
@@ -370,7 +370,7 @@ public class EveAsset implements Comparable<EveAsset> {
 	}
 	public static String calcLocation(int locationID, EveAsset parentAsset, Settings settings){
 		Location location = null;
-		Station station = null;
+		ApiStation station = null;
 
 		//Offices
 		//[FIXME] Fix not confirmed...
@@ -407,7 +407,7 @@ public class EveAsset implements Comparable<EveAsset> {
 	
 	public static String calcRegion(int locationID, EveAsset parentAsset, Settings settings){
 		Location location = null;
-		Station station = null;
+		ApiStation station = null;
 
 		//Offices
 		//[FIXME] Fix not confirmed...
