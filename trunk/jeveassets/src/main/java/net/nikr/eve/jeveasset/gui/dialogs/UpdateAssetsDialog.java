@@ -59,7 +59,7 @@ public class UpdateAssetsDialog extends JUpdateWindow implements PropertyChangeL
 	public void propertyChange(PropertyChangeEvent evt) {
 		int value = updateAssetsTask.getProgress();
 		if (updateAssetsTask.throwable != null){
-			Log.error("Uncaught Exception (SwingWorker):\r\nPlease email the log.txt to nkr@niklaskr.dk", updateAssetsTask.throwable);
+			Log.error("Uncaught Exception (SwingWorker): Please email the latest error.txt in the logs directory to niklaskr@gmail.com", updateAssetsTask.throwable);
 		}
 		if (value == 100 && updateAssetsTask.done){
 			updateAssetsTask.done = false;

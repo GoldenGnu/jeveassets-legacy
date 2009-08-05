@@ -370,7 +370,7 @@ public class EveAsset implements Comparable<EveAsset> {
 	}
 	public static String calcLocation(int locationID, EveAsset parentAsset, Settings settings){
 		Location location = null;
-		ApiStation station = null;
+		ApiStation apiStation = null;
 
 		//Offices
 		//[FIXME] Fix not confirmed...
@@ -383,13 +383,13 @@ public class EveAsset implements Comparable<EveAsset> {
 		}
 
 		//Conquerable Stations
-		station = settings.getConquerableStations().get(locationID);
-		if (station != null){
-			location = settings.getLocations().get(station.getSolarSystemID());
+		apiStation = settings.getConquerableStations().get(locationID);
+		if (apiStation != null){
+			location = settings.getLocations().get(apiStation.getSolarSystemID());
 			if (location != null){
-				return location.getName() + " - " + station.getStationName();
+				return location.getName() + " - " + apiStation.getStationName();
 			} else {
-				return station.getStationName();
+				return apiStation.getStationName();
 			}
 		}
 
@@ -407,7 +407,7 @@ public class EveAsset implements Comparable<EveAsset> {
 	
 	public static String calcRegion(int locationID, EveAsset parentAsset, Settings settings){
 		Location location = null;
-		ApiStation station = null;
+		ApiStation apiStation = null;
 
 		//Offices
 		//[FIXME] Fix not confirmed...
@@ -420,9 +420,9 @@ public class EveAsset implements Comparable<EveAsset> {
 		}
 
 		//Conquerable Stations
-		station = settings.getConquerableStations().get(locationID);
-		if (station != null){
-			location = settings.getLocations().get(station.getSolarSystemID());
+		apiStation = settings.getConquerableStations().get(locationID);
+		if (apiStation != null){
+			location = settings.getLocations().get(apiStation.getSolarSystemID());
 			if (location != null){
 				location = settings.getLocations().get(location.getRegion());
 				if (location != null){

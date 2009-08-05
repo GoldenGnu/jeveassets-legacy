@@ -60,7 +60,7 @@ import org.apache.log4j.Logger;
 public class Program implements ActionListener {
 
 	//"Major.Minor.Bugfix [BETA n] [BUILD #n])";
-	public static final String PROGRAM_VERSION = "Release Candidate 6";
+	public static final String PROGRAM_VERSION = "Release Candidate 7a";
 	public static final String PROGRAM_NAME = "jEveAssets";
 	public static final int BUTTONS_HEIGHT = 22;
 	public static final int BUTTONS_WIDTH = 90;
@@ -199,6 +199,13 @@ public class Program implements ActionListener {
 		//[DONE] Compiled with Java 6, again...
 		//[DONE] It's now possible to mark multiple items as BPOs
 		//[DONE] Better exit progress
+		//Release Candidate 7:
+		//[DONE] Ship Loadouts: Fixed bug that showed charges instead of modules
+		//[DONE] Fix bug that prevented the price data from being updated
+		//[DONE] Updated eveapi library to version 1.0.0
+		//[DONE] Updated nikr log library
+		//Release Candidate 7a:
+		//[DONE] Fixed price data bug, introduced in RC7
 
 		//[FIXME] before release: Fix copyright in all source files before release
 		//[FIXME] before release: Update version number and splash screen

@@ -22,7 +22,6 @@
 package net.nikr.eve.jeveasset.gui.table;
 
 import ca.odell.glazedlists.matchers.Matcher;
-import ca.odell.glazedlists.matchers.MatcherEditor.Listener;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.EveAsset;

@@ -303,7 +303,7 @@ public class ApiManagerDialog extends JDialogCentered implements ActionListener,
 	public void propertyChange(PropertyChangeEvent evt) {
 		apiAddDialog.setEnabledAll(false);
 		if (addHumanTask.throwable != null){
-			Log.error("Uncaught Exception (SwingWorker):\r\nPlease email the log.txt to nkr@niklaskr.dk", addHumanTask.throwable);
+			Log.error("Uncaught Exception (SwingWorker): Please email the latest error.txt in the logs directory to niklaskr@gmail.com", addHumanTask.throwable);
 		}
 		if (addHumanTask.result == 10 && addHumanTask.done){
 			addHumanTask.done = false;

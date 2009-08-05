@@ -105,7 +105,7 @@ public class Main {
 			JOptionPane.showMessageDialog(null, s, "Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(1);
 		}
-		Log.init(Main.class, "Please email the log.txt to niklaskr@gmail.com");
+		Log.init(Main.class, "Please email the latest error.txt in the logs directory to niklaskr@gmail.com");
 
 		SplashUpdater splashUpdater = new SplashUpdater();
 		splashUpdater.start();

@@ -49,7 +49,6 @@ public class Settings {
 	private final static String PATH_LOCATIONS = "data"+File.separator+"locations.xml";
 	private final static String PATH_MARKETSTATS = "data"+File.separator+"marketstats.xml";
 	private final static String PATH_CONQUERABLE_STATIONS = "data"+File.separator+"conquerable_stations.xml";
-	private final static String PATH_LOG = "log.txt";
 	private final static String PATH_README = "readme.txt";
 	private final static String PATH_LICENSE = "license.txt";
 	private final static String PATH_CREDITS = "credits.txt";
@@ -210,7 +209,7 @@ public class Settings {
 	}
 	public boolean hasAssets(){
 		updateAssetLists(false);
-		return uniqueAssets.isEmpty();
+		return !uniqueAssets.isEmpty();
 	}
 	private void updateAssetLists(boolean getAllAssets){
 		if ((allAssets == null && getAllAssets) ||  (eventListAssets == null && !getAllAssets) ){
@@ -413,9 +412,6 @@ public class Settings {
 	public static String getPathSettings(){
 		return getLocalFile(Settings.PATH_SETTINGS);
 	}
-	public static String getPathLog(){
-		return getLocalFile(Settings.PATH_LOG);
-	}
 	public static String getPathItems(){
 		return getLocalFile(Settings.PATH_ITEMS);
 	}
@@ -448,11 +444,7 @@ public class Settings {
 				File file = new File(net.nikr.eve.jeveasset.Program.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
 				return file.getAbsolutePath()+File.separator+filename;
 			} catch (URISyntaxException ex) {
-				Log.error("Error converting URL to URI:\r\n"
-							+ "\"" + net.nikr.eve.jeveasset.Program.class.getProtectionDomain().getCodeSource().getLocation() + "\"\r\n"
-							+ "Please email the "+PATH_LOG+" to:\r\n"
-							+ "nkr@nikr.net\r\n"
-							, ex);
+				Log.error("Failed to get program directory: Please email the latest error.txt in the logs directory to niklaskr@gmail.com", ex);
 			}
 			return null;
 		}

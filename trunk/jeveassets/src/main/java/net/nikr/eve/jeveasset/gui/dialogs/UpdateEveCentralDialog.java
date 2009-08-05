@@ -53,7 +53,7 @@ public class UpdateEveCentralDialog extends JUpdateWindow implements PropertyCha
 	public void propertyChange(PropertyChangeEvent evt) {
 		int value = updateEveCentralTask.getProgress();
 		if (updateEveCentralTask.throwable != null){
-			Log.error("Uncaught Exception (SwingWorker):\r\nPlease email the log.txt to nkr@niklaskr.dk", updateEveCentralTask.throwable);
+			Log.error("Uncaught Exception (SwingWorker): Please email the latest error.txt in the logs directory to niklaskr@gmail.com", updateEveCentralTask.throwable);
 		}
 		if (value == 100 && updateEveCentralTask.done){
 			updateEveCentralTask.done = false;
@@ -73,7 +73,7 @@ public class UpdateEveCentralDialog extends JUpdateWindow implements PropertyCha
 				JOptionPane.showMessageDialog(parent, "Could not update price data.\r\nPlease connect to the internet and try again...", "Update Price Data", JOptionPane.PLAIN_MESSAGE);
 			} else if (program.getSettings().getAccounts().isEmpty()) {
 				JOptionPane.showMessageDialog(parent, "No price data updated\r\nYou need to add your API Key:\r\nOptions > Manage API Keys > Add.", "Update Price Data", JOptionPane.PLAIN_MESSAGE);
-			} else if (program.getSettings().hasAssets()) {
+			} else if (!program.getSettings().hasAssets()) {
 				JOptionPane.showMessageDialog(parent, "No price data updated\r\nYou need to update your assets:\r\nOptions > Update Asset", "Update Price Data", JOptionPane.PLAIN_MESSAGE);
 			} else { //No assets updated
 				JOptionPane.showMessageDialog(parent, "No price data updated (not allowed yet)\r\n", "Update Price Data", JOptionPane.PLAIN_MESSAGE);

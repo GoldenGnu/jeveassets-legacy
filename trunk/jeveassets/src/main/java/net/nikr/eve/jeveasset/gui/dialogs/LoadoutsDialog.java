@@ -265,14 +265,17 @@ public class LoadoutsDialog extends JDialogCentered implements ActionListener, L
 			List<EveAsset> assets = ship.getAssets();
 			for (int a = 0; a < assets.size(); a++){
 				EveAsset module = assets.get(a);
-				if (modules.containsKey(module.getFlag())){
-					modules.get(module.getFlag()).add(module);
-				} else {
-					List<EveAsset> subModules = new ArrayList<EveAsset>();
-					subModules.add(module);
-					modules.put(module.getFlag(), subModules);
+				if ( (module.getFlag().contains("Slot") && module.getCategory().equals("Module"))
+					|| !module.getFlag().contains("Slot")){
+					if (modules.containsKey(module.getFlag())){
+						modules.get(module.getFlag()).add(module);
+					} else {
+						List<EveAsset> subModules = new ArrayList<EveAsset>();
+						subModules.add(module);
+						modules.put(module.getFlag(), subModules);
+					}
+					value = value + (module.getPrice() * module.getCount());
 				}
-				value = value + (module.getPrice() * module.getCount());
 			}
 			Output output = new Output(ship.getOwner() + "<br/>" + ship.getLocation());
 
