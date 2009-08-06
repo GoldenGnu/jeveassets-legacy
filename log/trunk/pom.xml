@@ -4,7 +4,7 @@
   <groupId>net.nikr</groupId>
   <artifactId>log</artifactId>
   <packaging>jar</packaging>
-  <version>1.0.0</version>
+  <version>1.0.1-SNAPSHOT</version>
   <name>log</name>
   <url>http://maven.apache.org</url>
 </project>

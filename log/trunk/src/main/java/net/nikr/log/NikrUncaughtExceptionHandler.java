@@ -27,14 +27,12 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 
 	public void uncaughtException(Thread t, Throwable e) {
 		Log.error(
-			"Uncaught Exception (Thread):\r\n"
-			+ "Please email the log.txt to nkr@niklaskr.dk"
+			"Uncaught Exception (Thread): " + Log.getsUncaughtErrorMessage()
 			, e);
 	}
 	
 	public void handle(Throwable e){
-		Log.error("Uncaught Exception (sun.awt.exception.handler):\r\n"
-			+ "Please email the log.txt to nkr@niklaskr.dk"
+		Log.error("Uncaught Exception (sun.awt.exception.handler):" + Log.getsUncaughtErrorMessage()
 			, e);
 	}
 }
