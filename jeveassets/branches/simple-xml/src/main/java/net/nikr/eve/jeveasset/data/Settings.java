@@ -76,25 +76,25 @@ public class Settings {
 	private List<EveAsset> eventListAssets = null;
 	private Map<String, List<AssetFilter>> assetFilters;
 	private Map<Integer, Items> items;
-	private Map<Integer, Marketstat> marketstats;
+	private Map<Integer, Marketstat> marketstats; // *
 	private Map<Integer, Location> locations;
 	private Map<Integer, ApiStation> conquerableStations;
-	private Map<Long, String> corporations;
-	private Map<Integer, UserPrice> userPrices;
+	private Map<Long, String> corporations; // *
+	private Map<Integer, UserPrice> userPrices; // *
 	private List<Account> accounts;
-	private List<String> tableColumnNames;
-	private Map<String, String> tableColumnTooltips;
-	private List<String> tableNumberColumns;
-	private List<String> tableColumnVisible;
-	private Date marketstatsNextUpdate;
-	private Date conquerableStationsNextUpdate;
-	private Map<Long, Date> corporationsNextUpdate;
-	private Map<String, Boolean> flags;
-	private List<Integer> bpos;
+	private List<String> tableColumnNames; // *
+	private Map<String, String> tableColumnTooltips; // *
+	private List<String> tableNumberColumns; // *
+	private List<String> tableColumnVisible; // *
+	private Date marketstatsNextUpdate; // *
+	private Date conquerableStationsNextUpdate; // *
+	private Map<Long, Date> corporationsNextUpdate; // *
+	private Map<String, Boolean> flags; // *
+	private List<Integer> bpos; // *
 	private boolean settingsLoaded;
-	private MarketstatSettings marketstatSettings;
-	private Proxy proxy;
-	private String apiProxy;
+	private MarketstatSettings marketstatSettings; // *
+	private Proxy proxy; // *
+	private String apiProxy; // *
 	//private boolean filterOnEnter;
 	
 	public Settings() {
