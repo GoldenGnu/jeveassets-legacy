@@ -304,7 +304,7 @@ public class Log {
 			if (!errorDirectory.exists()) errorDirectory.mkdir();
 			copyFile(new File(sLogFilename), new File(errorDirectory.getAbsolutePath()+File.separator+"error"+simpleDate.format(new Date()) + ".txt"));
 		} catch (IOException ex) {
-			failed("Logging to file (COPY TO ARROR FILE)", ex);
+			failed("Logging to file failed (COPY TO ERROR FILE)", ex);
 		}
 	}
 
@@ -321,10 +321,9 @@ public class Log {
 			}
 		} catch (IOException e) {
 			throw e;
-		}
-		finally {
-		if (inChannel != null) inChannel.close();
-		if (outChannel != null) outChannel.close();
+		} finally {
+			if (inChannel != null) inChannel.close();
+			if (outChannel != null) outChannel.close();
 		}
 	}
 
