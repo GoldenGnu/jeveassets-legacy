@@ -23,10 +23,11 @@ package net.nikr.log;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.nio.channels.FileChannel;
 import java.text.DateFormat;
@@ -43,45 +44,51 @@ public class Log {
 	private static final int WARNING = 3;
 	private static final int ERROR = 4;
 
-	private static FileWriter fileWriter;
 	private static boolean bInitialized = false;
 	private static boolean bDebug = false;
 	private static String sLogFilename = "";
 	private static String sErrorDirectory = "";
-	private static String sUncaughtError = "";
-	private static Class inputClazz;
+	private static String sUncaughtErrorMessage = "";
 	private static DateFormat simpleDate = new SimpleDateFormat("yyyyMMddHHmm", new Locale("en"));
 
 	public static void enableDebug(){
 		bDebug = true;
 	}
 
-	public static void init(Class clazz, String uncaughtError){
-		init(clazz, uncaughtError, false);
+	public static void init(Class clazz, String sUncaughtErrorMessage){
+		init(clazz, sUncaughtErrorMessage, false);
 	}
-	public static void init(Class inputClazz, String uncaughtError, boolean debug){
-		Log.inputClazz = inputClazz;
-		sLogFilename = getLogFilename(inputClazz, "log.txt");
-		sErrorDirectory = getLogFilename(inputClazz, "logs"+File.separator);
-		sUncaughtError = uncaughtError;
+	public static void init(Class clazz, String sUncaughtErrorMessage, boolean debug){
+		sLogFilename = getLogFilename(clazz, "log.txt");
+		sErrorDirectory = getLogFilename(clazz, "logs"+File.separator);
+		Log.sUncaughtErrorMessage = sUncaughtErrorMessage;
 		bDebug = debug;
-
 		bInitialized = true;
-
+		
 		System.setProperty("sun.awt.exception.handler", "net.nikr.log.NikrUncaughtExceptionHandler");
 		Thread.setDefaultUncaughtExceptionHandler( new NikrUncaughtExceptionHandler());
 
+		//Clear logfile
 		try {
-			fileWriter = new FileWriter(sLogFilename, false);
+			FileWriter fileWriter = new FileWriter(sLogFilename, false);
 			fileWriter.write("");
 			fileWriter.close();
 		} catch (IOException ex) {
 			failed("Clearing log failed (CLEAR: "+sLogFilename+")", ex);
 		}
+
+		//Add PrintStream to System.out & System.err
+		try {
+			PrintStream printStream = new PrintStream(new FileOutputStream(sLogFilename), true);
+			System.setOut( new DualPrintStream(printStream, System.out) );
+			System.setErr( new DualPrintStream(printStream, System.err) );
+		} catch (FileNotFoundException ex) {
+			failed("Failed to setOut/setErr", ex);
+		}
 	}
 
 	public static String getsUncaughtErrorMessage(){
-		return sUncaughtError;
+		return sUncaughtErrorMessage;
 	}
 
 	public static void info(Object obj){
@@ -197,11 +204,8 @@ public class Log {
 	}
 
 	public static void error(Throwable t){
-		error(
-			"Undefined error: "+ Log.getsUncaughtErrorMessage()
-			, t);
+		error("Undefined error: "+ Log.getsUncaughtErrorMessage(), t);
 	}
-
 	public static void error(Object obj, Throwable t){
 		error(String.valueOf(obj), t);
 	}
@@ -237,7 +241,7 @@ public class Log {
 		if (!bInitialized){
 			failed("Log.init() must be called before using the log");
 		}
-		// Output string to consol
+		//Save message for screen display
 		String screenMessage = message;
 
 		switch (level){
@@ -254,42 +258,17 @@ public class Log {
 				message = "(error) "+message;
 				break;
 		}
+		//Message
 		if(level >= WARNING){
 			System.err.println(message);
 		} else {
 			System.out.println(message);
 		}
-		//Output stack trace to consol
+		//Stack Trace
 		if(t != null){
 			t.printStackTrace();
 		}
-		//open file
-		try {
-			fileWriter = new FileWriter(sLogFilename, true);
-		} catch (IOException ex) {
-			failed("Logging to file failed (OPEN: "+sLogFilename+")", ex);
-		}
-		// Output string to file
-		try {
-			fileWriter.write(message+"\r\n");
-		} catch (IOException ex) {
-			failed("Logging to file failed (WRITE STRING)", ex);
-		}
-		// Output stack trace to file
-		if(t != null){
-			try {
-				PrintWriter printWriter = new PrintWriter(fileWriter);
-				t.printStackTrace(printWriter);
-			} catch (Exception ex) {
-				failed("Logging to file failed (WRITE STACK TRACE)", ex);
-			}
-		}
-		//Close file
-		try {
-			fileWriter.close();
-		} catch (IOException ex) {
-			failed("Logging to file failed (CLOSE)", ex);
-		}
+		//Handle Error
 		if(level == ERROR){
 			printErrorToScreen(screenMessage);
 			copyToError();
