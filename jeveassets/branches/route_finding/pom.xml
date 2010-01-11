@@ -4,7 +4,7 @@
 	<groupId>net.nikr</groupId>
 	<artifactId>jeveassets</artifactId>
 	<packaging>jar</packaging>
-	<version>1.2.4-SNAPSHOT</version>
+	<version>1.2.4-ROUTE-SNAPSHOT</version>
 	<name>jeveassets</name>
 	<url>http://eve.nikr.net/?page=jeveasset</url>
 	<build>
@@ -117,11 +117,17 @@
 			<artifactId>pricing</artifactId>
 			<version>1.0.3</version>
 		</dependency>
+	 <dependency>
+	  <groupId>uk.me.candle</groupId>
+	  <artifactId>routing</artifactId>
+	  <version>1.0.0-SNAPSHOT</version>
+	 </dependency>
 	</dependencies>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 </project>
+
 
 
 

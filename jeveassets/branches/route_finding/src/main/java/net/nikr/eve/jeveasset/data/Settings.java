@@ -36,6 +36,7 @@ import java.net.Proxy;
 import java.net.SocketAddress;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -57,6 +58,7 @@ import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.LocationsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.PriceDataGetter;
+import net.nikr.eve.jeveasset.io.local.JumpsReader;
 import net.nikr.log.Log;
 
 
@@ -64,6 +66,7 @@ public class Settings {
 
 	private final static String PATH_SETTINGS = "data"+File.separator+"settings.xml";
 	private final static String PATH_ITEMS = "data"+File.separator+"items.xml";
+	private final static String PATH_JUMPS = "data"+File.separator+"jumps.xml";
 	private final static String PATH_LOCATIONS = "data"+File.separator+"locations.xml";
 	private final static String PATH_PRICE_DATA = "data"+File.separator+"pricedata.dat";
 	private final static String PATH_ASSETS = "data"+File.separator+"assets.xml";
@@ -108,6 +111,7 @@ public class Settings {
 	private Dimension windowSize;
 	private boolean windowMaximized;
 	private boolean windowAutoSave;
+	List<Jump> jumps;
 
 	private PriceDataGetter priceDataGetter;
 	
@@ -122,6 +126,7 @@ public class Settings {
 		corporations = new HashMap<Long, String>();
 		userPrices = new HashMap<Integer, UserPrice>();
 		bpos = new Vector<Integer>();
+		jumps = new ArrayList<Jump>();
 		
 		flags = new HashMap<String, Boolean>();
 		flags.put(FLAG_AUTO_RESIZE_COLUMNS_TEXT, true);
@@ -157,6 +162,7 @@ public class Settings {
 		IndustryJobsGetter.load(this); //Jobs (Must be loaded before the price data)
 		HumansGetter.load(this);
 		SplashUpdater.setProgress(60);
+		JumpsReader.load(this);
 	//Price data (update as needed)
 		priceDataGetter = new PriceDataGetter(this); //Price Data - Must be loaded last
 		SplashUpdater.setProgress(70);
@@ -523,6 +529,14 @@ public class Settings {
 		}
 	}
 
+	public List<Jump> getJumps() {
+		return jumps;
+	}
+
+	public void setJumps(List<Jump> jumps) {
+		this.jumps = jumps;
+	}
+
   /**
    *
    * @param proxy passing 'null' removes proxying.
@@ -657,6 +671,9 @@ public class Settings {
 	}
 	public static String getPathConquerableStations(){
 		return getLocalFile(Settings.PATH_CONQUERABLE_STATIONS, !portable);
+	}
+	public static String getPathJumps(){
+		return getLocalFile(Settings.PATH_JUMPS, !portable);
 	}
 	public static String getPathPriceData(){
 		return getLocalFile(Settings.PATH_PRICE_DATA, !portable);

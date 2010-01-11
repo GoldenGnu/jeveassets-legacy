@@ -52,6 +52,7 @@ import net.nikr.eve.jeveasset.gui.dialogs.IndustryJobsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.LoadoutsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.MarketOrdersDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.MaterialsDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.RoutingDialogue;
 import net.nikr.eve.jeveasset.gui.dialogs.SaveFilterDialog;
 import net.nikr.eve.jeveasset.gui.settings.PriceSettingsPanel;
 import net.nikr.eve.jeveasset.gui.settings.ProxySettingsPanel;
@@ -77,9 +78,9 @@ public class Program implements ActionListener, Listener<EveAsset> {
 	public static final int BUTTONS_HEIGHT = 22;
 	public static final int BUTTONS_WIDTH = 90;
 
-	public static final boolean DEBUG = false;
+	public static final boolean DEBUG = true;
 	public static final boolean FORCE_UPDATE = (DEBUG && false);
-	public static final boolean FORCE_NO_UPDATE = (DEBUG && false);
+	public static final boolean FORCE_NO_UPDATE = (DEBUG && true);
 
 	//GUI
 	private Frame frame;
@@ -92,6 +93,7 @@ public class Program implements ActionListener, Listener<EveAsset> {
 	private ValuesDialog valuesDialog;
 	private MaterialsDialog materialsDialog;
 	private LoadoutsDialog loadoutsDialog;
+	private RoutingDialogue routingDialogue;
 	private MarketOrdersDialog marketOrdersDialog;
 	private IndustryJobsDialog industryJobsDialog;
 	private CsvExportDialog csvExportDialog;
@@ -163,6 +165,8 @@ public class Program implements ActionListener, Listener<EveAsset> {
 		marketOrdersDialog = new MarketOrdersDialog(this, ImageGetter.getImage("icon07_12.png"));
 		Log.info("	Industry Jobs Dialog");
 		industryJobsDialog = new IndustryJobsDialog(this, ImageGetter.getImage("icon33_02.png"));
+		Log.info("	Routing Dialog");
+		routingDialogue = new RoutingDialogue(this, ImageGetter.getImage("cog.png"));
 		Log.info("	About Dialog");
 		aboutDialog = new AboutDialog(this, ImageGetter.getImage("information.png"));
 		Log.info("	Materials Dialog");
@@ -307,6 +311,10 @@ public class Program implements ActionListener, Listener<EveAsset> {
 		}
 		if (Menu.ACTION_OPEN_CSV_EXPORT.equals(e.getActionCommand())) {
 			csvExportDialog.setVisible(true);
+		}
+		if (Menu.ACTION_OPEN_ROUTING.equals(e.getActionCommand())) {
+			routingDialogue = new RoutingDialogue(this, ImageGetter.getImage("cog.png")); // XXX remove this line for production. it is here so that I can hot-code-replace the dialogue without having to restart the app every time.
+			routingDialogue.setVisible(true);
 		}
 		if (Menu.ACTION_OPEN_SETTINGS.equals(e.getActionCommand())) {
 			settingsDialog.setVisible(true);
