@@ -209,6 +209,8 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 			SolarSystem loc = findNodeForLocation(filteredGraph, ea.getLocationID());
 			if (loc != null) {
 				allLocs.add(loc);
+			} else {
+				Log.debug("ignoring " + ea.getLocation());
 			}
 			pgp.setValue(pgp.getValue() + 1);
 		}
@@ -229,7 +231,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 	 */
 	private SolarSystem findNodeForLocation(Graph g, int locationID) {
 		int ssid = -1;
-		// from http://wiki.eve-id.net/APIv2_Corp_AssetList_XML
+		// from http://wiki.eve-id.net/APIvff2_Corp_AssetList_XML
 		if (66000000 <= locationID && locationID <= 66999999) {
 			// normal station office
 			ssid = program.getSettings().getLocations().get(locationID - 6000001).getSolarSystemID();
@@ -262,7 +264,8 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 				}
 			}
 		}
-		throw new RuntimeException("Unknown Location: " + locationID + ", ssid = " + ssid);
+		return null;
+		//throw new RuntimeException("Unknown Location: " + locationID + ", ssid = " + ssid);
 	}
 
 	@Override

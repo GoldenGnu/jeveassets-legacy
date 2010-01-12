@@ -673,7 +673,7 @@ public class Settings {
 		return getLocalFile(Settings.PATH_CONQUERABLE_STATIONS, !portable);
 	}
 	public static String getPathJumps(){
-		return getLocalFile(Settings.PATH_JUMPS, !portable);
+		return getLocalFile(Settings.PATH_JUMPS, false);
 	}
 	public static String getPathPriceData(){
 		return getLocalFile(Settings.PATH_PRICE_DATA, !portable);
