@@ -24,52 +24,43 @@
  */
 package net.nikr.eve.jeveasset.gui.dialogs;
 
-import com.beimin.eveapi.utils.stationlist.ApiStation;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dialog;
-import java.awt.Frame;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.Vector;
-import javax.swing.AbstractListModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.LayoutStyle;
+import javax.swing.ListModel;
 import javax.swing.SwingUtilities;
-import javax.swing.SwingWorker;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Jump;
-import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.SolarSystem;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.log.Log;
+import uk.me.candle.eve.graph.DisconnectedGraphException;
 import uk.me.candle.eve.graph.Edge;
 import uk.me.candle.eve.graph.Graph;
 import uk.me.candle.eve.graph.Node;
@@ -83,6 +74,8 @@ import uk.me.candle.eve.routing.RoutingAlgorithm;
 public class RoutingDialogue extends JDialogCentered implements ActionListener {
 
 	public static final String ACTION_ADD = "ACTION_ADD";
+	public static final String ACTION_ADD_RANDOM = "ACTION_ADD_RNDOM";
+	public static final String ACTION_CLOSE = "ACTION_CLOSE";
 	public static final String ACTION_REMOVE = "ACTION_REMOVE";
 	public static final String ACTION_CHANGE_ALGORITHM = "ACTION_CHANGE_ALGORITHM";
 	public static final String ACTION_CALCULATE = "ACTION_CALCULATE";
@@ -93,9 +86,11 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 	private JButton addRandom; // add a waypoint that the user doesn't have assets at.
 	private JComboBox algorithm;
 	private JTextArea description;
-	private JList available;
-	private JList waypoints;
-	private JLabel remaining; // waypoint count
+	private MoveJList available;
+	private MoveJList waypoints;
+	private JLabel availableRemaining;
+	private JLabel waypointsRemaining; // waypoint count
+	private ProgressBar progress;
 	Graph filteredGraph;
 
 	public RoutingDialogue(Program program, Image image) {
@@ -106,6 +101,23 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 		remove = new JButton("<<<");
 		calculate = new JButton("Calculate Route");
 		addRandom = new JButton("Other");
+
+		close.setActionCommand(ACTION_CLOSE);
+		add.setActionCommand(ACTION_ADD);
+		remove.setActionCommand(ACTION_REMOVE);
+		calculate.setActionCommand(ACTION_CALCULATE);
+		addRandom.setActionCommand(ACTION_ADD_RANDOM);
+
+		close.addActionListener(this);
+		add.addActionListener(this);
+		remove.addActionListener(this);
+		calculate.addActionListener(this);
+		addRandom.addActionListener(this);
+
+		progress = new ProgressBar();
+		progress.setValue(0);
+		progress.setMaximum(1);
+		progress.setMinimum(0);
 
 		algorithm = new JComboBox(new Vector<RoutingAlgorithmContainer>(RoutingAlgorithmContainer.getRegisteredList()));
 		algorithm.setSelectedIndex(0);
@@ -121,24 +133,99 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 		description.setEditable(false);
 		description.setWrapStyleWord(true);
 		description.setLineWrap(true);
-		available = new JList(new WaypointListModel());
-		waypoints = new JList(new WaypointListModel());
-		remaining = new JLabel();
+		Comparator<SolarSystem> comp = new Comparator<SolarSystem>() {
+			@Override
+			public int compare(SolarSystem o1, SolarSystem o2) {
+				return o1.getName().compareTo(o2.getName());
+			}
+		};
+
+		available = new MoveJList(new EditableListModel<Node>());
+		available.getEditableModel().setSortComparator(comp);
+		waypoints = new MoveJList(new EditableListModel<Node>());
+		waypoints.getEditableModel().setSortComparator(comp);
+		waypointsRemaining = new JLabel();
+		availableRemaining = new JLabel();
 		updateRemaining();
 
+		doLayout();
+	}
+
+	private void doLayout() {
 		JScrollPane descrSP = new JScrollPane(description);
 		JScrollPane availSP = new JScrollPane(available);
 		JScrollPane waypoSP = new JScrollPane(waypoints);
 
-
+		Layouter lay = new Layouter();
 		// widths are defined in here.
-		layout.setHorizontalGroup(
-						layout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(layout.createSequentialGroup().addContainerGap().addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(descrSP, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE).addComponent(algorithm, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE).addGroup(layout.createSequentialGroup().addComponent(availSP, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(add, 80, 80, 80).addComponent(remove, 80, 80, 80).addComponent(addRandom, 80, 80, 80)).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING).addComponent(calculate, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE).addComponent(remaining, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE).addComponent(waypoSP, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)))).addContainerGap()));
+    layout.setHorizontalGroup(
+						layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addGroup(layout.createSequentialGroup().addContainerGap()
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addComponent(descrSP, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+						.addComponent(algorithm, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+						.addGroup(layout.createSequentialGroup()
+						.addComponent(availSP, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addComponent(add, 80, 80, 80).addComponent(remove, 80, 80, 80)
+						.addComponent(addRandom, 80, 80, 80))
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addComponent(calculate, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+						.addComponent(waypointsRemaining, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+						.addComponent(waypoSP, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)))).addContainerGap()));
 		// heights are defined here.
-		layout.setVerticalGroup(
-						layout.createParallelGroup(GroupLayout.Alignment.LEADING).addGroup(layout.createSequentialGroup().addContainerGap().addComponent(algorithm, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(descrSP, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false).addComponent(waypoSP, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE).addComponent(availSP, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE).addGroup(layout.createSequentialGroup().addComponent(add).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(remove).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED).addComponent(addRandom))).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(remaining).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED).addComponent(calculate).addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+    layout.setVerticalGroup(
+						layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+						.addGroup(layout.createSequentialGroup().addContainerGap()
+						.addComponent(algorithm, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+						.addComponent(descrSP, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+						.addComponent(waypoSP, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(availSP, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addGroup(layout.createSequentialGroup().addComponent(add)
+						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+						.addComponent(remove).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+						.addComponent(addRandom))).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addComponent(waypointsRemaining).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addComponent(calculate).addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
 
 		setUIEnabled(false);
+	}
+
+	class Layouter {
+		private GroupLayout.ParallelGroup hTopThree(GroupLayout layout, Component progress, Component descrSP, Component algorithm) {
+			return layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+								.addComponent(progress, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+								.addComponent(descrSP, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+								.addComponent(algorithm, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+								;
+		}
+		private GroupLayout.ParallelGroup hBottom(GroupLayout layout, Component availSP, Component waypoSP) {
+			return layout.createParallelGroup()
+							.addGroup(
+									layout.createSequentialGroup()
+										.addGroup(
+											layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+											.addComponent(availSP, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+											.addComponent(availableRemaining, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+											.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+												.addComponent(add, 80, 80, 80)
+												.addComponent(remove, 80, 80, 80)
+												.addComponent(addRandom, 80, 80, 80)
+											)
+										)
+										.addGroup(
+											layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+											.addComponent(calculate, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+											.addComponent(waypointsRemaining, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
+											.addComponent(waypoSP, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+											)
+											);
+		}
 	}
 
 	private void changeAlgorithm() {
@@ -147,14 +234,25 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 	}
 
 	private void updateRemaining() {
+		updateWaypointsRemaining();
+		updateAvailableRemaining();
+	}
+	
+	private void updateWaypointsRemaining() {
 		int max = ((RoutingAlgorithmContainer) algorithm.getSelectedItem()).getWaypointLimit();
 		int cur = waypoints.getModel().getSize();
 		if (max < cur) {
-			remaining.setForeground(Color.RED);
+			waypointsRemaining.setForeground(Color.RED);
 		} else {
-			remaining.setForeground(Color.BLACK);
+			waypointsRemaining.setForeground(Color.BLACK);
 		}
-		remaining.setText("" + (max - cur) + " remaining");
+		waypointsRemaining.setText(cur + " of " + max + " allowed.");
+	}
+
+	private void updateAvailableRemaining() {
+		int cur = available.getModel().getSize();
+		int tot = cur + waypoints.getModel().getSize();
+		availableRemaining.setText(cur + " of " + tot + " total");
 	}
 
 	@Override
@@ -178,23 +276,38 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 
 	@Override
 	protected void windowShown() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				windowShownInner();
+			}
+		}, "routing dialogue ")
+		.start();
+	}
+
+	private void windowShownInner() {
 		Settings settings = program.getSettings();
 
-		final ProgressDialogue pgp = new ProgressDialogue(getDialog(), true);
-		pgp.setMaximum(settings.getJumps().size() + 1 + program.getTablePanel().getFilteredAssets().size());
-		pgp.setMinimum(0);
-		pgp.setValue(0);
-		pgp.setLocationRelativeTo(getDialog());
-		//pgp.setVisible(true);
+		progress.setMaximum(settings.getJumps().size() + 1 + program.getTablePanel().getFilteredAssets().size());
+		progress.setMinimum(0);
+		progress.setValue(0);
 								
 		// build the graph.
 		// filter the solarsystems based on the settings.
 		filteredGraph = new Graph();
 
 		for (Jump jump : settings.getJumps()) { // this way we exclude the locations that are unreachable.
-			filteredGraph.addEdge(new Edge(
-							new SolarSystem(jump.getFrom()), new SolarSystem(jump.getTo())));
-			pgp.setValue(pgp.getValue() + 1);
+			SolarSystem f = null;
+			SolarSystem t = null;
+			for (Node n : filteredGraph.getNodes()) {
+				SolarSystem s = (SolarSystem)n;
+				if (s.getSolarSystemID() == jump.getFrom().getSolarSystemID()) f = s;
+				if (s.getSolarSystemID() == jump.getTo().getSolarSystemID()) t = s;
+			}
+			if (f == null) f = new SolarSystem(jump.getFrom());
+			if (t == null) t = new SolarSystem(jump.getTo());
+			filteredGraph.addEdge(new Edge(f, t));
+			progress.setValue(progress.getValue() + 1);
 		}
 		// select the active places.
 		SortedSet<SolarSystem> allLocs = new TreeSet<SolarSystem>(new Comparator<SolarSystem>() {
@@ -212,15 +325,13 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 			} else {
 				Log.debug("ignoring " + ea.getLocation());
 			}
-			pgp.setValue(pgp.getValue() + 1);
+			progress.setValue(progress.getValue() + 1);
 		}
 
-		((WaypointListModel) available.getModel()).addAll(allLocs);
+		((EditableListModel) available.getModel()).addAll(allLocs);
 
-		pgp.setValue(pgp.getMaximum());
+		progress.setValue(progress.getMaximum());
 		setUIEnabled(true);
-		pgp.setVisible(false);
-		pgp.dispose();
 	}
 
 	/**
@@ -278,51 +389,59 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 		} else if (ACTION_CHANGE_ALGORITHM.equals(e.getActionCommand())) {
 			// this isn't used.
 		} else if (ACTION_CALCULATE.equals(e.getActionCommand())) {
-			SwingUtilities.invokeLater(new Runnable() {
-
-				@Override
-				public void run() {
-					processRoute();
-				}
-			});
+			processRoute();
 		}
 	}
 
 	/**
+	 * Moves the selectewd items in the 'from' JList to the 'to' JList.
 	 *
 	 * @param from
 	 * @param to
 	 * @param limit
-	 * @return true if all the items were added.
+	 * @return true if all the items were moved.
 	 */
-	private boolean move(JList from, JList to, int limit) {
-		for (Object obj : from.getSelectedValues()) {
-			if (to.getModel().getSize() < limit) {
-				((WaypointListModel) to.getModel()).add((SolarSystem) obj);
-				((WaypointListModel) to.getModel()).remove((SolarSystem) obj);
-			} else {
-				return false;
-			}
-		}
-		return true;
+	private boolean move(MoveJList from, MoveJList to, int limit) {
+		return from.move(to, limit);
 	}
 
 	private void processRoute() {
-		// disable the UI controls
-		setUIEnabled(false);
-		List<Node> inputWaypoints = new ArrayList<Node>(((WaypointListModel) waypoints.getModel()).getAll());
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				processRouteInner();
+			}
+		}, "Route Processor").start();
+	}
 
-		List<Node> route = ((RoutingAlgorithmContainer) algorithm.getSelectedItem()).execute(
-						new DummyProgress(), filteredGraph, inputWaypoints);
+	private void processRouteInner() {
+		try {
+			// disable the UI controls
+			setUIEnabled(false);
+			List<Node> inputWaypoints = new ArrayList<Node>(((EditableListModel) waypoints.getModel()).getAll());
 
-		StringBuilder sb = new StringBuilder("The suggested route is:");
-		for (Node ss : route) {
-			sb.append(ss.getName());
+			List<Node> route = ((RoutingAlgorithmContainer) algorithm.getSelectedItem()).execute(
+							progress, filteredGraph, inputWaypoints);
+
+			StringBuilder sb = new StringBuilder("The suggested route is:\n");
+			for (Node ss : route) {
+				sb.append(ss.getName());
+				sb.append('\n');
+			}
+
+			JOptionPane.showMessageDialog(getDialog()
+							, sb.toString()
+							, "Route"
+							, JOptionPane.INFORMATION_MESSAGE);
+
+		} catch (DisconnectedGraphException dce) {
+			JOptionPane.showMessageDialog(getDialog()
+							, dce.getMessage()
+							, "Error"
+							, JOptionPane.ERROR_MESSAGE);
+		} finally {
+			setUIEnabled(true);
 		}
-
-		JOptionPane.showMessageDialog(null, sb.toString());
-
-		setUIEnabled(true);
 	}
 
 	private void setUIEnabled(boolean b) {
@@ -335,7 +454,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 		description.setEnabled(b);
 		available.setEnabled(b);
 		waypoints.setEnabled(b);
-		remaining.setEnabled(b);
+		waypointsRemaining.setEnabled(b);
 	}
 
 	/**
@@ -378,67 +497,6 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 			return list;
 		}
 	}
-
-	class WaypointListModel extends AbstractListModel {
-
-		private static final long serialVersionUID = 1l;
-		List<SolarSystem> backed = new ArrayList<SolarSystem>();
-
-		public WaypointListModel() {
-		}
-
-		public WaypointListModel(List<SolarSystem> initial) {
-			backed.addAll(initial);
-		}
-
-		List<? extends SolarSystem> getAll() {
-			return Collections.unmodifiableList(backed);
-		}
-
-		@Override
-		public int getSize() {
-			return backed.size();
-		}
-
-		@Override
-		public Object getElementAt(int index) {
-			return backed.get(index);
-		}
-
-		public Node remove(int index) {
-			Node b = backed.remove(index);
-			changed();
-			return b;
-		}
-
-		public boolean remove(SolarSystem o) {
-			boolean b = backed.remove(o);
-			changed();
-			return b;
-		}
-
-		public boolean add(SolarSystem e) {
-			boolean b = backed.add(e);
-			changed();
-			return b;
-		}
-
-		public boolean addAll(Collection<? extends SolarSystem> c) {
-			boolean b = backed.addAll(c);
-			changed();
-			return b;
-		}
-
-		void changed() {
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					fireContentsChanged(this, 0, backed.size() - 1);
-				}
-			});
-		}
-	}
-
 
 	class DummyProgress implements Progress {
 
