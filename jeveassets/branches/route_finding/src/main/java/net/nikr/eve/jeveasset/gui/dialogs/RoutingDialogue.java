@@ -129,6 +129,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 		description.setEditable(false);
 		description.setWrapStyleWord(true);
 		description.setLineWrap(true);
+		description.setFont(algorithm.getFont());
 		Comparator<SolarSystem> comp = new Comparator<SolarSystem>() {
 			@Override
 			public int compare(SolarSystem o1, SolarSystem o2) {
@@ -157,6 +158,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 							layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 							.addGroup(layout.createSequentialGroup().addContainerGap()
 								.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+									.addComponent(progress, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
 									.addComponent(descrSP, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
 									.addComponent(algorithm, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
 									.addGroup(layout.createSequentialGroup()
@@ -181,6 +183,8 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
     layout.setVerticalGroup(
 							layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 							.addGroup(layout.createSequentialGroup().addContainerGap()
+								.addComponent(progress, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 								.addComponent(algorithm, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 								.addComponent(descrSP, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
