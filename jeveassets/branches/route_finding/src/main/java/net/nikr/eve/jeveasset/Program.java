@@ -78,9 +78,9 @@ public class Program implements ActionListener, Listener<EveAsset> {
 	public static final int BUTTONS_HEIGHT = 22;
 	public static final int BUTTONS_WIDTH = 90;
 
-	public static final boolean DEBUG = true;
-	public static final boolean FORCE_UPDATE = (DEBUG && false);
-	public static final boolean FORCE_NO_UPDATE = (DEBUG && true);
+	public static final boolean DEBUG = false;
+	public static final boolean FORCE_UPDATE = (DEBUG && true);
+	public static final boolean FORCE_NO_UPDATE = (DEBUG && false);
 
 	//GUI
 	private Frame frame;
