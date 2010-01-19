@@ -405,6 +405,13 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 	}
 
 	private void processRouteInner() {
+		if (waypoints.getModel().getSize() <= 2) {
+			JOptionPane.showMessageDialog(getDialog(), "There is little point in trying to calculate the\n" +
+							"optimal route between two points, since there is only\n" +
+							"one possible solution", "Not calculating", JOptionPane.INFORMATION_MESSAGE);
+			return;
+		}
+
 		try {
 			// disable the UI controls
 			setUIEnabled(false);
@@ -521,52 +528,5 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 	class ProgressBar extends JProgressBar implements Progress {
 
 		private static final long serialVersionUID = 1l;
-	}
-
-	class ProgressDialogue extends JDialog implements Progress {
-
-		private static final long serialVersionUID = 1l;
-		ProgressBar pb;
-
-		public ProgressDialogue(Dialog owner, boolean modal) {
-			super(owner, modal);
-			pb = new ProgressBar();
-			JLabel la = new JLabel("Loading Jump information.");
-			la.setAlignmentX(JLabel.CENTER_ALIGNMENT);
-			setLayout(new BorderLayout(2, 2));
-			add(la, BorderLayout.NORTH);
-			add(pb, BorderLayout.CENTER);
-			pack();
-		}
-
-		@Override
-		public void setValue(int n) {
-			pb.setValue(n);
-		}
-
-		@Override
-		public void setMinimum(int n) {
-			pb.setMinimum(n);
-		}
-
-		@Override
-		public void setMaximum(int n) {
-			pb.setMaximum(n);
-		}
-
-		@Override
-		public int getValue() {
-			return pb.getValue();
-		}
-
-		@Override
-		public int getMinimum() {
-			return pb.getMinimum();
-		}
-
-		@Override
-		public int getMaximum() {
-			return pb.getMaximum();
-		}
 	}
 }
