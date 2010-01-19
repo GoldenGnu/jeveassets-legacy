@@ -24,9 +24,7 @@
  */
 package net.nikr.eve.jeveasset.gui.dialogs;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dialog;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -42,7 +40,6 @@ import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
@@ -321,6 +318,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 		available.getEditableModel().addAll(allLocs);
 
 		progress.setValue(progress.getMaximum());
+		updateRemaining();
 		setUIEnabled(true);
 	}
 
@@ -392,7 +390,9 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 	 * @return true if all the items were moved.
 	 */
 	private boolean move(MoveJList<SolarSystem> from, MoveJList<SolarSystem> to, int limit) {
-		return from.move(to, limit);
+		boolean b = from.move(to, limit);
+		updateRemaining();
+		return b;
 	}
 
 	private void processRoute() {
@@ -452,6 +452,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 		available.setEnabled(b);
 		waypoints.setEnabled(b);
 		waypointsRemaining.setEnabled(b);
+		availableRemaining.setEnabled(b);
 	}
 
 	/**
