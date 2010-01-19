@@ -26,7 +26,6 @@ package net.nikr.eve.jeveasset.gui.dialogs;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dialog;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -45,14 +44,11 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.LayoutStyle;
-import javax.swing.ListModel;
-import javax.swing.SwingUtilities;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Jump;
@@ -86,8 +82,8 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 	private JButton addRandom; // add a waypoint that the user doesn't have assets at.
 	private JComboBox algorithm;
 	private JTextArea description;
-	private MoveJList available;
-	private MoveJList waypoints;
+	private MoveJList<SolarSystem> available;
+	private MoveJList<SolarSystem> waypoints;
 	private JLabel availableRemaining;
 	private JLabel waypointsRemaining; // waypoint count
 	private ProgressBar progress;
@@ -140,9 +136,9 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 			}
 		};
 
-		available = new MoveJList(new EditableListModel<Node>());
+		available = new MoveJList<SolarSystem>(new EditableListModel<SolarSystem>());
 		available.getEditableModel().setSortComparator(comp);
-		waypoints = new MoveJList(new EditableListModel<Node>());
+		waypoints = new MoveJList<SolarSystem>(new EditableListModel<SolarSystem>());
 		waypoints.getEditableModel().setSortComparator(comp);
 		waypointsRemaining = new JLabel();
 		availableRemaining = new JLabel();
@@ -156,76 +152,56 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 		JScrollPane availSP = new JScrollPane(available);
 		JScrollPane waypoSP = new JScrollPane(waypoints);
 
-		Layouter lay = new Layouter();
 		// widths are defined in here.
     layout.setHorizontalGroup(
-						layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addGroup(layout.createSequentialGroup().addContainerGap()
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addComponent(descrSP, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
-						.addComponent(algorithm, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-						.addGroup(layout.createSequentialGroup()
-						.addComponent(availSP, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
-						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addComponent(add, 80, 80, 80).addComponent(remove, 80, 80, 80)
-						.addComponent(addRandom, 80, 80, 80))
-						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addComponent(calculate, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-						.addComponent(waypointsRemaining, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
-						.addComponent(waypoSP, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)))).addContainerGap()));
-		// heights are defined here.
-    layout.setVerticalGroup(
-						layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-						.addGroup(layout.createSequentialGroup().addContainerGap()
-						.addComponent(algorithm, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(descrSP, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
-						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-						.addComponent(waypoSP, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(availSP, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addGroup(layout.createSequentialGroup().addComponent(add)
-						.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(remove).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(addRandom))).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(waypointsRemaining).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-						.addComponent(calculate).addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
-
-		setUIEnabled(false);
-	}
-
-	class Layouter {
-		private GroupLayout.ParallelGroup hTopThree(GroupLayout layout, Component progress, Component descrSP, Component algorithm) {
-			return layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-								.addComponent(progress, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
-								.addComponent(descrSP, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
-								.addComponent(algorithm, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
-								;
-		}
-		private GroupLayout.ParallelGroup hBottom(GroupLayout layout, Component availSP, Component waypoSP) {
-			return layout.createParallelGroup()
-							.addGroup(
-									layout.createSequentialGroup()
-										.addGroup(
-											layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-											.addComponent(availSP, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
-											.addComponent(availableRemaining, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
-											.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-												.addComponent(add, 80, 80, 80)
-												.addComponent(remove, 80, 80, 80)
-												.addComponent(addRandom, 80, 80, 80)
-											)
+							layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+							.addGroup(layout.createSequentialGroup().addContainerGap()
+								.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+									.addComponent(descrSP, GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+									.addComponent(algorithm, GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE)
+									.addGroup(layout.createSequentialGroup()
+										.addComponent(availSP, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+										.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+											.addComponent(add, 80, 80, 80).addComponent(remove, 80, 80, 80)
+											.addComponent(addRandom, 80, 80, 80)
 										)
-										.addGroup(
-											layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+										.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 											.addComponent(calculate, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
 											.addComponent(waypointsRemaining, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
 											.addComponent(waypoSP, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
-											)
-											);
-		}
+										)
+									)
+								)
+								.addContainerGap()
+							)
+						);
+		// heights are defined here.
+    layout.setVerticalGroup(
+							layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+							.addGroup(layout.createSequentialGroup().addContainerGap()
+								.addComponent(algorithm, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+								.addComponent(descrSP, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)
+								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+								.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
+									.addComponent(waypoSP, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+									.addComponent(availSP, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+									.addGroup(layout.createSequentialGroup().addComponent(add)
+										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+										.addComponent(remove).addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+										.addComponent(addRandom)
+									)
+								)
+								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+								.addComponent(waypointsRemaining).addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+								.addComponent(calculate)
+								.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							)
+						);
+
+		setUIEnabled(false);
 	}
 
 	private void changeAlgorithm() {
@@ -328,7 +304,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 			progress.setValue(progress.getValue() + 1);
 		}
 
-		((EditableListModel) available.getModel()).addAll(allLocs);
+		available.getEditableModel().addAll(allLocs);
 
 		progress.setValue(progress.getMaximum());
 		setUIEnabled(true);
@@ -401,7 +377,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 	 * @param limit
 	 * @return true if all the items were moved.
 	 */
-	private boolean move(MoveJList from, MoveJList to, int limit) {
+	private boolean move(MoveJList<SolarSystem> from, MoveJList<SolarSystem> to, int limit) {
 		return from.move(to, limit);
 	}
 
@@ -418,7 +394,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 		try {
 			// disable the UI controls
 			setUIEnabled(false);
-			List<Node> inputWaypoints = new ArrayList<Node>(((EditableListModel) waypoints.getModel()).getAll());
+			List<Node> inputWaypoints = new ArrayList<Node>(waypoints.getEditableModel().getAll());
 
 			List<Node> route = ((RoutingAlgorithmContainer) algorithm.getSelectedItem()).execute(
 							progress, filteredGraph, inputWaypoints);
