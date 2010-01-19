@@ -420,11 +420,17 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 			List<Node> route = ((RoutingAlgorithmContainer) algorithm.getSelectedItem()).execute(
 							progress, filteredGraph, inputWaypoints);
 
-			StringBuilder sb = new StringBuilder("The suggested route is:\n");
+			StringBuilder sb = new StringBuilder("The suggested route has ");
+			sb.append(((RoutingAlgorithmContainer) algorithm.getSelectedItem()).getLastDistance());
+			sb.append(" jumps and is:\n");
 			for (Node ss : route) {
+				sb.append(" * ");
 				sb.append(ss.getName());
 				sb.append('\n');
 			}
+			sb.append("Generating this route took ");
+			sb.append((int)Math.floor(((RoutingAlgorithmContainer) algorithm.getSelectedItem()).getLastTimeTaken() / 1000));
+			sb.append(" seconds.");
 
 			JOptionPane.showMessageDialog(getDialog()
 							, sb.toString()
@@ -480,6 +486,14 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 
 		public List<Node> execute(Progress progress, Graph g, List<? extends Node> assetLocations) {
 			return contained.execute(progress, g, assetLocations);
+		}
+
+		public long getLastTimeTaken() {
+			return contained.getLastTimeTaken();
+		}
+
+		public int getLastDistance() {
+			return contained.getLastDistance();
 		}
 
 		@Override
