@@ -44,10 +44,14 @@ public class MoveJList<T> extends JList {
 						tModel.add(ss);
 					}
 				} else {
+					setSelectedIndices(new int[]{});
+					to.setSelectedIndices(new int[]{});
 					return false;
 				}
 			}
 		}
+		setSelectedIndices(new int[]{});
+		to.setSelectedIndices(new int[]{});
 		return true;
 	}
 }
