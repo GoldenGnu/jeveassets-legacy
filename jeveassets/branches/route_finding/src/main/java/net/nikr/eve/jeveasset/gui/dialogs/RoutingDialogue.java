@@ -26,6 +26,7 @@ package net.nikr.eve.jeveasset.gui.dialogs;
 
 import java.awt.Color;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -97,7 +98,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 		remove = new JButton("<<<");
 		calculate = new JButton("Calculate Route");
 		addRandom = new JButton("Other");
-		cancel = new JButton("cancel");
+		cancel = new JButton("Cancel");
 
 		close.setActionCommand(ACTION_CLOSE);
 		add.setActionCommand(ACTION_ADD);
@@ -155,6 +156,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 
 	private void doLayout() {
 		JScrollPane descrSP = new JScrollPane(description);
+		description.scrollRectToVisible(new Rectangle(1,1,1,1));
 		JScrollPane availSP = new JScrollPane(available);
 		JScrollPane waypoSP = new JScrollPane(waypoints);
 
@@ -174,8 +176,9 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 										)
 										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 										.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-											.addComponent(add, 80, 80, 80).addComponent(remove, 80, 80, 80)
-											.addComponent(addRandom, 80, 80, 80)
+											.addComponent(add, 80, 80, 80)
+											.addComponent(remove, 80, 80, 80)
+//											.addComponent(addRandom, 80, 80, 80)
 										)
 										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 										.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -206,8 +209,8 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 										.addComponent(add)
 										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 										.addComponent(remove)
-										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
-										.addComponent(addRandom)
+//										.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+//										.addComponent(addRandom)
 									)
 								)
 								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -234,6 +237,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 	private void setAlgorithmDescriptionText() {
 		RoutingAlgorithmContainer rac = ((RoutingAlgorithmContainer) algorithm.getSelectedItem());
 		description.setText(rac.getBasicDescription() + "\n\n" + rac.getTechnicalDescription());
+//		description.scrollRectToVisible(new Rectangle(1,1,1,1)); This has no effect. WHY?!
 	}
 
 	private void updateRemaining() {
@@ -289,6 +293,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 	}
 
 	private void windowShownInner() {
+		description.scrollRectToVisible(new Rectangle(1,1,1,1));
 		Settings settings = program.getSettings();
 
 		progress.setMaximum(settings.getJumps().size() + 1 + program.getTablePanel().getFilteredAssets().size());
