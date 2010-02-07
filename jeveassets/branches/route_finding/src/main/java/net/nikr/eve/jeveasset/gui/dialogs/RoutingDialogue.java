@@ -59,6 +59,7 @@ import uk.me.candle.eve.graph.Graph;
 import uk.me.candle.eve.graph.Node;
 import uk.me.candle.eve.routing.Progress;
 import uk.me.candle.eve.routing.RoutingAlgorithm;
+import uk.me.candle.eve.routing.cancel.CancelService;
 
 /**
  *
@@ -72,6 +73,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 	public static final String ACTION_REMOVE = "ACTION_REMOVE";
 	public static final String ACTION_CHANGE_ALGORITHM = "ACTION_CHANGE_ALGORITHM";
 	public static final String ACTION_CALCULATE = "ACTION_CALCULATE";
+	public static final String ACTION_CANCEL = "ACTION_CANCEL";
 	private JButton close;
 	private JButton add;
 	private JButton remove;
@@ -84,6 +86,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 	private JLabel availableRemaining;
 	private JLabel waypointsRemaining; // waypoint count
 	private ProgressBar progress;
+	private JButton cancel;
 	Graph filteredGraph;
 
 	public RoutingDialogue(Program program, Image image) {
@@ -94,18 +97,21 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 		remove = new JButton("<<<");
 		calculate = new JButton("Calculate Route");
 		addRandom = new JButton("Other");
+		cancel = new JButton("cancel");
 
 		close.setActionCommand(ACTION_CLOSE);
 		add.setActionCommand(ACTION_ADD);
 		remove.setActionCommand(ACTION_REMOVE);
 		calculate.setActionCommand(ACTION_CALCULATE);
 		addRandom.setActionCommand(ACTION_ADD_RANDOM);
+		cancel.setActionCommand(ACTION_CANCEL);
 
 		close.addActionListener(this);
 		add.addActionListener(this);
 		remove.addActionListener(this);
 		calculate.addActionListener(this);
 		addRandom.addActionListener(this);
+		cancel.addActionListener(this);
 
 		progress = new ProgressBar();
 		progress.setValue(0);
@@ -122,7 +128,8 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 			}
 		});
 
-		description = new JTextArea(((RoutingAlgorithmContainer) algorithm.getSelectedItem()).getDescription());
+		description = new JTextArea();
+		setAlgorithmDescriptionText(); // sets the desciption text.
 		description.setEditable(false);
 		description.setWrapStyleWord(true);
 		description.setLineWrap(true);
@@ -143,6 +150,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 		updateRemaining();
 
 		doLayout();
+		cancel.setEnabled(false); // can't cancel the initial load...
 	}
 
 	private void doLayout() {
@@ -174,6 +182,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 											.addComponent(calculate, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
 											.addComponent(waypointsRemaining, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE, Short.MAX_VALUE)
 											.addComponent(waypoSP, GroupLayout.DEFAULT_SIZE, 140, Short.MAX_VALUE)
+											.addComponent(cancel, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE)
 										)
 									)
 								)
@@ -209,6 +218,8 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 								.addComponent(calculate)
 								.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+								.addComponent(cancel)
+								.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 							)
 						);
 
@@ -216,8 +227,13 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 	}
 
 	private void changeAlgorithm() {
-		description.setText(((RoutingAlgorithmContainer) algorithm.getSelectedItem()).getDescription());
+		setAlgorithmDescriptionText();
 		updateRemaining();
+	}
+
+	private void setAlgorithmDescriptionText() {
+		RoutingAlgorithmContainer rac = ((RoutingAlgorithmContainer) algorithm.getSelectedItem());
+		description.setText(rac.getBasicDescription() + "\n\n" + rac.getTechnicalDescription());
 	}
 
 	private void updateRemaining() {
@@ -378,6 +394,8 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 			// this isn't used.
 		} else if (ACTION_CALCULATE.equals(e.getActionCommand())) {
 			processRoute();
+		} else if (ACTION_CANCEL.equals(e.getActionCommand())) {
+			cancelProcessing();
 		}
 	}
 
@@ -459,6 +477,11 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 		waypoints.setEnabled(b);
 		waypointsRemaining.setEnabled(b);
 		availableRemaining.setEnabled(b);
+		cancel.setEnabled(!b);
+	}
+
+	private void cancelProcessing() {
+		((RoutingAlgorithmContainer)algorithm.getSelectedItem()).getCancelService().cancel();
 	}
 
 	/**
@@ -480,8 +503,12 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 			return contained.getName();
 		}
 
-		public String getDescription() {
-			return contained.getDescription();
+		public String getTechnicalDescription() {
+			return contained.getTechnicalDescription();
+		}
+
+		public String getBasicDescription() {
+			return contained.getBasicDescription();
 		}
 
 		public List<Node> execute(Progress progress, Graph g, List<? extends Node> assetLocations) {
@@ -494,6 +521,10 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 
 		public int getLastDistance() {
 			return contained.getLastDistance();
+		}
+
+		public CancelService getCancelService() {
+			return contained.getCancelService();
 		}
 
 		@Override

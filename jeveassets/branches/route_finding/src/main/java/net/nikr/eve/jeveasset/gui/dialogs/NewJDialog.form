@@ -28,7 +28,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
                           <Component id="availableRemaining" max="32767" attributes="1"/>
-                          <Component id="jScrollPane2" alignment="0" pref="144" max="32767" attributes="1"/>
+                          <Component id="availableSP" alignment="0" pref="144" max="32767" attributes="1"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -40,12 +40,13 @@
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="calculate" alignment="1" pref="151" max="32767" attributes="0"/>
                           <Component id="waypointsRemaining" alignment="0" pref="151" max="32767" attributes="0"/>
-                          <Component id="jScrollPane3" alignment="0" pref="151" max="32767" attributes="0"/>
+                          <Component id="waypointsSP" alignment="0" pref="151" max="32767" attributes="0"/>
+                          <Component id="cancel" alignment="0" pref="151" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                   <Component id="progress" alignment="0" pref="380" max="32767" attributes="0"/>
                   <Component id="algorithm" alignment="1" pref="380" max="32767" attributes="0"/>
-                  <Component id="jScrollPane1" alignment="0" pref="380" max="32767" attributes="0"/>
+                  <Component id="descriptionSP" alignment="0" pref="380" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -59,11 +60,11 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="algorithm" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jScrollPane1" min="-2" pref="78" max="-2" attributes="0"/>
+              <Component id="descriptionSP" min="-2" pref="78" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                  <Component id="jScrollPane3" min="0" pref="0" max="32767" attributes="1"/>
-                  <Component id="jScrollPane2" alignment="0" pref="94" max="32767" attributes="1"/>
+                  <Component id="waypointsSP" min="0" pref="0" max="32767" attributes="1"/>
+                  <Component id="availableSP" alignment="0" pref="94" max="32767" attributes="1"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="add" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -79,6 +80,8 @@
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="calculate" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="cancel" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
       </Group>
@@ -97,7 +100,7 @@
         </Property>
       </Properties>
     </Component>
-    <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+    <Container class="javax.swing.JScrollPane" name="descriptionSP">
       <AuxValues>
         <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
       </AuxValues>
@@ -112,7 +115,7 @@
         </Component>
       </SubComponents>
     </Container>
-    <Container class="javax.swing.JScrollPane" name="jScrollPane2">
+    <Container class="javax.swing.JScrollPane" name="availableSP">
       <AuxValues>
         <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
       </AuxValues>
@@ -144,7 +147,7 @@
         <Property name="text" type="java.lang.String" value="jButton2"/>
       </Properties>
     </Component>
-    <Container class="javax.swing.JScrollPane" name="jScrollPane3">
+    <Container class="javax.swing.JScrollPane" name="waypointsSP">
       <AuxValues>
         <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
       </AuxValues>
@@ -189,6 +192,11 @@
     <Component class="javax.swing.JLabel" name="availableRemaining">
       <Properties>
         <Property name="text" type="java.lang.String" value="avail"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="cancel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="jButton1"/>
       </Properties>
     </Component>
   </SubComponents>
