@@ -117,6 +117,10 @@ public class Settings {
 	private SplashUpdater splashUpdater;
 	
 	public Settings(SplashUpdater splashUpdater) {
+		this(splashUpdater, true);
+	}
+
+	public Settings(SplashUpdater splashUpdater, boolean fill) {
 		this.splashUpdater = splashUpdater;
 		splashUpdater.setProgress(10);
 		items = new HashMap<Integer, Item>();
@@ -136,7 +140,12 @@ public class Settings {
 		flags.put(FLAG_FILTER_ON_ENTER, false);
 		flags.put(FLAG_HIGHLIGHT_SELECTED_ROWS, true);
 
-		
+		if (fill) {
+			fill();
+		}
+	}
+
+	protected void fill() {
 		conquerableStationsNextUpdate = Settings.getGmtNow();
 		corporationsNextUpdate =  new HashMap<Long, Date>();  //Settings.cvtToGmt( new Date() );
 		resetMainTableColumns();

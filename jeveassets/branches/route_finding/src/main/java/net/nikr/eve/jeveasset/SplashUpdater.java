@@ -55,8 +55,9 @@ public class SplashUpdater implements Runnable {
 				Log.warning("SplashScreen: loading0"+(a+1)+".png (NOT FOUND)");
 			}
 		}
-		
 	}
+
+	protected SplashUpdater(boolean nothing) { }
 
 	@Override
 	public void run(){

@@ -32,6 +32,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.SortedSet;
@@ -88,7 +89,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 	private JLabel waypointsRemaining; // waypoint count
 	private ProgressBar progress;
 	private JButton cancel;
-	Graph filteredGraph;
+	private Graph filteredGraph;
 
 	public RoutingDialogue(Program program, Image image) {
 		super(program, "Routing", image);
@@ -292,7 +293,7 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 		.start();
 	}
 
-	private void windowShownInner() {
+	protected void windowShownInner() {
 		description.scrollRectToVisible(new Rectangle(1,1,1,1));
 		Settings settings = program.getSettings();
 
@@ -302,21 +303,8 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 								
 		// build the graph.
 		// filter the solarsystems based on the settings.
-		filteredGraph = new Graph();
+		filteredGraph = getGraphFromJumps(progress, settings);
 
-		for (Jump jump : settings.getJumps()) { // this way we exclude the locations that are unreachable.
-			SolarSystem f = null;
-			SolarSystem t = null;
-			for (Node n : filteredGraph.getNodes()) {
-				SolarSystem s = (SolarSystem)n;
-				if (s.getSolarSystemID() == jump.getFrom().getSolarSystemID()) f = s;
-				if (s.getSolarSystemID() == jump.getTo().getSolarSystemID()) t = s;
-			}
-			if (f == null) f = new SolarSystem(jump.getFrom());
-			if (t == null) t = new SolarSystem(jump.getTo());
-			filteredGraph.addEdge(new Edge(f, t));
-			progress.setValue(progress.getValue() + 1);
-		}
 		// select the active places.
 		SortedSet<SolarSystem> allLocs = new TreeSet<SolarSystem>(new Comparator<SolarSystem>() {
 			@Override
@@ -341,6 +329,42 @@ public class RoutingDialogue extends JDialogCentered implements ActionListener {
 		progress.setValue(progress.getMaximum());
 		updateRemaining();
 		setUIEnabled(true);
+	}
+
+	/**
+	 * get the grapg from the supplied settings - progress is updated, one per jump via the given Progress instance.
+	 * @param progress
+	 * @param settings
+	 * @return
+	 */
+	protected Graph getGraphFromJumps(Progress progress, Settings settings) {
+		Graph g = new Graph();
+		for (Jump jump : settings.getJumps()) { // this way we exclude the locations that are unreachable.
+			SolarSystem f = null;
+			SolarSystem t = null;
+			for (Node n : g.getNodes()) {
+				SolarSystem s = (SolarSystem)n;
+				if (s.getSolarSystemID() == jump.getFrom().getSolarSystemID()) f = s;
+				if (s.getSolarSystemID() == jump.getTo().getSolarSystemID()) t = s;
+			}
+			if (f == null) f = new SolarSystem(jump.getFrom());
+			if (t == null) t = new SolarSystem(jump.getTo());
+			if (!isSystemExcluded(settings, t) && !isSystemExcluded(settings, f)) {
+				g.addEdge(new Edge(f, t));
+			}
+			progress.setValue(progress.getValue() + 1);
+		}
+		return g;
+	}
+
+	/**
+	 * place holder method for future filtering of jumps/systems.
+	 * @param settings
+	 * @param solarsystem
+	 * @return
+	 */
+	protected boolean isSystemExcluded(Settings settings, SolarSystem solarsystem) {
+		return false;
 	}
 
 	/**

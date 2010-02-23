@@ -118,6 +118,10 @@ public class Program implements ActionListener, Listener<EveAsset> {
 	private Settings settings;
 	private EventList<EveAsset> eveAssetEventList;
 
+	protected Program(Settings settings) {
+		this.settings = settings;
+	}
+
 	public Program(String[] args){
 		
 		Log.info("Starting "+PROGRAM_NAME+" "+PROGRAM_VERSION);
