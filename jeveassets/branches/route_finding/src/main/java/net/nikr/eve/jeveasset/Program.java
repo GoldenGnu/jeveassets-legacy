@@ -84,6 +84,7 @@ public class Program implements ActionListener, Listener<EveAsset> {
 
 	//GUI
 	private Frame frame;
+	private SplashUpdater splashUpdater;
 	
 	//Dialogs
 	private ApiManagerDialog apiManagerDialog;
@@ -132,8 +133,10 @@ public class Program implements ActionListener, Listener<EveAsset> {
 		Logger.getLogger("uk.me.candle").setLevel(Level.INFO);
 		Logger.getLogger("org.apache.commons").setLevel(Level.INFO);
 
+		splashUpdater = new SplashUpdater();
+
 		//Data
-		SplashUpdater.setText("Loading DATA");
+		splashUpdater.setText("Loading DATA");
 		Log.info("DATA Loading...");
 
 		//Arguments
@@ -143,14 +146,14 @@ public class Program implements ActionListener, Listener<EveAsset> {
 			}
 		}
 
-		settings = new Settings();
+		settings = new Settings(splashUpdater);
 		eveAssetEventList = new BasicEventList<EveAsset>();
 
-		SplashUpdater.setText("Loading GUI");
+		splashUpdater.setText("Loading GUI");
 		Log.info("GUI Loading:");
 		Log.info("	Frame");
 		frame = new Frame(this);
-		SplashUpdater.setProgress(80);
+		splashUpdater.setProgress(80);
 		Log.info("	Save Filters Dialog");
 		saveFilterDialog = new SaveFilterDialog(this);
 		Log.info("	Filters Manager Dialog");
@@ -195,10 +198,10 @@ public class Program implements ActionListener, Listener<EveAsset> {
 		Log.info("	Price Data Update Dialog");
 		updatePriceDataDialog = new UpdatePriceDataDialog(this, frame);
 		Log.info("	GUI loaded");
-		SplashUpdater.setProgress(90);
+		splashUpdater.setProgress(90);
 		Log.info("Updating data...");
 		updateEventList();
-		SplashUpdater.setProgress(100);
+		splashUpdater.setProgress(100);
 		Log.info("Showing GUI");
 		frame.setVisible(true);
 		if(DEBUG){
@@ -279,6 +282,10 @@ public class Program implements ActionListener, Listener<EveAsset> {
 	}
 	public EventList<EveAsset> getEveAssetEventList() {
 		return eveAssetEventList;
+	}
+
+	public SplashUpdater getSplashUpdater() {
+		return splashUpdater;
 	}
 
 	@Override

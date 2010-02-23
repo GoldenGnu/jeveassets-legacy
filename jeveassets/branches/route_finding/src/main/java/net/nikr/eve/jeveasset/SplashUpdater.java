@@ -36,7 +36,7 @@ import javax.imageio.ImageIO;
 import net.nikr.log.Log;
 
 
-public class SplashUpdater extends Thread{
+public class SplashUpdater implements Runnable {
 	private static int nProgress = 0;
 	private static String sText = "";
 	private static int currentLoadingImage = 0;
@@ -58,8 +58,6 @@ public class SplashUpdater extends Thread{
 		
 	}
 
-
-
 	@Override
 	public void run(){
 		while (splash != null && splash.isVisible()){
@@ -78,7 +76,7 @@ public class SplashUpdater extends Thread{
 	 * Set splash screen text
 	 * @param s	 String to show on splash screen
 	 */
-	public static void setText(String s){
+	public void setText(String s){
 		sText = s;
 		update();
 	}
@@ -86,7 +84,7 @@ public class SplashUpdater extends Thread{
 	 * Set progress of splash screen progressbar in the range 0-100
 	 * @param n	 Set progress in the range 0-100
 	 */
-	public static void setProgress(int n){
+	public void setProgress(int n){
 		if (n > 100){
 			n = 100;
 		}
@@ -94,7 +92,7 @@ public class SplashUpdater extends Thread{
 		update();
 	}
 
-	private static void update(){
+	private void update(){
 		if (splash != null){
 			try {
 				Graphics2D g = splash.createGraphics();

@@ -114,9 +114,11 @@ public class Settings {
 	List<Jump> jumps;
 
 	private PriceDataGetter priceDataGetter;
+	private SplashUpdater splashUpdater;
 	
-	public Settings() {
-		SplashUpdater.setProgress(10);
+	public Settings(SplashUpdater splashUpdater) {
+		this.splashUpdater = splashUpdater;
+		splashUpdater.setProgress(10);
 		items = new HashMap<Integer, Item>();
 		locations = new HashMap<Integer, Location>();
 		priceData = new HashMap<Integer, PriceData>();
@@ -149,23 +151,23 @@ public class Settings {
 		//Load data and overwite default values
 		settingsLoaded = SettingsReader.load(this);
 	//Load from file
-		SplashUpdater.setProgress(20);
+		splashUpdater.setProgress(20);
 		ItemsReader.load(this); //Items (Must be loaded before Assets)
-		SplashUpdater.setProgress(30);
+		splashUpdater.setProgress(30);
 		LocationsReader.load(this); //Locations (Must be loaded before Assets)
-		SplashUpdater.setProgress(40);
+		splashUpdater.setProgress(40);
 		ConquerableStationsReader.load(this); //Conquerable Stations (Must be loaded before Assets)
-		SplashUpdater.setProgress(50);
+		splashUpdater.setProgress(50);
 		AssetsReader.load(this); //Assets (Must be loaded before the price data)
 	//Update from eve api
 		MarketOrdersGetter.load(this); //Orders (Must be loaded before the price data)
 		IndustryJobsGetter.load(this); //Jobs (Must be loaded before the price data)
 		HumansGetter.load(this);
-		SplashUpdater.setProgress(60);
+		splashUpdater.setProgress(60);
 		JumpsReader.load(this);
 	//Price data (update as needed)
 		priceDataGetter = new PriceDataGetter(this); //Price Data - Must be loaded last
-		SplashUpdater.setProgress(70);
+		splashUpdater.setProgress(70);
 		
 	}
 	public void resetMainTableColumns(){

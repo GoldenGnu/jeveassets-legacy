@@ -112,7 +112,8 @@ public class Main {
 		Log.init(Main.class, "Please email the latest error.txt in the logs directory to niklaskr@gmail.com");
 
 		SplashUpdater splashUpdater = new SplashUpdater();
-		splashUpdater.start();
+		Thread splashThread = new Thread(splashUpdater, "Splash Thread");
+		splashThread.start();
 
 		initLookAndFeel();
 
