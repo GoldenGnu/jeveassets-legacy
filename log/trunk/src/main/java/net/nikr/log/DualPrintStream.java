@@ -22,6 +22,7 @@
 package net.nikr.log;
 
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Locale;
 
@@ -188,7 +189,6 @@ public class DualPrintStream extends PrintStream {
 		return this;
 	}
 
-	/*
 	@Override
 	public PrintStream append(CharSequence csq) {
 		ps1.append(csq);
@@ -208,6 +208,10 @@ public class DualPrintStream extends PrintStream {
 		ps2.append(c);
 		return this;
 	}
-	 *
-	 */
+	
+	@Override
+	public void write(byte b[]) throws IOException {
+		ps1.write(b);
+		ps2.write(b);
+    }
 }

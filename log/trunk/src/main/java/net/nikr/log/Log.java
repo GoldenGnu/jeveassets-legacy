@@ -28,6 +28,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.nio.channels.FileChannel;
 import java.text.DateFormat;
@@ -43,6 +44,7 @@ public class Log {
 	private static final int DEBUG = 2;
 	private static final int WARNING = 3;
 	private static final int ERROR = 4;
+	private static final int MAX_BYTE_SIZE = 52428800; //50MB
 
 	private static boolean bInitialized = false;
 	private static boolean bDebug = false;
@@ -64,7 +66,7 @@ public class Log {
 		Log.sUncaughtErrorMessage = sUncaughtErrorMessage;
 		bDebug = debug;
 		bInitialized = true;
-		
+	
 		System.setProperty("sun.awt.exception.handler", "net.nikr.log.NikrUncaughtExceptionHandler");
 		Thread.setDefaultUncaughtExceptionHandler( new NikrUncaughtExceptionHandler());
 
@@ -76,12 +78,14 @@ public class Log {
 		} catch (IOException ex) {
 			failed("Clearing log failed (CLEAR: "+sLogFilename+")", ex);
 		}
-
+		
 		//Add PrintStream to System.out & System.err
 		try {
-			PrintStream printStream = new PrintStream(new FileOutputStream(sLogFilename), true);
+			PrintStream printStream = new PrintStream(new FileOutputStream(sLogFilename), true, "UTF-8");
 			System.setOut( new DualPrintStream(printStream, System.out) );
 			System.setErr( new DualPrintStream(printStream, System.err) );
+		} catch (UnsupportedEncodingException ex) {
+			failed("UTF-8 encoding not supported! ", ex);
 		} catch (FileNotFoundException ex) {
 			failed("Failed to setOut/setErr", ex);
 		}
@@ -274,7 +278,7 @@ public class Log {
 			copyToError();
 			System.exit(1);
 		}
-
+		checkForMaxLines();
 	}
 
 	private static void copyToError(){
@@ -333,5 +337,12 @@ public class Log {
 			failed("Getting log filename failed", ex);
 		}
 		return "";
+	}
+
+	private static void checkForMaxLines(){
+		File file = new File(sLogFilename);
+		if (file.length() > MAX_BYTE_SIZE){
+			failed("Log size is getting to big...");
+		}
 	}
 }
