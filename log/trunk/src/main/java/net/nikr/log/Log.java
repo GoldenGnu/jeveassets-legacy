@@ -21,22 +21,17 @@
 
 package net.nikr.log;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import javax.swing.JOptionPane;
 
@@ -47,7 +42,6 @@ public class Log {
 	private static final int DEBUG = 2;
 	private static final int WARNING = 3;
 	private static final int ERROR = 4;
-	public static final int MAX_LINES = 1000; //50MB
 
 	private static boolean bInitialized = false;
 	private static boolean bDebug = false;
@@ -279,7 +273,6 @@ public class Log {
 			copyToError();
 			System.exit(1);
 		}
-		checkForMaxLines();
 	}
 
 	private static void copyToError(){
@@ -338,35 +331,5 @@ public class Log {
 			failed("Getting log filename failed", ex);
 		}
 		return "";
-	}
-
-	private static void checkForMaxLines(){
-		File file = new File(sLogFilename);
-		List<String> lines = new ArrayList<String>();
-		try {
-			BufferedReader in = new BufferedReader(new FileReader(sLogFilename));
-			String str;
-			while ((str = in.readLine()) != null) {
-				lines.add(str);
-			}
-			in.close();
-			BufferedWriter out = new BufferedWriter(new FileWriter(sLogFilename));
-			int start = lines.size()-MAX_LINES;
-			if (start < 0) start = 0;
-			for (int a = start; a < lines.size(); a++){
-				if (a != start) out.write("\n");
-				out.write(lines.get(a)+"\r");
-			}
-			out.close();
-
-		} catch (IOException ex) {
-			failed("Failed to open logfile", ex);
-		}
-		/*
-		if (file.length() > MAX_BYTE_SIZE){
-			failed("Log size is getting to big...");
-		}
-		 * 
-		 */
 	}
 }

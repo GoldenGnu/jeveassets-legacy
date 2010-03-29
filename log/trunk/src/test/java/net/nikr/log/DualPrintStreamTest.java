@@ -17,9 +17,9 @@ import junit.framework.TestCase;
  *
  * @author Niklas
  */
-public class LogTest extends TestCase {
+public class DualPrintStreamTest extends TestCase {
     
-    public LogTest(String testName) {
+    public DualPrintStreamTest(String testName) {
         super(testName);
     }
 
@@ -35,7 +35,7 @@ public class LogTest extends TestCase {
     }
 
 	public void testCheckForMaxLines(){
-		for (int a = 1; a <= Log.MAX_LINES + 50; a++) {
+		for (int a = 1; a <= DualPrintStream.MAX_LINES + 50; a++) {
 			Log.info("Line: " + a);
 		}
 		try {
@@ -44,7 +44,7 @@ public class LogTest extends TestCase {
 			while (in.readLine() != null) {
 				count++;
 			}
-			if (count != Log.MAX_LINES) {
+			if (count != DualPrintStream.MAX_LINES) {
 				fail("over max lines");
 			}
 			in.close();
@@ -61,4 +61,5 @@ public class LogTest extends TestCase {
 		File file = new File(inputClazz.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
 		return file.getAbsolutePath()+File.separator+filename;
 	}
+
 }
