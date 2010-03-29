@@ -21,9 +21,12 @@
 
 package net.nikr.log;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
 /**
@@ -31,187 +34,237 @@ import java.util.Locale;
  * @author Niklas
  */
 public class DualPrintStream extends PrintStream {
-	PrintStream ps1;
-	PrintStream ps2;
+	//PrintStream ps1;
+	PrintStream sytemout;
+	PrintStream filePrintStream;
+	String filename;
 
 
-	public DualPrintStream(PrintStream ps1, PrintStream ps2) throws FileNotFoundException {
-		super(ps1);
-		this.ps1  = ps1;
-		this.ps2 = ps2;
+	public DualPrintStream(String filename, PrintStream sytemout) throws FileNotFoundException {
+		super(sytemout);
+		this.filename = filename;
+		this.sytemout = sytemout;
 	}
+
+	private PrintStream getFilePrintStream(){
+		try {
+			filePrintStream = new PrintStream(new FileOutputStream(new File(filename), true), true, "UTF-8");
+		} catch (UnsupportedEncodingException ex) {
+		} catch (FileNotFoundException ex) {
+		}
+		return filePrintStream;
+
+	}
+
+	private void end(){
+		if (filePrintStream != null){
+			filePrintStream.close();
+		}
+	}
+
 
 	@Override
 	public void flush() {
-		ps1.flush();
-		ps2.flush();
+		getFilePrintStream().flush();
+		sytemout.flush();
+		end();
 	}
 	@Override
 	public boolean checkError() {
 		boolean errorFlag1;
 		boolean errorFlag2;
-		errorFlag1 = ps1.checkError();
-		errorFlag2 = ps2.checkError();
+		errorFlag1 = getFilePrintStream().checkError();
+		errorFlag2 = sytemout.checkError();
+		end();
 		return errorFlag1 || errorFlag2;
 	}
 	@Override
 	public void close() {
-		ps1.close();
-		ps2.close();
+		getFilePrintStream().close();
+		sytemout.close();
+		end();
 	}
 	@Override
 	public void write(int b) {
-		ps1.write(b);
-		ps2.write(b);
+		getFilePrintStream().write(b);
+		sytemout.write(b);
+		end();
 	}
 	@Override
 	public void write(byte buf[], int off, int len) {
-		ps1.write(buf, off, len);
-		ps2.write(buf, off, len);
+		getFilePrintStream().write(buf, off, len);
+		sytemout.write(buf, off, len);
+		end();
 	}
 	@Override
 	public void print(boolean b) {
-		ps1.print(b);
-		ps2.print(b);
+		getFilePrintStream().print(b);
+		sytemout.print(b);
+		end();
 	}
 	@Override
 	public void print(char c) {
-		ps1.print(c);
-		ps2.print(c);
+		getFilePrintStream().print(c);
+		sytemout.print(c);
+		end();
 	}
 	@Override
 	public void print(int i) {
-		ps1.print(i);
-		ps2.print(i);
+		getFilePrintStream().print(i);
+		sytemout.print(i);
+		end();
 	}
 	@Override
 	public void print(long l) {
-		ps1.print(l);
-		ps2.print(l);
+		getFilePrintStream().print(l);
+		sytemout.print(l);
+		end();
 	}
 	@Override
 	public void print(float f) {
-		ps1.print(f);
-		ps2.print(f);
+		getFilePrintStream().print(f);
+		sytemout.print(f);
+		end();
 	}
 	@Override
 	public void print(double d) {
-		ps1.print(d);
-		ps2.print(d);
+		getFilePrintStream().print(d);
+		sytemout.print(d);
+		end();
 	}
 	@Override
 	public void print(char s[]) {
-		ps1.print(s);
-		ps2.print(s);
+		getFilePrintStream().print(s);
+		sytemout.print(s);
+		end();
 	}
 	@Override
 	public void print(String s) {
-		ps1.print(s);
-		ps2.print(s);
+		getFilePrintStream().print(s);
+		sytemout.print(s);
+		end();
 	}
 	@Override
 	public void print(Object obj) {
-		ps1.print(obj);
-		ps2.print(obj);
+		getFilePrintStream().print(obj);
+		sytemout.print(obj);
+		end();
 	}
 	@Override
 	public void println() {
-		ps1.println();
-		ps2.println();
+		getFilePrintStream().println();
+		sytemout.println();
+		end();
 	}
 	@Override
 	public void println(boolean x) {
-		ps1.println(x);
-		ps2.println(x);
+		getFilePrintStream().println(x);
+		sytemout.println(x);
+		end();
 	}
 	@Override
 	public void println(char x) {
-		ps1.println(x);
-		ps2.println(x);
+		getFilePrintStream().println(x);
+		sytemout.println(x);
+		end();
 	}
 	@Override
 	public void println(int x) {
-		ps1.println(x);
-		ps2.println(x);
+		getFilePrintStream().println(x);
+		sytemout.println(x);
+		end();
 	}
 	@Override
 	public void println(long x) {
-		ps1.println(x);
-		ps2.println(x);
+		getFilePrintStream().println(x);
+		sytemout.println(x);
+		end();
 	}
 	@Override
 	public void println(float x) {
-		ps1.println(x);
-		ps2.println(x);
+		getFilePrintStream().println(x);
+		sytemout.println(x);
 	}
 	@Override
 	public void println(double x) {
-		ps1.println(x);
-		ps2.println(x);
+		getFilePrintStream().println(x);
+		sytemout.println(x);
+		end();
 	}
 	@Override
 	public void println(char x[]) {
-		ps1.println(x);
-		ps2.println(x);
+		getFilePrintStream().println(x);
+		sytemout.println(x);
+		end();
 	}
 	@Override
 	public void println(String x) {
-		ps1.println(x);
-		ps2.println(x);
+		getFilePrintStream().println(x);
+		sytemout.println(x);
+		end();
 	}
 	@Override
 	public void println(Object x) {
-		ps1.println(x);
-		ps2.println(x);
+		getFilePrintStream().println(x);
+		sytemout.println(x);
+		end();
 	}
 	@Override
 	public PrintStream printf(String format, Object ... args) {
-		ps1.printf(format, args);
-		ps2.printf(format, args);
+		getFilePrintStream().printf(format, args);
+		sytemout.printf(format, args);
+		end();
 		return this;
 	}
 	@Override
 	public PrintStream printf(Locale l, String format, Object ... args) {
-		ps1.printf(l, format, args);
-		ps2.printf(l, format, args);
+		getFilePrintStream().printf(l, format, args);
+		sytemout.printf(l, format, args);
+		end();
 		return this;
 	}
 	@Override
 	public PrintStream format(String format, Object ... args) {
-		ps1.printf(format, args);
-		ps2.printf(format, args);
+		getFilePrintStream().printf(format, args);
+		sytemout.printf(format, args);
+		end();
 		return this;
 	}
 	@Override
 	public PrintStream format(Locale l, String format, Object ... args) {
-		ps1.printf(l, format, args);
-		ps2.printf(l, format, args);
+		getFilePrintStream().printf(l, format, args);
+		sytemout.printf(l, format, args);
+		end();
 		return this;
 	}
 
 	@Override
 	public PrintStream append(CharSequence csq) {
-		ps1.append(csq);
-		ps2.append(csq);
+		getFilePrintStream().append(csq);
+		sytemout.append(csq);
+		end();
 		return this;
 	}
 
 	@Override
 	public PrintStream append(CharSequence csq, int start, int end) {
-		ps1.append(csq, start, end);
-		ps2.append(csq, start, end);
+		getFilePrintStream().append(csq, start, end);
+		sytemout.append(csq, start, end);
+		end();
 		return this;
 	}
 	@Override
 	public PrintStream append(char c) {
-		ps1.append(c);
-		ps2.append(c);
+		getFilePrintStream().append(c);
+		sytemout.append(c);
+		end();
 		return this;
 	}
 	
 	@Override
 	public void write(byte b[]) throws IOException {
-		ps1.write(b);
-		ps2.write(b);
+		getFilePrintStream().write(b);
+		sytemout.write(b);
+		end();
     }
 }

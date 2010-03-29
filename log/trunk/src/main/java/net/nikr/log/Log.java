@@ -21,19 +21,22 @@
 
 package net.nikr.log;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.nio.channels.FileChannel;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import javax.swing.JOptionPane;
 
@@ -44,7 +47,7 @@ public class Log {
 	private static final int DEBUG = 2;
 	private static final int WARNING = 3;
 	private static final int ERROR = 4;
-	private static final int MAX_BYTE_SIZE = 52428800; //50MB
+	public static final int MAX_LINES = 1000; //50MB
 
 	private static boolean bInitialized = false;
 	private static boolean bDebug = false;
@@ -81,11 +84,9 @@ public class Log {
 		
 		//Add PrintStream to System.out & System.err
 		try {
-			PrintStream printStream = new PrintStream(new FileOutputStream(sLogFilename), true, "UTF-8");
-			System.setOut( new DualPrintStream(printStream, System.out) );
-			System.setErr( new DualPrintStream(printStream, System.err) );
-		} catch (UnsupportedEncodingException ex) {
-			failed("UTF-8 encoding not supported! ", ex);
+			//PrintStream printStream = new PrintStream(new FileOutputStream(), true, "UTF-8");
+			System.setOut( new DualPrintStream(sLogFilename, System.out) );
+			System.setErr( new DualPrintStream(sLogFilename, System.err) );
 		} catch (FileNotFoundException ex) {
 			failed("Failed to setOut/setErr", ex);
 		}
@@ -341,8 +342,31 @@ public class Log {
 
 	private static void checkForMaxLines(){
 		File file = new File(sLogFilename);
+		List<String> lines = new ArrayList<String>();
+		try {
+			BufferedReader in = new BufferedReader(new FileReader(sLogFilename));
+			String str;
+			while ((str = in.readLine()) != null) {
+				lines.add(str);
+			}
+			in.close();
+			BufferedWriter out = new BufferedWriter(new FileWriter(sLogFilename));
+			int start = lines.size()-MAX_LINES;
+			if (start < 0) start = 0;
+			for (int a = start; a < lines.size(); a++){
+				if (a != start) out.write("\n");
+				out.write(lines.get(a)+"\r");
+			}
+			out.close();
+
+		} catch (IOException ex) {
+			failed("Failed to open logfile", ex);
+		}
+		/*
 		if (file.length() > MAX_BYTE_SIZE){
 			failed("Log size is getting to big...");
 		}
+		 * 
+		 */
 	}
 }
