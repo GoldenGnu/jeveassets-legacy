@@ -85,8 +85,11 @@ public class AssetsReader extends AbstractXmlReader {
 		int userID = AttributeGetters.getInt(node, "userid");
 		String apiKey = AttributeGetters.getString(node, "apikey");
 		Date nextUpdate = new Date( AttributeGetters.getLong(node, "charactersnextupdate") );
-		//FIXME Account Management: account name is not loaded...
-		return new Account(userID, apiKey, "", nextUpdate);
+		String name = String.valueOf(userID);
+		if (AttributeGetters.haveAttribute(node, "name")){
+			name = AttributeGetters.getString(node, "name");
+		}
+		return new Account(userID, apiKey, name, nextUpdate);
 	}
 
 	private static void parseHumans(Element element, Account account, Settings settings){

@@ -29,8 +29,9 @@ import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
@@ -63,6 +64,10 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	private JButton jClose;
 	private EventList<Human> eventList;
 	private EventTableModel<Human> tableModel;
+
+	private Map<Human, Boolean> shownAssets;
+	private Map<Human, Boolean> corpAssets;
+	private boolean forceUpdate = false;
 
 	public AccountManagerDialog(Program program, Image image) {
 		super(program, "Accounts Management", image);
@@ -147,8 +152,10 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
-				.addComponent(jTable.getScrollPanel(), 550, 550, 550)
-				.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+				.addGroup(layout.createParallelGroup(Alignment.TRAILING)
+					.addComponent(jTable.getScrollPanel(), 550, 550, 550)
+					.addComponent(jClose, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
+				)
 				.addGroup(layout.createSequentialGroup()
 					.addComponent(jAdd, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 					.addGap(0, 0, Short.MAX_VALUE)
@@ -169,14 +176,24 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		);
 	}
 
+	public void forceUpdate(){
+		forceUpdate = true;
+	}
+
 	public void updateTable(){
 		//Update rows (Add all rows)
+		shownAssets = new HashMap<Human, Boolean>();
+		corpAssets = new HashMap<Human, Boolean>();
+		eventList.getReadWriteLock().writeLock().lock();
 		eventList.clear();
 		for (Account account : program.getSettings().getAccounts()){
 			for (Human human : account.getHumans()){
 				eventList.add(human);
+				shownAssets.put(human, human.isShowAssets());
+				corpAssets.put(human, human.isUpdateCorporationAssets());
 			}
 		}
+		eventList.getReadWriteLock().writeLock().unlock();
 		if (eventList.size() > 1){
 			jTable.setRowSelectionInterval(1, 1);
 			jAssets.setEnabled(true);
@@ -188,7 +205,6 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 	}
 
 	private void checkAssets(boolean selected, boolean check, boolean assets){
-		List<Long> ids = new ArrayList<Long>();
 		if (selected){
 			int[] selectedRows = jTable.getSelectedRows();
 			for (int a = 0; a < selectedRows.length; a++){
@@ -213,8 +229,6 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 				}
 			}
 		}
-		jTable.revalidate();
-		jTable.repaint();
 	}
 
 	@Override
@@ -235,15 +249,29 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 
 	@Override
 	protected void save() {
-		program.updateEventList();
-		//FIXME Account Management: Show message when corp is changed
-		//JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Corporation asset settings changed.\r\nYou need to update asset before the new settings take effect\r\nTo update assets select: Menu > Update > Update", "Corporation Asset Settings", JOptionPane.PLAIN_MESSAGE);
+		boolean showAssets = false;
+		boolean showCorporation = false;
+		for (Account account : program.getSettings().getAccounts()){
+			for (Human human : account.getHumans()){
+				if (human.isShowAssets() != shownAssets.get(human)) showAssets = true;
+				if (human.isUpdateCorporationAssets() != corpAssets.get(human)) showCorporation = true;
+			}
+		}
+		System.out.println("a: "+showAssets+" c: "+showCorporation+" f: "+forceUpdate);
+		if (showAssets || showCorporation || forceUpdate){
+			System.out.println("updating...");
+			program.updateEventList();
+		}
+		if (showCorporation){
+			JOptionPane.showMessageDialog(program.getMainWindow().getFrame(), "Corporation asset settings changed.\r\nYou need to update asset before the new settings take effect\r\nTo update assets select: Menu > Update > Update", "Corporation Asset Settings", JOptionPane.PLAIN_MESSAGE);
+		}
 		this.setVisible(false);
 	}
 
 	@Override
 	public void setVisible(boolean b) {
 		if (b){
+			forceUpdate = false;
 			updateTable();
 		}
 		super.setVisible(b);
@@ -265,8 +293,6 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 				Human human = (Human) separator.first();
 				Account account = human.getParentAccount();
 				accountImportDialog.show(String.valueOf(account.getUserID()), account.getApiKey());
-				jTable.revalidate();
-				jTable.repaint();
 			}
 		}
 		if (SeparatorTableCell.ACTION_DELETE.equals(e.getActionCommand())) {
@@ -279,8 +305,8 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 					Human human = (Human) separator.first();
 					Account account = human.getParentAccount();
 					program.getSettings().getAccounts().remove( account );
-					jTable.revalidate();
-					jTable.repaint();
+					forceUpdate();
+					updateTable();
 				}
 			}
 		}

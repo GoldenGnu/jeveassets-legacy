@@ -64,9 +64,9 @@ public class AssetsWriter extends AbstractXmlWriter {
 		for (int a = 0; a < accounts.size(); a++){
 			Account account = accounts.get(a);
 			Element node = xmldoc.createElementNS(null, "account");
-			//FIXME Account Management: account name is not saved...
 			node.setAttributeNS(null, "userid", String.valueOf(account.getUserID()));
 			node.setAttributeNS(null, "apikey", account.getApiKey());
+			node.setAttributeNS(null, "name", account.getName());
 			node.setAttributeNS(null, "charactersnextupdate", String.valueOf(account.getCharactersNextUpdate().getTime()));
 			parentNode.appendChild(node);
 			writeHumans(xmldoc, node, account.getHumans());
