@@ -53,26 +53,48 @@ public class PriceDataGetter implements PricingListener {
 	private Settings settings;
 	private UpdateTask updateTask;
 	private long nextUpdate = 0;
-	private long priceCacheTimer = 60*60*1000l; // 1 hour
-	private boolean enableCacheTimers = true;
+	private long priceCacheTimer = 1*60*60*1000l; // 1 hour (hours*min*sec*ms)
 	private Map<Integer, PriceData> priceDataList;
 	private List<Integer> failedIds;
-	private int retries = 1;
+	private final int attemptCount = 1;
+	private boolean update;
 
 	public PriceDataGetter(Settings settings) {
 		this.settings = settings;
 	}
+	/**
+	 * Load price data from cache and only update missing price data
+	 * @return
+	 */
+	public boolean load(){
+		return process(null, false);
+	}
+	/**
+	 * Load price data from cache and only update missing price data
+	 * @param task UpdateTask to track progress
+	 * @return
+	 */
+	public boolean load(UpdateTask task){
+		return process(task, false);
+	}
+	/**
+	 * Update of all price data
+	 * @param task UpdateTask to track progress
+	 * @return
+	 */
 
-	public boolean load(UpdateTask task, boolean forceUpdate, boolean enableCacheTimers){
+	public boolean update(UpdateTask task){
+		return process(task, true);
+	}
+
+	private boolean process(UpdateTask task, boolean update){
 		this.updateTask = task;
-		this.enableCacheTimers = enableCacheTimers;
-
-		if (forceUpdate){
-			LOG.info("Price data updating:");
-		} else if (!enableCacheTimers) {
-			LOG.info("Price data loading:");
+		this.update = update;
+		
+		if (update){
+			LOG.info("Price data update:");
 		} else {
-			LOG.info("Price data loading (updating as needed):");
+			LOG.info("Price data loading:");
 		}
 		//Create new price data map (Will only be used if task complete)
 		priceDataList = new HashMap<Integer, PriceData>();
@@ -86,15 +108,15 @@ public class PriceDataGetter implements PricingListener {
 		pricing.addPricingListener(this);
 		pricing.resetAllAttemptCounters();
 		//Reset cache timers...
-		if (forceUpdate){
-			for (int a = 0; a < ids.size(); a++){
-				pricing.setPrice(ids.get(a), -1.0);
+		if (update){
+			for (int id : ids){
+				pricing.setPrice(id, -1.0);
 			}
 		}
 		
 		//Load price data (Update as needed)
-		for (int a = 0; a < ids.size(); a++){
-			createPriceData(ids.get(a), pricing);
+		for (int id : ids){
+			createPriceData(id, pricing);
 		}
 		//Wait to complete
 		while (ids.size() >  (priceDataList.size() + failedIds.size())){
@@ -114,24 +136,16 @@ public class PriceDataGetter implements PricingListener {
 				return false;
 			}
 		}
-		boolean updated = !priceDataList.isEmpty();
-		boolean failed = !failedIds.isEmpty();
-
-		if (updated){
-			if (!failed){
-				if (!enableCacheTimers && updated){
-				LOG.info("	Price data loaded (updated as needed)");
-				} else if (!enableCacheTimers) {
-					LOG.info("	Price data loaded");
-				} else if (updated){
-					LOG.info("	Price data updated");
-				}
-				settings.setPriceData( priceDataList );
+		boolean updated = (!priceDataList.isEmpty() && failedIds.isEmpty());
+		if (updated){ //All Updated
+			if (update) {
+				LOG.info("	Price data updated");
 			} else {
-				LOG.info("	Some of the price data was updated");
-				if (updateTask != null) this.updateTask.addError("Price data", "Only some of the price data was updated");
+				LOG.info("	Price data loaded");
 			}
-		} else {
+			//We only set the price data if everthing worked (AKA all updated)
+			settings.setPriceData( priceDataList );
+		} else { //None or some updated
 			LOG.info("	Failed to update price data");
 			if (updateTask != null) this.updateTask.addError("Price data", "Failed to update price data");
 		}
@@ -238,7 +252,7 @@ public class PriceDataGetter implements PricingListener {
 
 		@Override
 		public boolean getCacheTimersEnabled() {
-			return enableCacheTimers;
+			return update;
 		}
 
 		@Override
@@ -248,7 +262,7 @@ public class PriceDataGetter implements PricingListener {
 
 		@Override
 		public int getAttemptCount() {
-			return retries;
+			return attemptCount;
 		}
 	}
 }
