@@ -3,7 +3,7 @@
 	<groupId>apple.dts.samplecode</groupId>
 	<artifactId>osxadapter</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.0</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<name>osxadapter</name>
 	<url>http://developer.apple.com/mac/library/samplecode/OSXAdapter/</url>
 	<build>
@@ -39,8 +39,8 @@
 		</plugins>
 	</build>
 	<scm>
-		<connection>scm:svn:http://svn.candle.me.uk/nikr/osxadapter/tags/osxadapter-1.0.0</connection>
-		<developerConnection>scm:svn:http://svn.candle.me.uk/nikr/osxadapter/tags/osxadapter-1.0.0</developerConnection>
+		<connection>scm:svn:http://svn.candle.me.uk/nikr/osxadapter/trunk</connection>
+		<developerConnection>scm:svn:http://svn.candle.me.uk/nikr/osxadapter/trunk</developerConnection>
 	</scm>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
