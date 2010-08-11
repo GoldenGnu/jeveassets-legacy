@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>apple.dts.samplecode</groupId>
 	<artifactId>osxadapter</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0</version>
 	<name>osxadapter</name>
 	<url>http://developer.apple.com/mac/library/samplecode/OSXAdapter/</url>
 	<build>
@@ -40,8 +39,8 @@
 		</plugins>
 	</build>
 	<scm>
-		<connection>http://svn.candle.me.uk/nikr/osxadapter/trunk</connection>
-		<tagBase>http://svn.candle.me.uk/nikr/osxadapter/tags</tagBase>
+		<connection>scm:svn:http://svn.candle.me.uk/nikr/osxadapter/tags/osxadapter-1.0.0</connection>
+		<developerConnection>scm:svn:http://svn.candle.me.uk/nikr/osxadapter/tags/osxadapter-1.0.0</developerConnection>
 	</scm>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
