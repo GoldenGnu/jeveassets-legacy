@@ -54,6 +54,8 @@ import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Overview;
 import net.nikr.eve.jeveasset.data.OverviewGroup;
 import net.nikr.eve.jeveasset.data.OverviewLocation;
+import net.nikr.eve.jeveasset.gui.dialogs.custom.CustomDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.custom.CustomDialog.CustomDialogInterface;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
@@ -61,7 +63,7 @@ import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
 import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
 
 
-public class OverviewTab extends JMainTab implements ActionListener {
+public class OverviewTab extends JMainTab implements ActionListener, CustomDialogInterface {
 
 	private final static String ACTION_UPDATE_LIST = "ACTION_UPDATE_LIST";
 	private final static String ACTION_ADD_NEW_GROUP = "ACTION_ADD_NEW_GROUP";
@@ -69,6 +71,7 @@ public class OverviewTab extends JMainTab implements ActionListener {
 	private final static String ACTION_RENAME_GROUP = "ACTION_RENAME_GROUP";
 	private final static String ACTION_ADD_GROUP_FILTER = "ACTION_ADD_GROUP_FILTER";
 	private final static String ALL = "All";
+	private final static String CUSTOM = "<Custom>";
 	private final static String ASSET_FILTER = "Filtered Assets";
 
 	private EventList<Overview> overviewEventList;
@@ -79,14 +82,17 @@ public class OverviewTab extends JMainTab implements ActionListener {
 	private JComboBox jCharacters;
 	private JComboBox jSource;
 	private OverviewGroupDialog overviewGroupDialog;
+	private CustomDialog customDialog;
 
 	private AddToGroup addToGroup = new AddToGroup();
 	private RemoveFromGroup removeFromGroup = new RemoveFromGroup();
+	
 
 	public OverviewTab(Program program) {
 		super(program, "Overview", Images.ICON_TOOL_OVERVIEW, true);
 
 		overviewGroupDialog = new OverviewGroupDialog(program, this);
+		customDialog = new CustomDialog(program);
 
 		JLabel jViewsLabel = new JLabel("View");
 		jViews = new JComboBox( new String[]  {"Stations", "Systems", "Regions", "Groups"} );
@@ -282,7 +288,7 @@ public class OverviewTab extends JMainTab implements ActionListener {
 		jComponent.add(new JMenuLookup(program, overview));
 	}
 
-	private List<Overview> getList(List<EveAsset> input, String character, String view){
+	private List<Overview> getList(List<EveAsset> input, List<String> characters, String view){
 		List<Overview> locations = new ArrayList<Overview>();
 		Map<String, Overview> locationsMap = new HashMap<String, Overview>();
 		List<String> groupedLocations = new ArrayList<String>();
@@ -312,7 +318,7 @@ public class OverviewTab extends JMainTab implements ActionListener {
 			} else {
 				name = eveAsset.getOwner();
 			}
-			if (!character.equals(name) && !character.equals(ALL)) continue;
+			if (!characters.contains(name) && !characters.contains(ALL)) continue;
 			if (eveAsset.getGroup().equals("Audit Log Secure Container") && program.getSettings().isIgnoreSecureContainers()) continue;
 			if (eveAsset.getGroup().equals("Station Services")) continue;
 
@@ -358,14 +364,18 @@ public class OverviewTab extends JMainTab implements ActionListener {
 	}
 
 	public void updateTable(){
+		updateTable(Collections.singletonList((String) jCharacters.getSelectedItem()));
+	}
+
+	public void updateTable(List<String> characters){
 		//Only need to update when added to the main window
 		if (!program.getMainWindow().getTabs().contains(this)) return;
 		overviewEventList.getReadWriteLock().writeLock().lock();
 		overviewEventList.clear();
 		overviewEventList.getReadWriteLock().writeLock().unlock();
-		String character = (String) jCharacters.getSelectedItem();
 		String view = (String) jViews.getSelectedItem();
 		String source = (String) jSource.getSelectedItem();
+		
 		if (view.equals("Regions")){
 			overviewTableFormat.setColumnNames(overviewTableFormat.getRegionColumns());
 			overviewTableModel.fireTableStructureChanged();
@@ -387,9 +397,9 @@ public class OverviewTab extends JMainTab implements ActionListener {
 		}
 		overviewEventList.getReadWriteLock().writeLock().lock();
 		if (source.equals(ASSET_FILTER)){
-			overviewEventList.addAll(getList(program.getAssetsTab().getFilteredAssets(), character, view));
+			overviewEventList.addAll(getList(program.getAssetsTab().getFilteredAssets(), characters, view));
 		} else {
-			overviewEventList.addAll(getList(program.getEveAssetEventList(), character, view));
+			overviewEventList.addAll(getList(program.getEveAssetEventList(), characters, view));
 		}
 		overviewEventList.getReadWriteLock().writeLock().unlock();
 	}
@@ -404,7 +414,6 @@ public class OverviewTab extends JMainTab implements ActionListener {
 	@Override
 	public void updateData() {
 		List<String> characters = new ArrayList<String>();
-		characters.add(ALL);
 		List<String> chars = new ArrayList<String>();
 		List<String> corps = new ArrayList<String>();
 		for (Account account : program.getSettings().getAccounts()){
@@ -416,8 +425,11 @@ public class OverviewTab extends JMainTab implements ActionListener {
 		}
 		Collections.sort(chars);
 		Collections.sort(corps);
+		characters.add(ALL);
+		chars.addAll(corps);
+		customDialog.updateList(chars);
 		characters.addAll(chars);
-		characters.addAll(corps);
+		characters.add(CUSTOM);
 		jCharacters.setModel( new DefaultComboBoxModel(characters.toArray()));
 		updateTable();
 	}
@@ -425,7 +437,12 @@ public class OverviewTab extends JMainTab implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_UPDATE_LIST.equals(e.getActionCommand())){
-			updateTable();
+			String character = (String) jCharacters.getSelectedItem();
+			if (character.equals(CUSTOM)){
+				customDialog.show(this);
+			} else {
+				updateTable();
+			}
 			return;
 		}
 		//Group
@@ -489,6 +506,11 @@ public class OverviewTab extends JMainTab implements ActionListener {
 			}
 			program.getMainWindow().addTab(program.getAssetsTab());
 		}
+	}
+
+	@Override
+	public void customDialogReady(List<String> list) {
+		updateTable(list);
 	}
 
 	class AddToGroup implements ActionListener {

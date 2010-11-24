@@ -32,6 +32,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +51,8 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.MarketOrder;
+import net.nikr.eve.jeveasset.gui.dialogs.custom.CustomDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.custom.CustomDialog.CustomDialogInterface;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
@@ -61,8 +64,10 @@ import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 public class MarketOrdersTab extends JMainTab implements ActionListener{
 
-	private final static String ACTION_SELECTED = "ACTION_SELECTED";
-	
+	private final static String ACTION_CHARACTER_SELECTED = "ACTION_CHARACTER_SELECTED";
+	private final static String ACTION_STATE_SELECTED = "ACTION_STATE_SELECTED";
+	private final static String CUSTOM = "<Custom>";
+	private final static String ALL = "All";
 	
 	private JComboBox jCharacters;
 	private JComboBox jState;
@@ -70,25 +75,29 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 	private EventTableModel<MarketOrder> buyOrdersTableModel;
 	private EventList<MarketOrder> sellOrdersEventList;
 	private EventList<MarketOrder> buyOrdersEventList;
+	private CustomDialog characterCustomDialog;
+	private CustomDialog stateCustomDialog;
 
 	private List<MarketOrder> all;
 	private Map<String, List<MarketOrder>> orders;
-	private Vector<String> characters;
+	private List<String> selectedCharacters;
+	private List<String> selectedStats;
 
 	private JAutoColumnTable jSellOrders;
 	private JAutoColumnTable jBuyOrders;
 
-	private String[] orderStates = new String[]{"All", "Active", "Fulfilled", "Partially Fulfilled", "Expired", "Closed", "Cancelled", "Pending"};
-
 	public MarketOrdersTab(Program program) {
 		super(program, "Market Orders", Images.ICON_TOOL_MARKET_ORDERS, true);
 
+		characterCustomDialog = new CustomDialog(program);
+		stateCustomDialog = new CustomDialog(program);
+
 		jCharacters = new JComboBox();
-		jCharacters.setActionCommand(ACTION_SELECTED);
+		jCharacters.setActionCommand(ACTION_CHARACTER_SELECTED);
 		jCharacters.addActionListener(this);
 
 		jState = new JComboBox();
-		jState.setActionCommand(ACTION_SELECTED);
+		jState.setActionCommand(ACTION_STATE_SELECTED);
 		jState.addActionListener(this);
 
 		//Table format
@@ -224,7 +233,7 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 
 	@Override
 	public void updateData() {
-		characters = new Vector<String>();
+		Vector<String> characters = new Vector<String>();
 		orders = new HashMap<String, List<MarketOrder>>();
 		all = new ArrayList<MarketOrder>();
 		List<Account> accounts = program.getSettings().getAccounts();
@@ -258,9 +267,12 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 			jSellOrders.setEnabled(true);
 			jBuyOrders.setEnabled(true);
 			Collections.sort(characters);
-			characters.add(0, "All");
+			characterCustomDialog.updateList(new ArrayList<String>(characters));
+			characters.add(0, ALL);
+			characters.add(CUSTOM);
 			jCharacters.setModel( new DefaultComboBoxModel(characters));
-			jState.setModel( new DefaultComboBoxModel(orderStates));
+			stateCustomDialog.updateList(new ArrayList<String>(Arrays.asList(new String[]{"Active", "Fulfilled", "Partially Fulfilled", "Expired", "Closed", "Cancelled", "Pending"})));
+			jState.setModel( new DefaultComboBoxModel(new String[]{ALL, "Active", "Fulfilled", "Partially Fulfilled", "Expired", "Closed", "Cancelled", "Pending", CUSTOM}));
 			jCharacters.setSelectedIndex(0);
 			jState.setSelectedIndex(0);
 		} else {
@@ -280,60 +292,50 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (ACTION_SELECTED.equals(e.getActionCommand())) {
-			String selected = (String) jCharacters.getSelectedItem();
-			if (characters.size() > 1){
+		if (ACTION_CHARACTER_SELECTED.equals(e.getActionCommand())) {
+			String character = (String) jCharacters.getSelectedItem();
+			if (character.equals(CUSTOM)){
+				characterCustomDialog.show(new CharacterListener());
+			} else {
+				selectedCharacters = Collections.singletonList(character);
+				updateTable();
+			}
+		}
+		if (ACTION_STATE_SELECTED.equals(e.getActionCommand())) {
+			String state = (String) jState.getSelectedItem();
+			if (state.equals(CUSTOM)){
+				stateCustomDialog.show(new StatsListener());
+			} else {
+				selectedStats = Collections.singletonList(state);
+				updateTable();
+			}
+		}
+	}
+
+	private void updateTable(){
+			if (jCharacters.getItemCount() > 2 && selectedCharacters != null && selectedStats != null ){
 				List<MarketOrder> marketOrders;
 				List<MarketOrder> sellMarketOrders = new ArrayList<MarketOrder>();
 				List<MarketOrder> buyMarketOrders = new ArrayList<MarketOrder>();
-				if (selected.equals("All")){
+				if (selectedCharacters.contains(ALL)){
 					marketOrders = all;
 				} else {
-					marketOrders = orders.get(selected);
+					marketOrders = new ArrayList<MarketOrder>();
+					for (String s : selectedCharacters){
+						marketOrders.addAll(orders.get(s));
+					}
 				}
-				String sState = (String) jState.getSelectedItem();
-				int state = 0;
-				if (sState.equals("All")) state = -1;
-				if (sState.equals("Active")) state = 0;
-				if (sState.equals("Closed")) state = 1;
-				if (sState.equals("Expired") 
-						|| sState.equals("Fulfilled")
-						|| sState.equals("Partially Fulfilled")) state = 2;
-				if (sState.equals("Cancelled")) state = 3;
-				if (sState.equals("Pending")) state = 4;
 				for (int a = 0; a < marketOrders.size(); a++){
 					MarketOrder marketOrder = marketOrders.get(a);
-					if (marketOrder.getOrderState() == state || state < 0){
-						boolean add = true;
-						if (state == 2){
-							add = false;
-							if (sState.equals("Expired") && marketOrder.getStatus().equals("Expired")){
-								add = true;
-							}
-							if (sState.equals("Fulfilled") && marketOrder.getStatus().equals("Fulfilled")){
-								add = true;
-							}
-							if (sState.equals("Partially Fulfilled") && marketOrder.getStatus().equals("Partially Fulfilled")){
-								add = true;
-							}
-						}
-						if (add){
-							if (marketOrder.getBid() < 1){
-								sellMarketOrders.add(marketOrder);
-							} else {
-								buyMarketOrders.add(marketOrder);
-							}
+					if (selectedStats.contains(marketOrder.getStatus()) || selectedStats.contains(ALL)){
+						if (marketOrder.getBid() < 1){
+							sellMarketOrders.add(marketOrder);
+						} else {
+							buyMarketOrders.add(marketOrder);
 						}
 					}
 
 				}
-				/*
-				sellOrdersEventList.clear();
-				sellOrdersEventList.addAll( sellMarketOrders );
-				buyOrdersEventList.clear();
-				buyOrdersEventList.addAll( buyMarketOrders );
-				 * 
-				 */
 				try {
 					sellOrdersEventList.getReadWriteLock().writeLock().lock();
 					sellOrdersEventList.clear();
@@ -346,6 +348,25 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 					buyOrdersEventList.getReadWriteLock().writeLock().unlock();
 				}
 			}
+	}
+
+	public class CharacterListener implements CustomDialogInterface{
+
+		@Override
+		public void customDialogReady(List<String> list) {
+			selectedCharacters = list;
+			updateTable();
 		}
+
+	}
+
+	public class StatsListener implements CustomDialogInterface{
+
+		@Override
+		public void customDialogReady(List<String> list) {
+			selectedStats = list;
+			updateTable();
+		}
+
 	}
 }
