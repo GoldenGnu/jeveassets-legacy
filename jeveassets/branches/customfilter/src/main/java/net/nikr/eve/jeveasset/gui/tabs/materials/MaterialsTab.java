@@ -47,6 +47,8 @@ import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Material;
+import net.nikr.eve.jeveasset.gui.dialogs.custom.CustomDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.custom.CustomDialog.CustomDialogInterface;
 import net.nikr.eve.jeveasset.gui.shared.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
@@ -56,11 +58,13 @@ import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
 import net.nikr.eve.jeveasset.gui.shared.PaddingTableCellRenderer;
 
 
-public class MaterialsTab extends JMainTab implements ActionListener{
+public class MaterialsTab extends JMainTab implements ActionListener, CustomDialogInterface{
 
 	private final static String ACTION_SELECTED = "ACTION_SELECTED";
 	private final static String ACTION_COLLAPSE = "ACTION_COLLAPSE";
 	private final static String ACTION_EXPAND = "ACTION_EXPAND";
+	private final static String CUSTOM = "<Custom>";
+	private final static String ALL = "All";
 
 	//GUI
 	private JComboBox jCharacters;
@@ -68,6 +72,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 	private JButton jCollapse;
 	private JSeparatorTable jTable;
 	private EventTableModel<Material> materialTableModel;
+	private CustomDialog characterCustomDialog;
 
 	//Data
 	private EventList<Material> materialEventList;
@@ -77,6 +82,8 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		super(program, "Materials", Images.ICON_TOOL_MATERIALS, true);
 		//Category: Asteroid
 		//Category: Material
+
+		characterCustomDialog = new CustomDialog(program);
 
 		jCharacters = new JComboBox();
 		jCharacters.setActionCommand(ACTION_SELECTED);
@@ -151,7 +158,9 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 			jCollapse.setEnabled(true);
 			jCharacters.setEnabled(true);
 			Collections.sort(characters);
-			characters.add(0, "All");
+			characterCustomDialog.updateList(new ArrayList<String>(characters));
+			characters.add(0, ALL);
+			characters.add(CUSTOM);
 			jCharacters.setModel( new DefaultComboBoxModel(characters.toArray()));
 			jCharacters.setSelectedIndex(0);
 		} else {
@@ -198,8 +207,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 	}
 
 
-	private void updateTable(){
-		String character = (String) jCharacters.getSelectedItem();
+	private void updateTable(List<String> characters){
 		List<Material> materials = new ArrayList<Material>();
 		Map<String, Material> uniqueMaterials = new HashMap<String, Material>();
 		Map<String, Material> summary = new HashMap<String, Material>();
@@ -208,7 +216,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		Material allMaterials = new Material("2All", "2Summary", "2Grand Total", null);
 		for (EveAsset eveAsset : eveAssetEventList){
 			if (!eveAsset.getCategory().equals("Material")) continue;
-			if (!eveAsset.getOwner().equals(character) && !eveAsset.getOwner().equals("["+character+"]") && !character.equals("All")) continue;
+			if (!characters.contains(eveAsset.getOwner()) && !characters.contains("["+eveAsset.getOwner()+"]") && !characters.contains(ALL)) continue;
 			String key = eveAsset.getLocation()+eveAsset.getName();
 			//Locations
 			if (!uniqueMaterials.containsKey(key)){ //New
@@ -263,7 +271,13 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_SELECTED.equals(e.getActionCommand())){
-			updateTable();
+			String character = (String) jCharacters.getSelectedItem();
+			if (character.equals(CUSTOM)){
+				characterCustomDialog.show(this);
+			} else {
+				updateTable(Collections.singletonList(character));
+			}
+			
 		}
 		if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
 			jTable.expandSeparators(false, separatorList);
@@ -271,5 +285,10 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		if (ACTION_EXPAND.equals(e.getActionCommand())) {
 			jTable.expandSeparators(true, separatorList);
 		}
+	}
+
+	@Override
+	public void customDialogReady(List<String> list) {
+		updateTable(list);
 	}
 }
