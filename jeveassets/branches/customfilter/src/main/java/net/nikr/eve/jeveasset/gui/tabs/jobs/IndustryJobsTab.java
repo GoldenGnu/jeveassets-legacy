@@ -47,6 +47,10 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.IndustryJob;
+import net.nikr.eve.jeveasset.data.IndustryJob.IndustryActivity;
+import net.nikr.eve.jeveasset.data.IndustryJob.IndustryJobState;
+import net.nikr.eve.jeveasset.gui.dialogs.custom.CustomDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.custom.CustomDialog.CustomDialogInterface;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
@@ -58,33 +62,48 @@ import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 public class IndustryJobsTab extends JMainTab implements ActionListener {
 
-	private final static String ACTION_SELECTED = "ACTION_SELECTED";
+	private final static String ACTION_CHARACTER_SELECTED = "ACTION_CHARACTER_SELECTED";
+	private final static String ACTION_STATE_SELECTED = "ACTION_STATE_SELECTED";
+	private final static String ACTION_ACTIVITY_SELECTED = "ACTION_ACTIVITY_SELECTED";
+
+	private final static String CUSTOM = "<Custom>";
+	private final static String ALL = "All";
 
 	private JComboBox jCharacters;
 	private JComboBox jState;
 	private JComboBox jActivity;
 	private JAutoColumnTable jTable;
+	private CustomDialog characterCustomDialog;
+	private CustomDialog stateCustomDialog;
+	private CustomDialog activityCustomDialog;
 
 	private EventList<IndustryJob> jobsEventList;
 	private EventTableModel<IndustryJob> jobsTableModel;
 
 	private List<IndustryJob> all;
 	private Map<String, List<IndustryJob>> jobs;
-	private Vector<String> characters;
+
+	private List<String> selectedCharacters;
+	private List<String> selectedStats;
+	private List<String> selectedActivities;
 
 	public IndustryJobsTab(Program program) {
 		super(program, "Industry Jobs", Images.ICON_TOOL_INDUSTRY_JOBS, true);
 
+		characterCustomDialog = new CustomDialog(program);
+		stateCustomDialog = new CustomDialog(program);
+		activityCustomDialog = new CustomDialog(program);
+
 		jCharacters = new JComboBox();
-		jCharacters.setActionCommand(ACTION_SELECTED);
+		jCharacters.setActionCommand(ACTION_CHARACTER_SELECTED);
 		jCharacters.addActionListener(this);
 
 		jState = new JComboBox();
-		jState.setActionCommand(ACTION_SELECTED);
+		jState.setActionCommand(ACTION_STATE_SELECTED);
 		jState.addActionListener(this);
 
 		jActivity = new JComboBox();
-		jActivity.setActionCommand(ACTION_SELECTED);
+		jActivity.setActionCommand(ACTION_ACTIVITY_SELECTED);
 		jActivity.addActionListener(this);
 
 		JLabel jCharactersLabel = new JLabel("Character");
@@ -173,8 +192,7 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 
 	@Override
 	public void updateData() {
-		characters = new Vector<String>();
-		//characters.add("All");
+		Vector<String> characters = new Vector<String>();
 		jobs = new HashMap<String, List<IndustryJob>>();
 		all = new ArrayList<IndustryJob>();
 		List<Account> accounts = program.getSettings().getAccounts();
@@ -206,10 +224,33 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 			jActivity.setEnabled(true);
 			jState.setEnabled(true);
 			Collections.sort(characters);
-			characters.add(0, "All");
+			characterCustomDialog.updateList(new ArrayList<String>(characters));
+			characters.add(0, ALL);
+			characters.add(CUSTOM);
 			jCharacters.setModel( new DefaultComboBoxModel(characters));
-			jActivity.setModel( new DefaultComboBoxModel(IndustryJob.IndustryActivity.values()));
-			jState.setModel( new DefaultComboBoxModel(IndustryJob.IndustryJobState.values()));
+
+			IndustryActivity[] activities = IndustryJob.IndustryActivity.values();
+			List<String> activityList = new ArrayList<String>(activities.length+1);
+			for (IndustryActivity activity : activities){
+				activityList.add(activity.toString());
+			}
+			activityList.add(CUSTOM);
+			jActivity.setModel( new DefaultComboBoxModel(new Vector<String>(activityList)));
+			activityList.remove(0);
+			activityList.remove(activityList.size()-1);
+			activityCustomDialog.updateList(activityList);
+
+			IndustryJobState[] states = IndustryJob.IndustryJobState.values();
+			List<String> statesList = new ArrayList<String>(states.length+1);
+			for (IndustryJobState state : states){
+				statesList.add(state.toString());
+			}
+			statesList.add(CUSTOM);
+			jState.setModel( new DefaultComboBoxModel(new Vector<String>(statesList)));
+			statesList.remove(0);
+			statesList.remove(statesList.size()-1);
+			stateCustomDialog.updateList(statesList);
+
 			jCharacters.setSelectedIndex(0);
 			jActivity.setSelectedIndex(0);
 			jState.setSelectedIndex(0);
@@ -228,40 +269,97 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 		}
 	}
 
+	private void updateTable(){
+		if (jCharacters.getItemCount() > 2 && selectedCharacters != null && selectedStats != null && selectedActivities != null){
+			List<IndustryJob> industryJobsInput;
+			List<IndustryJob> industryJobsOutput = new ArrayList<IndustryJob>();
+			//Characters
+			if (selectedCharacters.contains(ALL)){
+				industryJobsInput = all;
+			} else {
+				industryJobsInput = new ArrayList<IndustryJob>();
+				for (String s : selectedCharacters){
+					industryJobsInput.addAll(jobs.get(s));
+				}
+			}
+			for (int a = 0; a < industryJobsInput.size(); a++){
+				IndustryJob industryJob = industryJobsInput.get(a);
+				boolean bState = (selectedStats.contains(industryJob.getState().toString()) || selectedStats.contains(IndustryJob.IndustryJobState.STATE_ALL.toString()));
+				boolean bActivity = (selectedActivities.contains(industryJob.getActivity().toString()) || selectedActivities.contains(IndustryJob.IndustryActivity.ACTIVITY_ALL.toString()));
+				if (bState && bActivity){
+					industryJobsOutput.add(industryJob);
+				}
+			}
+			try {
+				jobsEventList.getReadWriteLock().writeLock().lock();
+				jobsEventList.clear();
+				jobsEventList.addAll( industryJobsOutput );
+			} finally {
+				jobsEventList.getReadWriteLock().writeLock().unlock();
+			}
+
+		}
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (ACTION_SELECTED.equals(e.getActionCommand())) {
+		if (ACTION_CHARACTER_SELECTED.equals(e.getActionCommand())) {
 			String selected = (String) jCharacters.getSelectedItem();
-			if (characters.size() > 1){
-				List<IndustryJob> industryJobsInput;
-				List<IndustryJob> industryJobsOutput = new ArrayList<IndustryJob>();
-				//Characters
-				if (selected.equals("All")){
-					industryJobsInput = all;
-				} else {
-					industryJobsInput = jobs.get(selected);
-				}
-				//State
-				IndustryJob.IndustryJobState sState = (IndustryJob.IndustryJobState) jState.getSelectedItem();
-				//Activity
-				Object activity = jActivity.getSelectedItem();
-				for (int a = 0; a < industryJobsInput.size(); a++){
-					IndustryJob industryJob = industryJobsInput.get(a);
-					boolean bState = (industryJob.getState().equals(sState) || sState.equals(IndustryJob.IndustryJobState.STATE_ALL));
-					boolean bActivity = (industryJob.getActivity().equals(activity) || activity.equals(IndustryJob.IndustryActivity.ACTIVITY_ALL));
-					if (bState && bActivity){
-						industryJobsOutput.add(industryJob);
-					}
-				}
-				try {
-					jobsEventList.getReadWriteLock().writeLock().lock();
-					jobsEventList.clear();
-					jobsEventList.addAll( industryJobsOutput );
-				} finally {
-					jobsEventList.getReadWriteLock().writeLock().unlock();
-				}
-				
+			if (selected.equals(CUSTOM)){
+				characterCustomDialog.show(new CharacterListener());
+			} else {
+				selectedCharacters = Collections.singletonList(selected);
+				updateTable();
 			}
 		}
+		if (ACTION_ACTIVITY_SELECTED.equals(e.getActionCommand())) {
+			String selected = (String) jActivity.getSelectedItem();
+			if (selected.equals(CUSTOM)){
+				activityCustomDialog.show(new ActivityListener());
+			} else {
+				selectedActivities = Collections.singletonList(selected);
+				updateTable();
+			}
+		}
+		if (ACTION_STATE_SELECTED.equals(e.getActionCommand())) {
+			String selected = (String) jState.getSelectedItem();
+			if (selected.equals(CUSTOM)){
+				stateCustomDialog.show(new StateListener());
+			} else {
+				selectedStats = Collections.singletonList(selected);
+				updateTable();
+			}
+			
+		}
+	}
+
+	public class CharacterListener implements CustomDialogInterface{
+
+		@Override
+		public void customDialogReady(List<String> list) {
+			selectedCharacters = list;
+			updateTable();
+		}
+
+	}
+
+	public class ActivityListener implements CustomDialogInterface{
+
+		@Override
+		public void customDialogReady(List<String> list) {
+			selectedActivities = list;
+			updateTable();
+		}
+
+	}
+
+	public class StateListener implements CustomDialogInterface{
+
+		@Override
+		public void customDialogReady(List<String> list) {
+			selectedStats = list;
+			updateTable();
+		}
+
 	}
 }
