@@ -63,6 +63,7 @@ public class Images {
 	public final static Icon ICON_RENAME = Images.getIcon("textfield_rename.png");
 	public final static Icon ICON_DELETE = Images.getIcon("delete.png");
 	public final static Icon ICON_ADD = Images.getIcon("add.png");
+	public final static Icon ICON_SHOW_FIELDS= Images.getIcon("show_fields.png");
 	public final static Icon ICON_STATION = Images.getIcon("station.png");
 	public final static Icon ICON_SYSTEM = Images.getIcon("system.png");
 	public final static Icon ICON_REGION = Images.getIcon("region.png");

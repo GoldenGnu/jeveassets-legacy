@@ -46,7 +46,7 @@ public class FilterPanel extends JGroupLayoutPanel {
 
 	private EveAssetMatcherEditor eveAssetMatcherEditor;
 	
-	public FilterPanel(Program program, ToolPanel filtersPanel) {
+	public FilterPanel(Program program, ToolPanel toolPanel) {
 		super(program);
 
 		layout.setAutoCreateGaps(true);
@@ -74,7 +74,7 @@ public class FilterPanel extends JGroupLayoutPanel {
 		jRemove = new JButton();
 		jRemove.setIcon(Images.ICON_DELETE);
 		jRemove.setActionCommand(ACTION_REMOVE_FILTER);
-		jRemove.addActionListener(filtersPanel);
+		jRemove.addActionListener(toolPanel.getListener());
 		this.getPanel().add(jRemove);
 
 		this.textCompareLayout();

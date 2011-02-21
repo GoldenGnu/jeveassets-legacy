@@ -35,6 +35,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
@@ -43,13 +44,14 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 
 
-public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
+public class ToolPanel extends JGroupLayoutPanel {
 	
-	public final static String ACTION_ADD_FIELD = "ACTION_ADD_FILTER";
-	public final static String ACTION_CLEAR_FIELDS = "ACTION_RESET_FILTERS";
-	public final static String ACTION_SAVE_FILTER = "ACTION_SAVE_FILTER";
-	public final static String ACTION_OPEN_FILTER_MANAGER = "ACTION_OPEN_FILTER_MANAGER";
-	public final static String ACTION_ADD_SYSTEM = "ADD_SYSTEM";
+	private final static String ACTION_ADD_FIELD = "ACTION_ADD_FILTER";
+	private final static String ACTION_CLEAR_FIELDS = "ACTION_RESET_FILTERS";
+	private final static String ACTION_SAVE_FILTER = "ACTION_SAVE_FILTER";
+	private final static String ACTION_OPEN_FILTER_MANAGER = "ACTION_OPEN_FILTER_MANAGER";
+	private final static String ACTION_ADD_SYSTEM = "ADD_SYSTEM";
+	private final static String ACTION_SHOW_FILTERS = "ACTION_SHOW_FILTERS";
 
 	//Data
 	private List<FilterPanel> filters;
@@ -57,18 +59,19 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 	int rowCount;
 
 	//GUI
-	private JButton jAddField;
-	private JButton jClearFields;
-	private JButton jSaveFilter;
 	private JDropDownButton jLoadFilter;
 	private JLabel jRows;
 	private JToolBar jToolBar;
+	private JToggleButton jHideFilters;
+
+	private Listener listener;
 
 	public ToolPanel(Program program, MatcherEditorManager matcherEditorManager) {
 		super(program);
 		this. matcherEditorManager = matcherEditorManager;
 		filters = new ArrayList<FilterPanel>();
 		
+		listener = new Listener();
 
 		//Layout setup
 		layout.setAutoCreateGaps(true);
@@ -79,35 +82,45 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 		jToolBar.setRollover(true);
 
 		//Add
-		jAddField = new JButton("Add Field");
+		JButton jAddField = new JButton("Add Field");
 		jAddField.setIcon(Images.ICON_ADD);
 		jAddField.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
 		jAddField.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jAddField.setHorizontalAlignment(JButton.LEFT);
 		jAddField.setActionCommand(ACTION_ADD_FIELD);
-		jAddField.addActionListener(this);
+		jAddField.addActionListener(listener);
 		jToolBar.add(jAddField);
 
 		//Reset
-		jClearFields = new JButton("Clear Fields");
+		JButton jClearFields = new JButton("Clear Fields");
 		jClearFields.setIcon(Images.ICON_CLEAR);
 		jClearFields.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
 		jClearFields.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jClearFields.setHorizontalAlignment(JButton.LEFT);
 		jClearFields.setActionCommand(ACTION_CLEAR_FIELDS);
-		jClearFields.addActionListener(this);
+		jClearFields.addActionListener(listener);
 		jToolBar.add(jClearFields);
+
+		jHideFilters = new JToggleButton("Hide Fields");
+		jHideFilters.setIcon(Images.ICON_SHOW_FIELDS);
+		jHideFilters.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
+		jHideFilters.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
+		//jHideFilters.setHorizontalAlignment(JButton.LEFT);
+		jHideFilters.setActionCommand(ACTION_SHOW_FILTERS);
+		jHideFilters.addActionListener(listener);
+		//jHideFilters.setSelected(true);
+		jToolBar.add(jHideFilters);
 
 		jToolBar.addSeparator();
 
 		//Save Filter
-		jSaveFilter = new JButton("Save Filter");
+		JButton jSaveFilter = new JButton("Save Filter");
 		jSaveFilter.setIcon(Images.ICON_SAVE);
 		jSaveFilter.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
 		jSaveFilter.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jSaveFilter.setHorizontalAlignment(JButton.LEFT);
 		jSaveFilter.setActionCommand(ACTION_SAVE_FILTER);
-		jSaveFilter.addActionListener(this);
+		jSaveFilter.addActionListener(listener);
 		jToolBar.add(jSaveFilter);
 
 		//Load Filter
@@ -125,7 +138,7 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 		jAddSystem.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jAddSystem.setHorizontalAlignment(JButton.LEFT);
 		jAddSystem.setActionCommand(ACTION_ADD_SYSTEM);
-		jAddSystem.addActionListener(this);
+		jAddSystem.addActionListener(listener);
 		
 		//jToolBar.add(jAddSystem);
 
@@ -135,6 +148,10 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 		//Add one filterPanel
 		addFilter();
 		savedFiltersChanged();
+	}
+
+	public Listener getListener() {
+		return listener;
 	}
 
 	public List<AssetFilter> getAssetFilters(){
@@ -222,8 +239,10 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 
 		pg = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
 		pg.addGroup(sg);
-		for (int a = 0; a < filters.size(); a++){
-			pg.addComponent(filters.get(a).getPanel());
+		if (!jHideFilters.isSelected()){
+			for (int a = 0; a < filters.size(); a++){
+				pg.addComponent(filters.get(a).getPanel());
+			}
 		}
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
@@ -238,9 +257,10 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 		pg.addComponent(jRows, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT);
 		sg = layout.createSequentialGroup();
 		sg.addGroup(pg);
-		//sg.addComponent(buttons);
-		for (int a = 0; a < filters.size(); a++){
-			sg.addComponent(filters.get(a).getPanel());
+		if (!jHideFilters.isSelected()){
+			for (int a = 0; a < filters.size(); a++){
+				sg.addComponent(filters.get(a).getPanel());
+			}
 		}
 		layout.setVerticalGroup(sg);
 	}
@@ -276,7 +296,7 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 			jMenuItem.setRolloverEnabled(true);
 			jMenuItem.setIcon( Images.ICON_FOLDER);
 			jMenuItem.setActionCommand(s);
-			jMenuItem.addActionListener(this);
+			jMenuItem.addActionListener(listener);
 			jLoadFilter.add(jMenuItem);
 		}
 		
@@ -284,7 +304,7 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 
 		jMenuItem = new JMenuItem("Manage Saved Filters");
 		jMenuItem.setActionCommand(ACTION_OPEN_FILTER_MANAGER);
-		jMenuItem.addActionListener(this);
+		jMenuItem.addActionListener(listener);
 		jMenuItem.setRolloverEnabled(true);
 		jLoadFilter.add(jMenuItem);
 		jLoadFilter.add(jMenuItem);
@@ -294,37 +314,43 @@ public class ToolPanel extends JGroupLayoutPanel implements ActionListener {
 		jRows.setText(text);
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (FilterPanel.ACTION_REMOVE_FILTER.equals(e.getActionCommand())) {
-			JButton button = (JButton)e.getSource();
-			for (int a = 0; a < filters.size(); a++){
-				if (button.getParent().equals(filters.get(a).getPanel())){
-					this.removeFilter(filters.get(a));
-					return;
+	public class Listener  implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (FilterPanel.ACTION_REMOVE_FILTER.equals(e.getActionCommand())) {
+				JButton button = (JButton)e.getSource();
+				for (int a = 0; a < filters.size(); a++){
+					if (button.getParent().equals(filters.get(a).getPanel())){
+						removeFilter(filters.get(a));
+						return;
+					}
 				}
+				return;
 			}
-			return;
+			if (ACTION_SHOW_FILTERS.equals(e.getActionCommand())) {
+				updateLayout();
+			}
+			if (ACTION_ADD_FIELD.equals(e.getActionCommand())) {
+				addFilter();
+				return;
+			}
+			if (ACTION_CLEAR_FIELDS.equals(e.getActionCommand())) {
+				clearFilters();
+				return;
+			}
+			if (ACTION_SAVE_FILTER.equals(e.getActionCommand())) {
+				saveFilter();
+				return;
+			}
+			if (ACTION_OPEN_FILTER_MANAGER.equals(e.getActionCommand())) {
+				program.getFiltersManagerDialog().setVisible(true);
+				return;
+			}
+			if (ACTION_ADD_SYSTEM.equals(e.getActionCommand())) {
+				new AddSystemController(program);
+			}
+			loadFilter(e.getActionCommand());
 		}
-		if (ACTION_ADD_FIELD.equals(e.getActionCommand())) {
-			this.addFilter();
-			return;
-		}
-		if (ACTION_CLEAR_FIELDS.equals(e.getActionCommand())) {
-			this.clearFilters();
-			return;
-		}
-		if (ACTION_SAVE_FILTER.equals(e.getActionCommand())) {
-			saveFilter();
-			return;
-		}
-		if (ACTION_OPEN_FILTER_MANAGER.equals(e.getActionCommand())) {
-			program.getFiltersManagerDialog().setVisible(true);
-			return;
-		}
-		if (ACTION_ADD_SYSTEM.equals(e.getActionCommand())) {
-			new AddSystemController(this.program);
-		}
-		loadFilter(e.getActionCommand());
 	}
 }
