@@ -24,9 +24,11 @@ package net.nikr.eve.jeveasset.gui.tabs.assets;
 import net.nikr.eve.jeveasset.gui.shared.JGroupLayoutPanel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -36,6 +38,7 @@ public class FilterPanel extends JGroupLayoutPanel {
 
 	public final static String ACTION_REMOVE_FILTER = "ACTION_REMOVE_FILTER";
 
+	private JToggleButton jEnabled;
 	private JComboBox jAnd;
 	private JComboBox jColumn;
 	private JComboBox jMode;
@@ -56,26 +59,22 @@ public class FilterPanel extends JGroupLayoutPanel {
 
 		eveAssetMatcherEditor = new EveAssetMatcherEditor(program, this);
 
+		jEnabled = eveAssetMatcherEditor.getEnabled();
+
 		jAnd = eveAssetMatcherEditor.getAnd();
-		this.getPanel().add(jAnd);
 
 		jColumn = eveAssetMatcherEditor.getColumn();
-		this.getPanel().add(jColumn);
 
 		jMode = eveAssetMatcherEditor.getMode();
-		this.getPanel().add(jMode);
 
 		jMatchColumn = eveAssetMatcherEditor.getMatchColumn();
-		this.getPanel().add(jMatchColumn);
 
 		jText = eveAssetMatcherEditor.getText();
-		this.getPanel().add(jText);
 		
 		jRemove = new JButton();
 		jRemove.setIcon(Images.ICON_DELETE);
 		jRemove.setActionCommand(ACTION_REMOVE_FILTER);
 		jRemove.addActionListener(toolPanel.getListener());
-		this.getPanel().add(jRemove);
 
 		this.textCompareLayout();
 	}
@@ -129,6 +128,7 @@ public class FilterPanel extends JGroupLayoutPanel {
 				.addComponent(jColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jMode, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jMatchColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jEnabled, 30, 30, 30)
 				.addComponent(space, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 				.addComponent(jRemove, 30, 30, 30)
 		);
@@ -139,6 +139,7 @@ public class FilterPanel extends JGroupLayoutPanel {
 				.addComponent(jColumn, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jMode, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jMatchColumn, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jEnabled, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(space, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 			)
@@ -153,6 +154,8 @@ public class FilterPanel extends JGroupLayoutPanel {
 				.addComponent(jColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jMode, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jText, 150, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+				.addComponent(jEnabled, 30, 30, 30)
+				.addGap(5)
 				.addComponent(jRemove, 30, 30, 30)
 		);
 		layout.setVerticalGroup(
@@ -162,6 +165,7 @@ public class FilterPanel extends JGroupLayoutPanel {
 				.addComponent(jColumn, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jMode, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jText, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jEnabled, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 			)
 		);
