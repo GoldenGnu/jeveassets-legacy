@@ -24,7 +24,6 @@ package net.nikr.eve.jeveasset.data;
 import com.beimin.eveapi.EveApi;
 import com.beimin.eveapi.connectors.ApiConnector;
 import com.beimin.eveapi.connectors.ProxyConnector;
-import com.beimin.eveapi.core.AbstractApiParser;
 import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -99,8 +98,8 @@ public class Settings{
 	private List<Integer> uniqueIds = null; //TypeID : int
 	private Map<Integer, List<EveAsset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, PriceData> priceData; //TypeID : int
-	private Map<Integer, UserPrice> userPrices; //TypeID : int
-	private Map<Long, UserItemName> userItemNames; //ItemID : long
+	private Map<Integer, UserItem<Integer,Double>> userPrices; //TypeID : int
+	private Map<Long, UserItem<Long, String>> userNames; //ItemID : long
 	private List<EveAsset> eventListAssets = null;
 	private List<Account> accounts;
 	private List<Long> bpos; //ItemID : long
@@ -135,9 +134,9 @@ public class Settings{
 		profiles = new ArrayList<Profile>();
 
 		//Settings
-		userPrices = new HashMap<Integer, UserPrice>();
+		userPrices = new HashMap<Integer, UserItem<Integer,Double>>();
 		bpos = new ArrayList<Long>();
-		userItemNames = new HashMap<Long, UserItemName>();
+		userNames = new HashMap<Long, UserItem<Long,String>>();
 		overviewGroups = new HashMap<String, OverviewGroup>();
 		
 		flags = new HashMap<String, Boolean>();
@@ -390,8 +389,8 @@ public class Settings{
 					eveAsset.setUserPrice(null);
 				}
 				//User Item Names
-				if (userItemNames.containsKey(eveAsset.getItemID())){
-					eveAsset.setName(userItemNames.get(eveAsset.getItemID()).getName());
+				if (userNames.containsKey(eveAsset.getItemID())){
+					eveAsset.setName(userNames.get(eveAsset.getItemID()).getValue());
 				} else {
 					eveAsset.setName(eveAsset.getTypeName());
 				}
@@ -426,7 +425,7 @@ public class Settings{
 							PriceData priceDatum = priceData.get(material.getTypeID());
 							double price = 0;
 							if (userPrices.containsKey(material.getTypeID())){
-								price = userPrices.get(material.getTypeID()).getPrice();
+								price = userPrices.get(material.getTypeID()).getValue();
 							} else {
 								price = EveAsset.getDefaultPrice(priceDatum);
 							}
@@ -498,17 +497,17 @@ public class Settings{
 	public Date getPriceDataNextUpdate(){
 		return priceDataGetter.getNextUpdate();
 	}
-	public Map<Integer, UserPrice> getUserPrices() {
+	public Map<Integer, UserItem<Integer,Double>> getUserPrices() {
 		return userPrices;
 	}
-	public void setUserPrices(Map<Integer, UserPrice> userPrices) {
+	public void setUserPrices(Map<Integer, UserItem<Integer,Double>> userPrices) {
 		this.userPrices = userPrices;
 	}
-	public Map<Long, UserItemName> getUserItemNames() {
-		return userItemNames;
+	public Map<Long, UserItem<Long,String>> getUserItemNames() {
+		return userNames;
 	}
-	public void setUserItemNames(Map<Long, UserItemName> userItemNames) {
-		this.userItemNames = userItemNames;
+	public void setUserItemNames(Map<Long, UserItem<Long,String>> userItemNames) {
+		this.userNames = userItemNames;
 	}
 	public List<Account> getAccounts() {
 		return accounts;

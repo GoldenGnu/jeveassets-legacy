@@ -24,46 +24,66 @@ import java.util.Map;
 import javax.swing.Icon;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.UserItemName;
+import net.nikr.eve.jeveasset.data.EveAsset;
+import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
-public class UserItemNameSettingsPanel extends JUserListPanel<Long, UserItemName> {
+public class UserItemNameSettingsPanel extends JUserListPanel<Long, String> {
 
 	public UserItemNameSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon, DefaultMutableTreeNode parentNode) {
-		super(program, optionsDialog, icon, parentNode, JUserListPanel.FILTER_NO_RESTRICTIONS,
+		super(program, optionsDialog, icon, parentNode,
 				DialoguesSettings.get().names(),
-				DialoguesSettings.get().namesAssets(),
 				DialoguesSettings.get().name(),
 				DialoguesSettings.get().namesInstruction()
 				);
 	}
 
 	@Override
-	protected Map<Long, UserItemName> getItems() {
+	protected String valueOf(String value) {
+		return value;
+	}
+
+	@Override
+	protected Map<Long, UserItem<Long, String>> getItems() {
 		return program.getSettings().getUserItemNames();
 	}
 
 	@Override
-	protected void setItems(Map<Long, UserItemName> items) {
+	protected void setItems(Map<Long, UserItem<Long, String>> items) {
 		program.getSettings().setUserItemNames(items);
 	}
 
 	@Override
-	protected UserItemName newItem(UserItemName item) {
-		return new UserItemName(item);
+	protected UserItem<Long, String> newUserItem(UserItem<Long, String> userItem) {
+		return new UserName(userItem);
 	}
 
-	@Override
-	protected UserItemName valueOf(Object o) {
-		if (o instanceof UserItemName){
-			return (UserItemName) o;
+	public static class UserName extends UserItem<Long, String>{
+
+		public UserName(UserItem<Long, String> userItem) {
+			super(userItem);
 		}
-		return null;
-	}
+		public UserName(EveAsset eveAsset) {
+			super(eveAsset.getName(), eveAsset.getItemID(), eveAsset.getTypeName());
+		}
+		public UserName(String value, Long key, String name) {
+			super(value, key, name);
+		}
 
-	@Override
-	protected String getDefault(UserItemName item) {
-		return item.getTypeName();
+		@Override
+		public String toString(){
+			return getValue()+" ("+getName()+")";
+		}
+
+		@Override
+		public String formatedValue() {
+			return getValue();
+		}
+
+		@Override
+		public String message() {
+			return getValue()+"\n("+getName()+")";
+		}
 	}
 }

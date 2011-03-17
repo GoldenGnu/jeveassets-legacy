@@ -34,8 +34,6 @@ import javax.swing.Timer;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.UserItemName;
-import net.nikr.eve.jeveasset.data.UserPrice;
 import net.nikr.eve.jeveasset.gui.dialogs.AboutDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountManagerDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.export.CsvExportDialog;
@@ -48,7 +46,9 @@ import net.nikr.eve.jeveasset.gui.dialogs.settings.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.AssetsToolSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.OverviewToolSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserItemNameSettingsPanel;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.UserItemNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.WindowSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateDialog;
 import net.nikr.eve.jeveasset.gui.frame.MainMenu;
@@ -450,7 +450,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		if (MainMenu.ACTION_OPEN_OPTIONS.equals(e.getActionCommand())) {
 			showSettings();
 		}
-		if (AssetsTab.ACTION_SET_USER_PRICE.equals(e.getActionCommand())) {
+		if (AssetsTab.ACTION_USER_PRICE_EDIT.equals(e.getActionCommand())) {
 			EveAsset eveAsset = this.getAssetsTab().getSelectedAsset();
 			if (eveAsset.isBlueprint() && !eveAsset.isBpo()){
 				JOptionPane.showMessageDialog(mainWindow.getFrame(),
@@ -458,13 +458,11 @@ public class Program implements ActionListener, Listener<EveAsset>{
 						"If this is a Blueprint Original, mark it as such, to set the price", "Price Settings", JOptionPane.PLAIN_MESSAGE);
 				return;
 			}
-			userPriceSettingsPanel.setNewItem(new UserPrice(eveAsset));
-			settingsDialog.setVisible(userPriceSettingsPanel);
+			userPriceSettingsPanel.edit(new UserPrice(eveAsset));
 		}
-		if (AssetsTab.ACTION_SET_ITEM_NAME.equals(e.getActionCommand())){
+		if (AssetsTab.ACTION_USER_NAME_EDIT.equals(e.getActionCommand())){
 			EveAsset eveAsset = this.getAssetsTab().getSelectedAsset();
-			userItemNameSettingsPanel.setNewItem(new UserItemName(eveAsset));
-			settingsDialog.setVisible(userItemNameSettingsPanel);
+			userItemNameSettingsPanel.edit(new UserName(eveAsset));
 		}
 	//Others
 		if (MainMenu.ACTION_OPEN_ABOUT.equals(e.getActionCommand())) {

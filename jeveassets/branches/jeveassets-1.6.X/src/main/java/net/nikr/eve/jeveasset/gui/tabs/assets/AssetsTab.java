@@ -63,8 +63,9 @@ public class AssetsTab extends JMainTab
 	private final static Logger LOG = LoggerFactory.getLogger(AssetsTab.class);
 
 	public final static String ACTION_BLUEPRINT_ORIGINAL = "ACTION_BLUEPRINT_ORIGINAL";
-	public final static String ACTION_SET_USER_PRICE = "ACTION_SET_USER_PRICE";
-	public final static String ACTION_SET_ITEM_NAME = "ACTION_SET_ITEM_NAME";
+	public final static String ACTION_USER_PRICE_EDIT = "ACTION_USER_PRICE_EDIT";
+	public final static String ACTION_USER_NAME_EDIT = "ACTION_SET_ITEM_NAME";
+	//public final static String ACTION_SET_ITEM_NAME = "ACTION_SET_ITEM_NAME";
 	public final static String ACTION_ADD_FILTER_CONTAIN = "ACTION_ADD_FILTER_CONTAIN";
 	public final static String ACTION_ADD_FILTER_CONTAIN_NOT = "ACTION_ADD_FILTER_CONTAIN_NOT";
 	public final static String ACTION_ADD_FILTER_EQUALS = "ACTION_ADD_FILTER_EQUALS";
@@ -281,7 +282,7 @@ public class AssetsTab extends JMainTab
 		JMenuItem  jMenuItem;
 		JCheckBoxMenuItem jCheckBoxMenuItem;
 		JMenu jSubMenu;
-
+	//Logic
 		int[] selectedRows = jTable.getSelectedRows();
 		int[] selectedColumns = jTable.getSelectedColumns();
 		boolean isSingleCell = (selectedRows.length == 1 && selectedColumns.length == 1);
@@ -413,14 +414,14 @@ public class AssetsTab extends JMainTab
 		jMenuItem = new JMenuItem("Price...");
 		jMenuItem.setIcon(Images.ICON_USER_ITEM_PRICE);
 		jMenuItem.setEnabled(isSingleRow);
-		jMenuItem.setActionCommand(ACTION_SET_USER_PRICE);
+		jMenuItem.setActionCommand(ACTION_USER_PRICE_EDIT);
 		jMenuItem.addActionListener(program);
 		jSubMenu.add(jMenuItem);
 
 		jMenuItem = new JMenuItem("Name...");
 		jMenuItem.setIcon(Images.ICON_USER_ITEM_NAME);
 		jMenuItem.setEnabled(isSingleRow);
-		jMenuItem.setActionCommand(ACTION_SET_ITEM_NAME);
+		jMenuItem.setActionCommand(ACTION_USER_NAME_EDIT);
 		jMenuItem.addActionListener(program);
 		jSubMenu.add(jMenuItem);
 

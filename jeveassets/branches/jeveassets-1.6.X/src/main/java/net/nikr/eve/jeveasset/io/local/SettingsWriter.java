@@ -33,8 +33,7 @@ import net.nikr.eve.jeveasset.data.OverviewGroup;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.UserItemName;
-import net.nikr.eve.jeveasset.data.UserPrice;
+import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
 import org.slf4j.Logger;
@@ -95,15 +94,15 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	private static void writeUserItemNames(Document xmldoc, Map<Long, UserItemName> userPrices){
+	private static void writeUserItemNames(Document xmldoc, Map<Long, UserItem<Long,String>> userPrices){
 		Element parentNode = xmldoc.createElementNS(null, "itemmames");
 		xmldoc.getDocumentElement().appendChild(parentNode);
-		for (Map.Entry<Long, UserItemName> entry : userPrices.entrySet()){
-			UserItemName userItemName = entry.getValue();
+		for (Map.Entry<Long, UserItem<Long,String>> entry : userPrices.entrySet()){
+			UserItem<Long,String> userItemName = entry.getValue();
 			Element node = xmldoc.createElementNS(null, "itemname");
-			node.setAttributeNS(null, "name", userItemName.getName());
-			node.setAttributeNS(null, "typename", userItemName.getTypeName());
-			node.setAttributeNS(null, "itemid", String.valueOf(userItemName.getItemID()));
+			node.setAttributeNS(null, "name", userItemName.getValue());
+			node.setAttributeNS(null, "typename", userItemName.getName());
+			node.setAttributeNS(null, "itemid", String.valueOf(userItemName.getKey()));
 			parentNode.appendChild(node);
 		}
 	}
@@ -139,15 +138,15 @@ public class SettingsWriter extends AbstractXmlWriter {
 			parentNode.appendChild(node);
 		}
 	}
-	private static void writeUserPrices(Document xmldoc, Map<Integer, UserPrice> userPrices){
+	private static void writeUserPrices(Document xmldoc, Map<Integer, UserItem<Integer,Double>> userPrices){
 		Element parentNode = xmldoc.createElementNS(null, "userprices");
 		xmldoc.getDocumentElement().appendChild(parentNode);
-		for (Map.Entry<Integer, UserPrice> entry : userPrices.entrySet()){
-			UserPrice userPrice = entry.getValue();
+		for (Map.Entry<Integer, UserItem<Integer,Double>> entry : userPrices.entrySet()){
+			UserItem<Integer,Double> userPrice = entry.getValue();
 			Element node = xmldoc.createElementNS(null, "userprice");
 			node.setAttributeNS(null, "name", userPrice.getName());
-			node.setAttributeNS(null, "price", String.valueOf(userPrice.getPrice()));
-			node.setAttributeNS(null, "typeid", String.valueOf(userPrice.getTypeID()));
+			node.setAttributeNS(null, "price", String.valueOf(userPrice.getValue()));
+			node.setAttributeNS(null, "typeid", String.valueOf(userPrice.getKey()));
 			parentNode.appendChild(node);
 		}
 	}

@@ -37,8 +37,9 @@ import net.nikr.eve.jeveasset.data.OverviewLocation;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.UserItemName;
-import net.nikr.eve.jeveasset.data.UserPrice;
+import net.nikr.eve.jeveasset.data.UserItem;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.UserItemNameSettingsPanel.UserName;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
@@ -253,7 +254,7 @@ public class SettingsReader extends AbstractXmlReader {
 			String name = AttributeGetters.getString(currentNode, "name");
 			double price = AttributeGetters.getDouble(currentNode, "price");
 			int typeID = AttributeGetters.getInt(currentNode, "typeid");
-			UserPrice userPrice = new UserPrice(price, typeID, name);
+			UserItem<Integer,Double> userPrice = new UserPrice(price, typeID, name);
 			settings.getUserPrices().put(typeID, userPrice);
 		}
 	}
@@ -265,7 +266,7 @@ public class SettingsReader extends AbstractXmlReader {
 			String name = AttributeGetters.getString(currentNode, "name");
 			String typeName = AttributeGetters.getString(currentNode, "typename");
 			long itemId = AttributeGetters.getLong(currentNode, "itemid");
-			UserItemName userItemName = new UserItemName(name, itemId, typeName);
+			UserItem<Long,String> userItemName = new UserName(name, itemId, typeName);
 			settings.getUserItemNames().put(itemId, userItemName);
 		}
 	}
