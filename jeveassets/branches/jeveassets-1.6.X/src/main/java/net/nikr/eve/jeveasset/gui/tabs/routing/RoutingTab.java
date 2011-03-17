@@ -49,6 +49,7 @@ import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Jump;
 import net.nikr.eve.jeveasset.data.OverviewGroup;
 import net.nikr.eve.jeveasset.data.OverviewLocation;
+import net.nikr.eve.jeveasset.data.OverviewLocation.LocationType;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.SolarSystem;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -330,7 +331,10 @@ public class RoutingTab extends JMainTab  {
 			OverviewGroup group = program.getSettings().getOverviewGroups().get(source.getName());
 			for (OverviewLocation location : group.getLocations()){
 				for (EveAsset eveAsset : program.getEveAssetEventList()){
-					if (location.getName().equals(eveAsset.getLocation())){
+					if ((location.getName().equals(eveAsset.getLocation()))
+						|| (location.getType() == LocationType.TYPE_SYSTEM && location.getName().equals(eveAsset.getSystem()))
+						|| (location.getType() == LocationType.TYPE_REGION && location.getName().equals(eveAsset.getRegion()))
+						){
 						assets.add(eveAsset);
 					}
 				}
