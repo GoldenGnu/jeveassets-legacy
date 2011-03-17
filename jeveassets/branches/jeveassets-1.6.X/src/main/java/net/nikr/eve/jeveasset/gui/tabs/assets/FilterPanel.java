@@ -28,7 +28,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.JToggleButton;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -38,7 +37,7 @@ public class FilterPanel extends JGroupLayoutPanel {
 
 	public final static String ACTION_REMOVE_FILTER = "ACTION_REMOVE_FILTER";
 
-	private JToggleButton jEnabled;
+	private JCheckBox jEnabled;
 	private JComboBox jAnd;
 	private JComboBox jColumn;
 	private JComboBox jMode;
@@ -124,25 +123,23 @@ public class FilterPanel extends JGroupLayoutPanel {
 		this.getPanel().remove(jText);
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
+				.addComponent(jEnabled, 30, 30, 30)
 				.addComponent(jAnd, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jMode, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jMatchColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addComponent(jEnabled, 30, 30, 30)
 				.addComponent(space, 0, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 				.addComponent(jRemove, 30, 30, 30)
 		);
 		layout.setVerticalGroup(
-			layout.createSequentialGroup()
-			.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+			layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+				.addComponent(jEnabled, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jAnd, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jColumn, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jMode, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jMatchColumn, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addComponent(jEnabled, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(space, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-			)
 		);
 	}
 	private void textCompareLayout(){
@@ -150,24 +147,22 @@ public class FilterPanel extends JGroupLayoutPanel {
 		this.getPanel().remove(space);
 		layout.setHorizontalGroup(
 			layout.createSequentialGroup()
+				.addComponent(jEnabled, 30, 30, 30)
 				.addComponent(jAnd, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jMode, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jText, 150, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-				.addComponent(jEnabled, 30, 30, 30)
 				.addGap(5)
 				.addComponent(jRemove, 30, 30, 30)
 		);
 		layout.setVerticalGroup(
-			layout.createSequentialGroup()
-			.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+			layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+				.addComponent(jEnabled, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jAnd, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jColumn, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jMode, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jText, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addComponent(jEnabled, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-			)
 		);
 	}
 }

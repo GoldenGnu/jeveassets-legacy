@@ -31,6 +31,7 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
@@ -52,7 +53,7 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset>{
 	public final static String ACTION_TIMER = "ACTION_TIMER";
 	private final static String ACTION_ENABLED = "ACTION_ENABLED";
 
-	private JToggleButton jEnabled;
+	private JCheckBox jEnabled;
 	private JComboBox jAnd;
 	private JComboBox jColumn;
 	private JComboBox jMode;
@@ -75,8 +76,7 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset>{
 		timer = new Timer(500, listener);
 		timer.setActionCommand(ACTION_TIMER);
 
-		jEnabled = new JToggleButton();
-		jEnabled.setIcon(Images.ICON_ENABLED);
+		jEnabled = new JCheckBox();
 		jEnabled.setSelected(true);
 		jEnabled.setActionCommand(ACTION_ENABLED);
 		jEnabled.addActionListener(listener);
@@ -109,7 +109,7 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset>{
 		jText.addKeyListener(listener);
 	}
 
-	public JToggleButton getEnabled() {
+	public JCheckBox getEnabled() {
 		return jEnabled;
 	}
 
@@ -119,7 +119,7 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset>{
 	}
 
 	public boolean isEmpty(){
-		return jText.getText().equals("") && !columnCompare;
+		return (jText.getText().equals("") && !columnCompare) || !jEnabled.isSelected();
 	}
 
 	public JComboBox getAnd() {
@@ -144,9 +144,9 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset>{
 
 	public void refilter(){
 		if (columnCompare){
-			this.fireChanged(new EveAssetMatcher((String) jColumn.getSelectedItem(), (AssetFilter.Mode) jMode.getSelectedItem(), "", (String) jMatchColumn.getSelectedItem(), jEnabled.isSelected()));
+			this.fireChanged(new EveAssetMatcher((String) jColumn.getSelectedItem(), (AssetFilter.Mode) jMode.getSelectedItem(), "", (String) jMatchColumn.getSelectedItem()));
 		} else {
-			this.fireChanged(new EveAssetMatcher((String) jColumn.getSelectedItem(), (AssetFilter.Mode) jMode.getSelectedItem(), jText.getText(), null, jEnabled.isSelected()));
+			this.fireChanged(new EveAssetMatcher((String) jColumn.getSelectedItem(), (AssetFilter.Mode) jMode.getSelectedItem(), jText.getText(), null));
 		}
 	}
 
@@ -252,24 +252,18 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<EveAsset>{
 		private final String column;
 		private final AssetFilter.Mode mode;
 		private final String text;
-		private final boolean enabled;
 		private String columnMatch;
 
-		public EveAssetMatcher(String column,  AssetFilter.Mode mode, String text, String columnMatch, boolean enabled) {
+		public EveAssetMatcher(String column,  AssetFilter.Mode mode, String text, String columnMatch) {
 			this.column = column;
 			this.mode = mode;
 			this.text = text;
 			this.columnMatch = columnMatch;
-			this.enabled = enabled;
 		}
 
 		@Override
 		public boolean matches(EveAsset item) {
-			if (enabled){
-				return eveAssetMatching.matches(item, column, mode, text, columnMatch);
-			} else { //Nothing is filtered
-				return true;
-			}
+			return eveAssetMatching.matches(item, column, mode, text, columnMatch);
 		}
 	}
 }
