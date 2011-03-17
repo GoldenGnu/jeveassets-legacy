@@ -392,6 +392,7 @@ public class OverviewTab extends JMainTab implements ActionListener {
 			overviewEventList.addAll(getList(program.getEveAssetEventList(), character, view));
 		}
 		overviewEventList.getReadWriteLock().writeLock().unlock();
+		program.overviewGroupsChanged();
 	}
 
 	public void resetViews(){

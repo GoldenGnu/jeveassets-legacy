@@ -29,7 +29,6 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
 import uk.me.candle.eve.graph.Graph;
 import uk.me.candle.eve.graph.Node;
-import uk.me.candle.eve.routing.Progress;
 import uk.me.candle.eve.routing.RoutingAlgorithm;
 
 /**
@@ -46,9 +45,8 @@ public class FakeRoutingTab extends RoutingTab {
 		this.ra = ra;
 	}
 
-	@Override
-	public void buildGraph(Settings settings, Progress progress) {
-		super.buildGraph(settings, progress);
+	public void buildTestGraph(Settings settings) {
+		super.buildGraph(settings);
 	}
 
 	public List<Node> getNodesFromNames(List<String> names) {

@@ -380,6 +380,14 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	}
 
 	/**
+	 * Called when Overview Groups are changed
+	 */
+	public void overviewGroupsChanged(){
+		routingTab.updateData();
+		
+	}
+
+	/**
 	 * Called when the table menu needs update
 	 */
 	public void updateTableMenu(){
@@ -436,8 +444,6 @@ public class Program implements ActionListener, Listener<EveAsset>{
 			overviewTab.resetViews();
 		}
 		if (MainMenu.ACTION_OPEN_ROUTING.equals(e.getActionCommand())) {
-			// XXX Although the line above should be removed for production, removing it makes the GUI flicker.
-			routingTab = new RoutingTab(this);
 			mainWindow.addTab(routingTab);
 		}
 	//Settings
