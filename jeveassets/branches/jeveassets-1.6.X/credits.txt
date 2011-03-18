@@ -70,6 +70,14 @@ Link:
   http://eve-marketdata.com/
 
 ________________________________________________________________________________
+_PRICES.C0RPORATION_____________________________________________________________
+
+jEveAssets use Prices.c0rporation.com to get faction prices
+
+Link:
+  http://prices.c0rporation.com/
+
+________________________________________________________________________________
 _SILK_ICONS_____________________________________________________________________
 
 jEveAssets use Silk Icons from famfamfam.com

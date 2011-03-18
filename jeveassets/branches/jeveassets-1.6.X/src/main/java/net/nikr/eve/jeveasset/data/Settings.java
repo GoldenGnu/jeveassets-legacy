@@ -98,6 +98,7 @@ public class Settings{
 	private List<Integer> uniqueIds = null; //TypeID : int
 	private Map<Integer, List<EveAsset>> uniqueAssetsDuplicates = null; //TypeID : int
 	private Map<Integer, PriceData> priceData; //TypeID : int
+	private final Map<Integer, PriceData> priceFactionData = new HashMap<Integer, PriceData>(); //TypeID : int
 	private Map<Integer, UserItem<Integer,Double>> userPrices; //TypeID : int
 	private Map<Long, UserItem<Long, String>> userNames; //ItemID : long
 	private List<EveAsset> eventListAssets = null;
@@ -408,9 +409,14 @@ public class Settings{
 				eveAsset.setContainer(sContainer);
 
 				//Price data
-				if (eveAsset.isMarketGroup()){ //Add price data
+				if (eveAsset.isMarketGroup() && priceData.containsKey(eveAsset.getTypeID()) && !priceData.get(eveAsset.getTypeID()).isEmpty()){ //Market Price
 					eveAsset.setPriceData(priceData.get(eveAsset.getTypeID()));
+				} else if (priceFactionData.containsKey(eveAsset.getTypeID())){ //Faction Price
+					eveAsset.setPriceData(priceFactionData.get(eveAsset.getTypeID()));
+				} else { //No Price :(
+					eveAsset.setPriceData(null);
 				}
+				
 				//Reprocessed price
 				eveAsset.setPriceReprocessed(0);
 				if (getItems().containsKey(eveAsset.getTypeID())){
@@ -519,6 +525,10 @@ public class Settings{
 
 	public Map<Integer, PriceData> getPriceData() {
 		return priceData;
+	}
+
+	public Map<Integer, PriceData> getPriceFactionData() {
+		return priceFactionData;
 	}
 
 	public void setPriceData(Map<Integer, PriceData> priceData) {
@@ -651,17 +661,9 @@ public class Settings{
 	 * build the API Connector and set it in the library.
 	 */
 	private void constructEveApiConnector() {
-		String apiProxy = getApiProxy();
-		Proxy proxy = getProxy();
-		ApiConnector connector;
-		if (apiProxy != null) {
-			connector = new ApiConnector(apiProxy);
-		} else {
-			connector = new ApiConnector(apiProxy);
-		}
-		if (proxy != null) {
-			connector = new ProxyConnector(proxy, connector);
-		}
+		ApiConnector connector = new ApiConnector(); //Default
+		if (getApiProxy() != null) connector = new ApiConnector(getApiProxy()); //API Proxy
+		if (getProxy() != null) connector = new ProxyConnector(getProxy(), connector); //Real Proxy
 		EveApi.setConnector(connector);
 	}
 

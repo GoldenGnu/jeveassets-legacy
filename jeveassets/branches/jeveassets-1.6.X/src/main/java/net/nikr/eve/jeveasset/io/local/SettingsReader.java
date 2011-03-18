@@ -41,6 +41,7 @@ import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserItemNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.io.local.update.Update;
+import net.nikr.eve.jeveasset.io.online.FactionGetter;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
@@ -78,6 +79,13 @@ public class SettingsReader extends AbstractXmlReader {
 			throw new XmlException("Wrong root element name.");
 		}
 
+		//Faction Price Data
+		NodeList factionPricesNodes = element.getElementsByTagName("factionprices");
+		if (factionPricesNodes.getLength() == 1){
+			Element factionPricesElement = (Element) factionPricesNodes.item(0);
+			NodeList factionPriceNodes = factionPricesElement.getElementsByTagName("factionprice");
+			FactionGetter.parseNodes(factionPriceNodes , settings.getPriceFactionData());
+		}
 		//Overview
 		NodeList overviewNodes = element.getElementsByTagName("overview");
 		if (overviewNodes.getLength() == 1){

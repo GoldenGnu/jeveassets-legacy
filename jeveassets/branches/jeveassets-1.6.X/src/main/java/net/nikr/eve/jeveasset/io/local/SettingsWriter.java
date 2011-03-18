@@ -30,6 +30,7 @@ import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.TableSettings;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.OverviewGroup;
+import net.nikr.eve.jeveasset.data.PriceData;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -56,6 +57,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		//Add version number
 		xmldoc.getDocumentElement().setAttribute("version", String.valueOf(SettingsReader.SETTINGS_VERSION));
 
+		writePriceFactionData(xmldoc, settings.getPriceFactionData());
 		writeOverviewGroups(xmldoc, settings.getOverviewGroups());
 		writeReprocessSettings(xmldoc, settings.getReprocessSettings());
 		writeWindow(xmldoc, settings);
@@ -77,6 +79,21 @@ public class SettingsWriter extends AbstractXmlWriter {
 		LOG.info("Settings saved");
 	}
 
+	private static void writePriceFactionData(Document xmldoc, Map<Integer, PriceData> priceFactionData){
+		Element parentNode = xmldoc.createElementNS(null, "factionprices");
+		xmldoc.getDocumentElement().appendChild(parentNode);
+		for (Map.Entry<Integer, PriceData> entry : priceFactionData.entrySet()){
+			PriceData priceData = entry.getValue();
+			Element node = xmldoc.createElementNS(null, "factionprice");
+			node.setAttributeNS(null, "typeID", String.valueOf(entry.getKey()));
+			node.setAttributeNS(null, "avg", String.valueOf(priceData.getBuyAvg()));
+			node.setAttributeNS(null, "median", String.valueOf(priceData.getBuyMedian()));
+			node.setAttributeNS(null, "lo", String.valueOf(priceData.getBuyMin()));
+			node.setAttributeNS(null, "hi", String.valueOf(priceData.getBuyMax()));
+			parentNode.appendChild(node);
+		}
+
+	}
 	private static void writeOverviewGroups(Document xmldoc, Map<String, OverviewGroup> overviewGroups){
 		Element parentNode = xmldoc.createElementNS(null, "overview");
 		xmldoc.getDocumentElement().appendChild(parentNode);
