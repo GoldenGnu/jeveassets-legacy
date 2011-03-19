@@ -75,7 +75,7 @@ public class UserPriceSettingsPanel extends JUserListPanel<Integer, Double> {
 			super(userItem);
 		}
 		public UserPrice(EveAsset eveAsset) {
-			super(eveAsset.getPrice(), eveAsset.getTypeID(), eveAsset.getTypeName());
+			super(eveAsset.getPrice(), (eveAsset.isBlueprint() && !eveAsset.isBpo()) ? -eveAsset.getTypeID() : eveAsset.getTypeID(), eveAsset.isBlueprint() ? eveAsset.isBpo() ? eveAsset.getTypeName()+" (Original)" : eveAsset.getTypeName()+" (Copy)" : eveAsset.getTypeName());
 		}
 		public UserPrice(Double value, Integer key, String name) {
 			super(value, key, name);
@@ -83,12 +83,17 @@ public class UserPriceSettingsPanel extends JUserListPanel<Integer, Double> {
 
 		@Override
 		public String toString(){
-			return getName()+" ("+getValueFormated()+")";
+			return getName();
 		}
 
 		@Override
 		public String getValueFormated() {
 			return simpleFormat.format(getValue());
+		}
+
+		@Override
+		public int compare(UserItem<Integer, Double> o1, UserItem<Integer, Double> o2) {
+			return o1.getName().compareTo(o2.getName());
 		}
 	}
 }

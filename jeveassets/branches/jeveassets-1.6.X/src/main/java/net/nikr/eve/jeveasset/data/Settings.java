@@ -383,12 +383,20 @@ public class Settings{
 		for (int a = 0; a < currentAssets.size(); a++){
 			EveAsset eveAsset = currentAssets.get(a);
 			if (shouldShow && ((eveAsset.isCorporationAsset() && shouldShowCorp) || !eveAsset.isCorporationAsset())){
-				//User price
-				if (userPrices.containsKey(eveAsset.getTypeID())){ //Add User Price
-					eveAsset.setUserPrice(userPrices.get(eveAsset.getTypeID()));
-				} else { //No user price, clear user price
-					eveAsset.setUserPrice(null);
+				//Blueprint (Must be before user price)
+				if (eveAsset.isBlueprint()){
+					eveAsset.setBpo(bpos.contains(eveAsset.getItemID()));
+				} else {
+					eveAsset.setBpo(false);
 				}
+
+				//User price
+				if (eveAsset.isBlueprint() && !eveAsset.isBpo()) { //Blueprint Copy
+					eveAsset.setUserPrice(userPrices.get(-eveAsset.getTypeID()));
+				} else { //All other
+					eveAsset.setUserPrice(userPrices.get(eveAsset.getTypeID()));
+				}
+				
 				//User Item Names
 				if (userNames.containsKey(eveAsset.getItemID())){
 					eveAsset.setName(userNames.get(eveAsset.getItemID()).getValue());
@@ -448,12 +456,6 @@ public class Settings{
 					eveAsset.setPriceReprocessed(priceReprocessed);
 				}
 
-				//Blueprint
-				if (eveAsset.isBlueprint()){
-					eveAsset.setBpo(bpos.contains(eveAsset.getItemID()));
-				} else {
-					eveAsset.setBpo(false);
-				}
 				//Type Count
 				if (!uniqueAssetsDuplicates.containsKey(eveAsset.getTypeID())){
 					uniqueAssetsDuplicates.put(eveAsset.getTypeID(), new ArrayList<EveAsset>());

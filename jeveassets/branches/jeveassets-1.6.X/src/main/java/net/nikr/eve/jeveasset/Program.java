@@ -458,12 +458,6 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		}
 		if (AssetsTab.ACTION_USER_PRICE_EDIT.equals(e.getActionCommand())) {
 			EveAsset eveAsset = this.getAssetsTab().getSelectedAsset();
-			if (eveAsset.isBlueprint() && !eveAsset.isBpo()){
-				JOptionPane.showMessageDialog(mainWindow.getFrame(),
-						"You can not set price for Blueprint Copies.\r\n" +
-						"If this is a Blueprint Original, mark it as such, to set the price", "Price Settings", JOptionPane.PLAIN_MESSAGE);
-				return;
-			}
 			userPriceSettingsPanel.edit(new UserPrice(eveAsset));
 		}
 		if (AssetsTab.ACTION_USER_NAME_EDIT.equals(e.getActionCommand())){

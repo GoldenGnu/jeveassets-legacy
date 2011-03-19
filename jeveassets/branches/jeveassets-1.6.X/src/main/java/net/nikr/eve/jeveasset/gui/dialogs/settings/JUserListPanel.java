@@ -147,7 +147,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 
 	private void delete(UserItem<K,V> userItem, boolean save){
 		if (save) load();
-		int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), userItem.getName()+"\n("+userItem.getValueFormated()+")", "Delete "+type, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+		int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), userItem.getName()+"\n["+userItem.getValueFormated()+"]", "Delete "+type, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if (value == JOptionPane.OK_OPTION){
 			items.remove(userItem.getKey());
 			listItems.remove(userItem);

@@ -283,13 +283,13 @@ public class EveAsset implements Comparable<EveAsset> {
 	}
 
 	public double getPrice() {
-		if (isBlueprint() && !isBpo()) {
-			return 0;
-		}
+		//UserPrice
+		if (this.getUserPrice() != null) return this.getUserPrice().getValue();
 
-		if (this.getUserPrice() != null) {
-			return this.getUserPrice().getValue();
-		}
+		//Blueprint Copy (Default Zero)
+		if (isBlueprint() && !isBpo()) return 0;
+
+		//PriceData
 		return getDefaultPrice();
 	}
 

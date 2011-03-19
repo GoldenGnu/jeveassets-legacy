@@ -65,7 +65,6 @@ public class AssetsTab extends JMainTab
 	public final static String ACTION_BLUEPRINT_ORIGINAL = "ACTION_BLUEPRINT_ORIGINAL";
 	public final static String ACTION_USER_PRICE_EDIT = "ACTION_USER_PRICE_EDIT";
 	public final static String ACTION_USER_NAME_EDIT = "ACTION_SET_ITEM_NAME";
-	//public final static String ACTION_SET_ITEM_NAME = "ACTION_SET_ITEM_NAME";
 	public final static String ACTION_ADD_FILTER_CONTAIN = "ACTION_ADD_FILTER_CONTAIN";
 	public final static String ACTION_ADD_FILTER_CONTAIN_NOT = "ACTION_ADD_FILTER_CONTAIN_NOT";
 	public final static String ACTION_ADD_FILTER_EQUALS = "ACTION_ADD_FILTER_EQUALS";

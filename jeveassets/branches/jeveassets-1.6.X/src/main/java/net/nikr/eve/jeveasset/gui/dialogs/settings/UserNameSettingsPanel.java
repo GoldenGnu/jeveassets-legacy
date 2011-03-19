@@ -73,12 +73,17 @@ public class UserNameSettingsPanel extends JUserListPanel<Long, String> {
 
 		@Override
 		public String toString(){
-			return getValue()+" ("+getName()+")";
+			return getValue()+" ["+getName()+"]";
 		}
 
 		@Override
 		public String getValueFormated() {
 			return getValue();
+		}
+
+		@Override
+		public int compare(UserItem<Long, String> o1, UserItem<Long, String> o2) {
+			return o1.getValue().compareTo(o2.getValue());
 		}
 	}
 }

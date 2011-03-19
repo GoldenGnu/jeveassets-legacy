@@ -55,10 +55,11 @@ public abstract class UserItem<K, V extends Comparable<V>> implements Comparable
 	}
 
 	abstract public String getValueFormated();
+	abstract public int compare(UserItem<K,V> o1, UserItem<K,V> o2);
 
 	@Override
 	public int compareTo(UserItem<K,V> o) {
-		return value.compareTo(o.getValue());
+		return compare(this, o);
 	}
 
 	@Override
