@@ -45,8 +45,8 @@ import net.nikr.eve.jeveasset.gui.dialogs.settings.ReprocessingSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.SettingsDialog;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.AssetsToolSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.OverviewToolSettingsPanel;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.UserItemNameSettingsPanel;
-import net.nikr.eve.jeveasset.gui.dialogs.settings.UserItemNameSettingsPanel.UserName;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.WindowSettingsPanel;
@@ -118,7 +118,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 	private PriceDataSettingsPanel priceDataSettingsPanel;
 	private ProxySettingsPanel proxySettingsPanel;
 	private UserPriceSettingsPanel userPriceSettingsPanel;
-	private UserItemNameSettingsPanel userItemNameSettingsPanel;
+	private UserNameSettingsPanel userNameSettingsPanel;
 	private WindowSettingsPanel windowSettingsPanel;
 	private ReprocessingSettingsPanel reprocessingSettingsPanel;
 	private AssetsToolSettingsPanel assetsToolSettingsPanel;
@@ -225,7 +225,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		userPriceSettingsPanel = new UserPriceSettingsPanel(this, settingsDialog, Images.ICON_USER_ITEM_PRICE, modifiedAssetsNode);
 		SplashUpdater.setProgress(91);
 		LOG.info("Loading: Assets Name Settings Panel");
-		userItemNameSettingsPanel = new UserItemNameSettingsPanel(this, settingsDialog, Images.ICON_USER_ITEM_NAME, modifiedAssetsNode);
+		userNameSettingsPanel = new UserNameSettingsPanel(this, settingsDialog, Images.ICON_USER_ITEM_NAME, modifiedAssetsNode);
 		SplashUpdater.setProgress(92);
 		LOG.info("Loading: Price Data Settings Panel");
 		priceDataSettingsPanel = new PriceDataSettingsPanel(this, settingsDialog, Images.ICON_PRICE_DATA);
@@ -468,7 +468,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		}
 		if (AssetsTab.ACTION_USER_NAME_EDIT.equals(e.getActionCommand())){
 			EveAsset eveAsset = this.getAssetsTab().getSelectedAsset();
-			userItemNameSettingsPanel.edit(new UserName(eveAsset));
+			userNameSettingsPanel.edit(new UserName(eveAsset));
 		}
 	//Others
 		if (MainMenu.ACTION_OPEN_ABOUT.equals(e.getActionCommand())) {

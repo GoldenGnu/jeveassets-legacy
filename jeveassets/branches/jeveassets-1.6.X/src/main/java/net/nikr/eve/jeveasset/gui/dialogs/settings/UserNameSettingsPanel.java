@@ -29,9 +29,9 @@ import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
-public class UserItemNameSettingsPanel extends JUserListPanel<Long, String> {
+public class UserNameSettingsPanel extends JUserListPanel<Long, String> {
 
-	public UserItemNameSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon, DefaultMutableTreeNode parentNode) {
+	public UserNameSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon, DefaultMutableTreeNode parentNode) {
 		super(program, optionsDialog, icon, parentNode,
 				DialoguesSettings.get().names(),
 				DialoguesSettings.get().name(),
@@ -77,13 +77,8 @@ public class UserItemNameSettingsPanel extends JUserListPanel<Long, String> {
 		}
 
 		@Override
-		public String formatedValue() {
+		public String getValueFormated() {
 			return getValue();
-		}
-
-		@Override
-		public String message() {
-			return getValue()+"\n("+getName()+")";
 		}
 	}
 }

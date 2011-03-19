@@ -83,17 +83,12 @@ public class UserPriceSettingsPanel extends JUserListPanel<Integer, Double> {
 
 		@Override
 		public String toString(){
-			return getName()+" ("+formatedValue()+")";
+			return getName()+" ("+getValueFormated()+")";
 		}
 
 		@Override
-		public String formatedValue() {
+		public String getValueFormated() {
 			return simpleFormat.format(getValue());
-		}
-
-		@Override
-		public String message() {
-			return getName()+"\n("+formatedValue()+")";
 		}
 	}
 }

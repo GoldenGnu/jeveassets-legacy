@@ -117,15 +117,20 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 
 	private void edit(UserItem<K,V> userItem, boolean save, String oldValue){
 		if (save) load();
-		String value = (String)JOptionPane.showInputDialog(program.getMainWindow().getFrame(), userItem.message(), "Edit "+type, JOptionPane.PLAIN_MESSAGE, null, null, oldValue != null ? oldValue : userItem.formatedValue());
+		String value = (String)JOptionPane.showInputDialog(program.getMainWindow().getFrame(), userItem.getName(), "Edit "+type, JOptionPane.PLAIN_MESSAGE, null, null, oldValue != null ? oldValue : userItem.getValueFormated());
 		if (value != null){
 			V v = valueOf(value);
 			if (v != null){
-				items.put(userItem.getKey(), userItem);
-				listItems.add(userItem);
+				//Add if needed
+				if (!items.containsKey(userItem.getKey())){
+					items.put(userItem.getKey(), userItem);
+					listItems.add(userItem);
+				}
+				//Update Value
 				userItem.setValue(v);
+				//Update GUI
 				updateGUI();
-				if (save){
+				if (save){ //Save (if not in setttings dialog)
 					boolean update = save();
 					if (update) program.updateEventList();
 				}
@@ -142,7 +147,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 
 	private void delete(UserItem<K,V> userItem, boolean save){
 		if (save) load();
-		int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), userItem.message(), "Delete "+type, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+		int value = JOptionPane.showConfirmDialog(program.getMainWindow().getFrame(), userItem.getName()+"\n("+userItem.getValueFormated()+")", "Delete "+type, JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 		if (value == JOptionPane.OK_OPTION){
 			items.remove(userItem.getKey());
 			listItems.remove(userItem);
