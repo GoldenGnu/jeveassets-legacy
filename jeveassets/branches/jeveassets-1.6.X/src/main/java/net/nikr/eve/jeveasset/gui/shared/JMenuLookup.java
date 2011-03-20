@@ -48,32 +48,32 @@ public class JMenuLookup extends JMenuTool implements ActionListener{
 	public JMenuLookup(Program program, Object object) {
 		super("Lookup", program, object);
 		
-		this.setIcon(Images.ICON_EXTERNAL_LINK);
+		this.setIcon(Images.LINK_LOOKUP.getIcon());
 
 		JMenuItem menuItem;
 		JMenu jSubMenu;
 
 		jSubMenu = new JMenu("Dotlan EveMaps");
-		jSubMenu.setIcon(Images.ICON_DOTLAN_EVEMAPS);
+		jSubMenu.setIcon(Images.LINK_DOTLAN_EVEMAPS.getIcon());
 		jSubMenu.setEnabled(station != null || system != null || region != null);
 		add(jSubMenu);
 
 		menuItem = new JMenuItem("Station");
-		menuItem.setIcon(Images.ICON_STATION);
+		menuItem.setIcon(Images.LOC_STATION.getIcon());
 		menuItem.setEnabled(station != null);
 		menuItem.setActionCommand(ACTION_BROWSE_EVEMAPS_DOTLAN_STATION);
 		menuItem.addActionListener(this);
 		jSubMenu.add(menuItem);
 
 		menuItem = new JMenuItem("System");
-		menuItem.setIcon(Images.ICON_SYSTEM);
+		menuItem.setIcon(Images.LOC_SYSTEM.getIcon());
 		menuItem.setEnabled(system != null);
 		menuItem.setActionCommand(ACTION_BROWSE_EVEMAPS_DOTLAN_SYSTEM);
 		menuItem.addActionListener(this);
 		jSubMenu.add(menuItem);
 
 		menuItem = new JMenuItem("Region");
-		menuItem.setIcon(Images.ICON_REGION);
+		menuItem.setIcon(Images.LOC_REGION.getIcon());
 		menuItem.setEnabled(region != null);
 		menuItem.setActionCommand(ACTION_BROWSE_EVEMAPS_DOTLAN_REGION);
 		menuItem.addActionListener(this);
@@ -82,28 +82,28 @@ public class JMenuLookup extends JMenuTool implements ActionListener{
 		if ((station != null || system != null || region != null) && typeId != 0) addSeparator();
 
 		menuItem = new JMenuItem("Eve-Central");
-		menuItem.setIcon(Images.ICON_EVE_CENTRAL);
+		menuItem.setIcon(Images.LINK_EVE_CENTRAL.getIcon());
 		menuItem.setEnabled(typeId != 0 && isMarketGroup);
 		menuItem.setActionCommand(ACTION_BROWSE_EVE_CENTRAL);
 		menuItem.addActionListener(this);
 		add(menuItem);
 
 		menuItem = new JMenuItem("Eve-Marketdata");
-		menuItem.setIcon(Images.ICON_EVE_MARKETDATA);
+		menuItem.setIcon(Images.LINK_EVE_MARKETDATA.getIcon());
 		menuItem.setEnabled(typeId != 0 && isMarketGroup);
 		menuItem.setActionCommand(ACTION_BROWSE_EVE_MARKETDATA);
 		menuItem.addActionListener(this);
 		add(menuItem);
 
 		menuItem = new JMenuItem("Eve-Markets");
-		menuItem.setIcon(Images.ICON_EVE_MARKETS);
+		menuItem.setIcon(Images.LINK_EVE_MARKETS.getIcon());
 		menuItem.setEnabled(typeId != 0 && isMarketGroup);
 		menuItem.setActionCommand(ACTION_BROWSE_EVE_MARKETS);
 		menuItem.addActionListener(this);
 		add(menuItem);
 
 		menuItem = new JMenuItem("Chruker Item Database");
-		menuItem.setIcon(Images.ICON_CHRUKER);
+		menuItem.setIcon(Images.LINK_CHRUKER.getIcon());
 		menuItem.setEnabled(typeId != 0);
 		menuItem.setActionCommand(ACTION_BROWSE_GAMES_CHRUKER);
 		menuItem.addActionListener(this);

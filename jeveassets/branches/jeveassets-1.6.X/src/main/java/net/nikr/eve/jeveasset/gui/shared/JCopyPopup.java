@@ -74,7 +74,7 @@ public class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner
 
 		if (component.isEditable()){
 			jMenuItem = new JMenuItem("Cut");
-			jMenuItem.setIcon(Images.ICON_CUT);
+			jMenuItem.setIcon(Images.EDIT_CUT.getIcon());
 			jMenuItem.setActionCommand(ACTION_CUT);
 			jMenuItem.addActionListener(this);
 			jMenuItem.setEnabled(canCopy);
@@ -82,7 +82,7 @@ public class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner
 		}
 
 		jMenuItem = new JMenuItem("Copy");
-		jMenuItem.setIcon(Images.ICON_COPY);
+		jMenuItem.setIcon(Images.EDIT_COPY.getIcon());
 		jMenuItem.setActionCommand(ACTION_COPY);
 		jMenuItem.addActionListener(this);
 		jMenuItem.setEnabled(canCopy);
@@ -90,7 +90,7 @@ public class JCopyPopup implements MouseListener, ActionListener, ClipboardOwner
 
 		if (component.isEditable()){
 			jMenuItem = new JMenuItem("Paste");
-			jMenuItem.setIcon(Images.ICON_PASTE);
+			jMenuItem.setIcon(Images.EDIT_PASTE.getIcon());
 			jMenuItem.setActionCommand(ACTION_PASTE);
 			jMenuItem.addActionListener(this);
 			jPopupMenu.add(jMenuItem);

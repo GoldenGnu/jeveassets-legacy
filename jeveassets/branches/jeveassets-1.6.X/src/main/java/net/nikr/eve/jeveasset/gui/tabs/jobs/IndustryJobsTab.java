@@ -36,7 +36,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -70,10 +69,10 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 
 	private List<IndustryJob> all;
 	private Map<String, List<IndustryJob>> jobs;
-	private Vector<String> characters;
+	private List<String> characters;
 
 	public IndustryJobsTab(Program program) {
-		super(program, "Industry Jobs", Images.ICON_TOOL_INDUSTRY_JOBS, true);
+		super(program, "Industry Jobs", Images.TOOL_INDUSTRY_JOBS.getIcon(), true);
 
 		jCharacters = new JComboBox();
 		jCharacters.setActionCommand(ACTION_SELECTED);
@@ -173,7 +172,7 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 
 	@Override
 	public void updateData() {
-		characters = new Vector<String>();
+		characters = new ArrayList<String>();
 		//characters.add("All");
 		jobs = new HashMap<String, List<IndustryJob>>();
 		all = new ArrayList<IndustryJob>();
@@ -207,7 +206,7 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 			jState.setEnabled(true);
 			Collections.sort(characters);
 			characters.add(0, "All");
-			jCharacters.setModel( new DefaultComboBoxModel(characters));
+			jCharacters.setModel( new DefaultComboBoxModel(characters.toArray()));
 			jActivity.setModel( new DefaultComboBoxModel(IndustryJob.IndustryActivity.values()));
 			jState.setModel( new DefaultComboBoxModel(IndustryJob.IndustryJobState.values()));
 			jCharacters.setSelectedIndex(0);

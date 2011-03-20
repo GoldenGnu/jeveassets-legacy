@@ -45,6 +45,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.LayoutStyle;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Jump;
 import net.nikr.eve.jeveasset.data.OverviewGroup;
@@ -107,7 +108,7 @@ public class RoutingTab extends JMainTab  {
 	}
 
 	public RoutingTab(Program program) {
-		super(program, "Routing", Images.ICON_TOOL_ROUTING, true);
+		super(program, "Routing", Images.TOOL_ROUTING.getIcon(), true);
 
 		ListenerClass listener = new ListenerClass();
 
@@ -295,8 +296,10 @@ public class RoutingTab extends JMainTab  {
 		// build the graph.
 		// filter the solarsystems based on the settings.
 		filteredGraph = new Graph();
-
+		int count = 0;
 		for (Jump jump : settings.getJumps()) { // this way we exclude the locations that are unreachable.
+			count++;
+			SplashUpdater.setSubProgress((int)(count * 100 / settings.getJumps().size()));
 			SolarSystem f = null;
 			SolarSystem t = null;
 			for (Node n : filteredGraph.getNodes()) {

@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.PriceData;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.update.UpdateTask;
@@ -57,6 +58,7 @@ public class PriceDataGetter implements PricingListener {
 	private final int attemptCount = 5;
 	private boolean update;
 	private boolean failed;
+	private List<Integer> ids;
 
 	public PriceDataGetter(Settings settings) {
 		this.settings = settings;
@@ -100,7 +102,7 @@ public class PriceDataGetter implements PricingListener {
 		failed = false;
 
 		//Get all price ids
-		List<Integer> ids = settings.getUniqueIds();
+		ids = settings.getUniqueIds();
 
 		PricingFactory.setPricingOptions( new EveAssetPricingOptions() );
 		Pricing pricing = PricingFactory.getPricing();
@@ -210,7 +212,8 @@ public class PriceDataGetter implements PricingListener {
 		if (nextUpdateTemp >= 0 && nextUpdateTemp > nextUpdate ){
 			nextUpdate = nextUpdateTemp;
 		}
-		if (updateTask != null) updateTask.setTaskProgress(settings.getUniqueIds().size(), priceDataList.size(), 0, 100);
+		if (updateTask != null) updateTask.setTaskProgress(ids.size(), priceDataList.size(), 0, 100);
+		if (!priceDataList.isEmpty() && !ids.isEmpty()) SplashUpdater.setSubProgress((int)(priceDataList.size() * 100 / ids.size()));
 	}
 
 	private class EveAssetPricingOptions implements PricingOptions {

@@ -94,7 +94,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 	private SeparatorList<Module> separatorList;
 
 	public LoadoutsTab(Program program) {
-		super(program, "Ship Loadouts", Images.ICON_TOOL_SHIP_LOADOUTS, true);
+		super(program, "Ship Loadouts", Images.TOOL_SHIP_LOADOUTS.getIcon(), true);
 
 		loadoutsExportDialog = new LoadoutsExportDialog(program, this);
 

@@ -47,8 +47,8 @@ import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Material;
-import net.nikr.eve.jeveasset.gui.shared.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
 import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
@@ -74,7 +74,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 	private SeparatorList<Material> separatorList;
 
 	public MaterialsTab(Program program) {
-		super(program, "Materials", Images.ICON_TOOL_MATERIALS, true);
+		super(program, "Materials", Images.TOOL_MATERIALS.getIcon(), true);
 		//Category: Asteroid
 		//Category: Material
 

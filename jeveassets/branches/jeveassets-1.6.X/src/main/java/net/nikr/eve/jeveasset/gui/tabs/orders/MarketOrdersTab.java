@@ -36,7 +36,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
@@ -73,7 +72,7 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 
 	private List<MarketOrder> all;
 	private Map<String, List<MarketOrder>> orders;
-	private Vector<String> characters;
+	private List<String> characters;
 
 	private JAutoColumnTable jSellOrders;
 	private JAutoColumnTable jBuyOrders;
@@ -81,7 +80,7 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 	private String[] orderStates = new String[]{"All", "Active", "Fulfilled", "Partially Fulfilled", "Expired", "Closed", "Cancelled", "Pending"};
 
 	public MarketOrdersTab(Program program) {
-		super(program, "Market Orders", Images.ICON_TOOL_MARKET_ORDERS, true);
+		super(program, "Market Orders", Images.TOOL_MARKET_ORDERS.getIcon(), true);
 
 		jCharacters = new JComboBox();
 		jCharacters.setActionCommand(ACTION_SELECTED);
@@ -224,7 +223,7 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 
 	@Override
 	public void updateData() {
-		characters = new Vector<String>();
+		characters = new ArrayList<String>();
 		orders = new HashMap<String, List<MarketOrder>>();
 		all = new ArrayList<MarketOrder>();
 		List<Account> accounts = program.getSettings().getAccounts();
@@ -259,7 +258,7 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 			jBuyOrders.setEnabled(true);
 			Collections.sort(characters);
 			characters.add(0, "All");
-			jCharacters.setModel( new DefaultComboBoxModel(characters));
+			jCharacters.setModel( new DefaultComboBoxModel(characters.toArray()));
 			jState.setModel( new DefaultComboBoxModel(orderStates));
 			jCharacters.setSelectedIndex(0);
 			jState.setSelectedIndex(0);

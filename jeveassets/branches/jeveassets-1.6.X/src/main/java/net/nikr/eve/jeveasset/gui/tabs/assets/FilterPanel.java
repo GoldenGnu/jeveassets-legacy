@@ -71,7 +71,7 @@ public class FilterPanel extends JGroupLayoutPanel {
 		jText = eveAssetMatcherEditor.getText();
 		
 		jRemove = new JButton();
-		jRemove.setIcon(Images.ICON_DELETE);
+		jRemove.setIcon(Images.EDIT_DELETE.getIcon());
 		jRemove.setActionCommand(ACTION_REMOVE_FILTER);
 		jRemove.addActionListener(toolPanel.getListener());
 

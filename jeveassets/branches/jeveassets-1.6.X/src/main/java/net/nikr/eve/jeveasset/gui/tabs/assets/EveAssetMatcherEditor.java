@@ -34,14 +34,12 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JTextField;
-import javax.swing.JToggleButton;
 import javax.swing.Timer;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.EveAsset;
-import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.EveAssetMatching;
 

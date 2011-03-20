@@ -65,7 +65,7 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 		jWait = new JWait(this.getDialog());
 
 		JLabel jIcon = new JLabel();
-		jIcon.setIcon(Images.ICON_JEVEASSETS64);
+		jIcon.setIcon(Images.MISC_ASSETS_64.getIcon());
 
 		JEditorPane jProgram = createEditorPane(false, 
 				"<div style=\"font-size: 30pt;\"><b>"+Program.PROGRAM_NAME+"</b></div>"

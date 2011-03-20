@@ -66,12 +66,11 @@ public class MainWindow implements WindowListener, ChangeListener {
 	
 	public MainWindow(Program program){
 		this.program = program;
-
 		//Frame
 		jFrame = new JFrame();
 		updateTitle();
 		this.setSizeAndLocation(program.getSettings().getWindowSize(),  program.getSettings().getWindowLocation(), program.getSettings().isWindowMaximized());
-		jFrame.setIconImage(Images.IMAGE_JEVEASSETS16);
+		jFrame.setIconImage(Images.TOOL_ASSETS.getImage());
 		jFrame.addWindowListener(this);
 		jFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
@@ -80,7 +79,6 @@ public class MainWindow implements WindowListener, ChangeListener {
 		jPanel.setLayout(layout);
 		layout.setAutoCreateGaps(false);
 		layout.setAutoCreateContainerGaps(false);
-
 		jFrame.getContentPane().add(jPanel);
 
 		mainMenu = new MainMenu(program);
@@ -90,7 +88,6 @@ public class MainWindow implements WindowListener, ChangeListener {
 		jTabbedPane.addChangeListener(this);
 
 		statusPanel = new StatusPanel(program);
-
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addComponent(jTabbedPane, 0, 0, Short.MAX_VALUE)
@@ -245,8 +242,8 @@ public class MainWindow implements WindowListener, ChangeListener {
 			if (jMainTab.isCloseable()){
 				JButton jClose = new JButton();
 				jClose.setToolTipText("Close Tab");
-				jClose.setIcon(Images.ICON_CLOSE);
-				jClose.setRolloverIcon(Images.ICON_CLOSE_ACTIVE);
+				jClose.setIcon(Images.TAB_CLOSE.getIcon());
+				jClose.setRolloverIcon(Images.TAB_CLOSE_ACTIVE.getIcon());
 				jClose.setUI(new BasicButtonUI());
 				jClose.setPreferredSize(new Dimension(16, 16));
 				jClose.setOpaque(false);

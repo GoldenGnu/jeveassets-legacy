@@ -58,9 +58,9 @@ public class StatusPanel extends JGroupLayoutPanel {
 		
 		
 
-		jUpdatable = createIcon(Images.ICON_UPDATE, "Updatable");
+		jUpdatable = createIcon(Images.DIALOG_UPDATE.getIcon(), "Updatable");
 		programStatus.add(jUpdatable);
-		jEveTime = createLabel("Eve Server Time", Images.ICON_EVE);
+		jEveTime = createLabel("Eve Server Time", Images.MISC_EVE.getIcon());
 		programStatus.add(jEveTime);
 
 		layout.setHorizontalGroup(

@@ -40,12 +40,12 @@ public class JMenuAssetFilter extends JMenuTool implements ActionListener {
 	public JMenuAssetFilter(Program program, Object object) {
 		super("Add Asset Filter", program, object);
 
-		this.setIcon(Images.ICON_TOOL_ASSETS);
+		this.setIcon(Images.TOOL_ASSETS.getIcon());
 
 		JMenuItem jMenuItem;
 
 		jMenuItem = new JMenuItem("Item Type");
-		jMenuItem.setIcon(Images.ICON_ADD);
+		jMenuItem.setIcon(Images.EDIT_ADD.getIcon());
 		jMenuItem.setEnabled(typeId != 0);
 		jMenuItem.setActionCommand(ACTION_ADD_ITEM_TYPE_FILTER);
 		jMenuItem.addActionListener(this);
@@ -55,21 +55,21 @@ public class JMenuAssetFilter extends JMenuTool implements ActionListener {
 
 
 		jMenuItem = new JMenuItem("Station");
-		jMenuItem.setIcon(Images.ICON_STATION);
+		jMenuItem.setIcon(Images.LOC_STATION.getIcon());
 		jMenuItem.setEnabled(station != null);
 		jMenuItem.setActionCommand(ACTION_ADD_STATION_FILTER);
 		jMenuItem.addActionListener(this);
 		add(jMenuItem);
 
 		jMenuItem = new JMenuItem("System");
-		jMenuItem.setIcon(Images.ICON_SYSTEM);
+		jMenuItem.setIcon(Images.LOC_SYSTEM.getIcon());
 		jMenuItem.setEnabled(system != null);
 		jMenuItem.setActionCommand(ACTION_ADD_SYSTEM_FILTER);
 		jMenuItem.addActionListener(this);
 		add(jMenuItem);
 
 		jMenuItem = new JMenuItem("Region");
-		jMenuItem.setIcon(Images.ICON_REGION);
+		jMenuItem.setIcon(Images.LOC_REGION.getIcon());
 		jMenuItem.setEnabled(region != null);
 		jMenuItem.setActionCommand(ACTION_ADD_REGION_FILTER);
 		jMenuItem.addActionListener(this);

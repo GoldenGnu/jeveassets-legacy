@@ -84,7 +84,7 @@ public class OverviewTab extends JMainTab {
 	private ListenerClass listenerClass = new ListenerClass();
 
 	public OverviewTab(Program program) {
-		super(program, "Overview", Images.ICON_TOOL_OVERVIEW, true);
+		super(program, "Overview", Images.TOOL_OVERVIEW.getIcon(), true);
 
 		JLabel jViewsLabel = new JLabel("View");
 		jViews = new JComboBox( new String[]  {"Stations", "Systems", "Regions", "Groups"} );
@@ -197,11 +197,11 @@ public class OverviewTab extends JMainTab {
 	//GROUPS
 		//Station, System, Region views
 		jSubMenu = new JMenu("Groups");
-		jSubMenu.setIcon(Images.ICON_GROUPS);
+		jSubMenu.setIcon(Images.LOC_GROUPS.getIcon());
 		jComponent.add(jSubMenu);
 		if (!jViews.getSelectedItem().equals("Groups")){
 			jMenuItem = new JMenuItem("Add to new group...");
-			jMenuItem.setIcon(Images.ICON_ADD);
+			jMenuItem.setIcon(Images.EDIT_ADD.getIcon());
 			jMenuItem.setEnabled(isSelected);
 			jMenuItem.setActionCommand(ACTION_ADD_NEW_GROUP);
 			jMenuItem.addActionListener(listenerClass);
@@ -213,9 +213,9 @@ public class OverviewTab extends JMainTab {
 				OverviewGroup overviewGroup = entry.getValue();
 				boolean found = overviewGroup.getLocations().containsAll(getSelectedLocations());
 				jCheckBoxMenuItem = new JCheckBoxMenuItem(overviewGroup.getName());
-				if (jViews.getSelectedItem().equals("Stations")) jCheckBoxMenuItem.setIcon(Images.ICON_STATION);
-				if (jViews.getSelectedItem().equals("Systems")) jCheckBoxMenuItem.setIcon(Images.ICON_SYSTEM);
-				if (jViews.getSelectedItem().equals("Regions")) jCheckBoxMenuItem.setIcon(Images.ICON_REGION);
+				if (jViews.getSelectedItem().equals("Stations")) jCheckBoxMenuItem.setIcon(Images.LOC_STATION.getIcon());
+				if (jViews.getSelectedItem().equals("Systems")) jCheckBoxMenuItem.setIcon(Images.LOC_SYSTEM.getIcon());
+				if (jViews.getSelectedItem().equals("Regions")) jCheckBoxMenuItem.setIcon(Images.LOC_REGION.getIcon());
 				jCheckBoxMenuItem.setEnabled(isSelected);
 				jCheckBoxMenuItem.setActionCommand(overviewGroup.getName());
 				jCheckBoxMenuItem.addActionListener(addToGroup);
@@ -226,14 +226,14 @@ public class OverviewTab extends JMainTab {
 		//Groups view
 		if (jViews.getSelectedItem().equals("Groups")){
 			jMenuItem = new JMenuItem("Rename Group");
-			jMenuItem.setIcon(Images.ICON_RENAME);
+			jMenuItem.setIcon(Images.EDIT_RENAME.getIcon());
 			jMenuItem.setEnabled(isSingleRow);
 			jMenuItem.setActionCommand(ACTION_RENAME_GROUP);
 			jMenuItem.addActionListener(listenerClass);
 			jSubMenu.add(jMenuItem);
 
 			jMenuItem = new JMenuItem("Delete Group");
-			jMenuItem.setIcon(Images.ICON_DELETE);
+			jMenuItem.setIcon(Images.EDIT_DELETE.getIcon());
 			jMenuItem.setEnabled(isSingleRow);
 			jMenuItem.setActionCommand(ACTION_DELETE_GROUP);
 			jMenuItem.addActionListener(listenerClass);
@@ -246,9 +246,9 @@ public class OverviewTab extends JMainTab {
 					for (int a = 0; a < overviewGroup.getLocations().size(); a++){
 						OverviewLocation location = overviewGroup.getLocations().get(a);
 						jCheckBoxMenuItem = new JCheckBoxMenuItem(location.getName());
-						if (location.isStation()) jCheckBoxMenuItem.setIcon(Images.ICON_STATION);
-						if (location.isSystem()) jCheckBoxMenuItem.setIcon(Images.ICON_SYSTEM);
-						if (location.isRegion()) jCheckBoxMenuItem.setIcon(Images.ICON_REGION);
+						if (location.isStation()) jCheckBoxMenuItem.setIcon(Images.LOC_STATION.getIcon());
+						if (location.isSystem()) jCheckBoxMenuItem.setIcon(Images.LOC_SYSTEM.getIcon());
+						if (location.isRegion()) jCheckBoxMenuItem.setIcon(Images.LOC_REGION.getIcon());
 						jCheckBoxMenuItem.setActionCommand(location.getName());
 						jCheckBoxMenuItem.addActionListener(removeFromGroup);
 						jCheckBoxMenuItem.setSelected(true);
@@ -264,7 +264,7 @@ public class OverviewTab extends JMainTab {
 		jSubMenuItem = new JMenuAssetFilter(program, overview);
 		if (jViews.getSelectedItem().equals("Groups")){
 			jMenuItem = new JMenuItem("Locations");
-			jMenuItem.setIcon(Images.ICON_LOCATIONS);
+			jMenuItem.setIcon(Images.LOC_LOCATIONS.getIcon());
 			jMenuItem.setEnabled(isSingleRow);
 			jMenuItem.setActionCommand(ACTION_ADD_GROUP_FILTER);
 			jMenuItem.addActionListener(listenerClass);
