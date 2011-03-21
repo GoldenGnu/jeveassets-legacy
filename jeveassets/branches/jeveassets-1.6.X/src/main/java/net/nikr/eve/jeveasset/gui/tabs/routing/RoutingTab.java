@@ -53,6 +53,7 @@ import net.nikr.eve.jeveasset.data.OverviewLocation;
 import net.nikr.eve.jeveasset.data.OverviewLocation.LocationType;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.SolarSystem;
+import net.nikr.eve.jeveasset.gui.dialogs.addsystem.AddSystemController;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import org.slf4j.Logger;
@@ -75,6 +76,7 @@ public class RoutingTab extends JMainTab  {
 
 	public static final String ACTION_ADD = "ACTION_ADD";
 	public static final String ACTION_REMOVE = "ACTION_REMOVE";
+	public static final String ACTION_ADD_SYSTEM = "ACTION_ADD_SYSTEM";
 	public static final String ACTION_SOURCE = "ACTION_SOURCE";
 	public static final String ACTION_CALCULATE = "ACTION_CALCULATE";
 	public static final String ACTION_CANCEL = "ACTION_CANCEL";
@@ -85,6 +87,7 @@ public class RoutingTab extends JMainTab  {
 	private JButton jAdd;
 	private JButton jRemove;
 	private JButton jCalculate;
+	private JButton jAddSystem;
 	private JComboBox jAlgorithm;
 	private JComboBox jSource;
 	private JTextArea jDescription;
@@ -119,6 +122,10 @@ public class RoutingTab extends JMainTab  {
 		jRemove = new JButton("<<<");
 		jRemove.setActionCommand(ACTION_REMOVE);
 		jRemove.addActionListener(listener);
+
+		jAddSystem = new JButton("Add");
+		jAddSystem.setActionCommand(ACTION_ADD_SYSTEM);
+		jAddSystem.addActionListener(listener);
 
 		jSourceLabel = new JLabel("Source");
 
@@ -211,6 +218,7 @@ public class RoutingTab extends JMainTab  {
 								.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 									.addComponent(jAdd, 80, 80, 80)
 									.addComponent(jRemove, 80, 80, 80)
+									//.addComponent(jAddSystem, 80, 80, 80)
 								)
 								.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 								.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
@@ -241,6 +249,7 @@ public class RoutingTab extends JMainTab  {
 						.addGroup(layout.createSequentialGroup()
 							.addComponent(jAdd, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 							.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+							//.addComponent(jAddSystem, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 						)
 					)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
@@ -473,6 +482,7 @@ public class RoutingTab extends JMainTab  {
 		jAlgorithmLabel.setEnabled(b);
 		jSourceLabel.setEnabled(b);
 		jSource.setEnabled(b);
+		jAddSystem.setEnabled(b);
 		jCancel.setEnabled(!b);
 	}
 
@@ -504,7 +514,11 @@ public class RoutingTab extends JMainTab  {
 				jAvailable.getEditableModel().clear();
 				jWaypoints.getEditableModel().clear();
 				processFilteredAssets(program.getSettings());
+			} else if (ACTION_ADD_SYSTEM.equals(e.getActionCommand())) {
+				//jAddSystem
+				AddSystemController system = new AddSystemController(program);
 			}
+
 		}
 	}
 

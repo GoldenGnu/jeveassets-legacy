@@ -273,7 +273,6 @@ public class OverviewTab extends JMainTab {
 		jComponent.add(jSubMenuItem);
 		
 	//LOOKUP
-		//XXX - you can not lookup group locations
 		jComponent.add(new JMenuLookup(program, overview));
 	}
 
