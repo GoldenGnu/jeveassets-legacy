@@ -156,7 +156,7 @@ public class Program implements ActionListener, Listener<EveAsset>{
 		SplashUpdater.setText("Loading GUI");
 		LOG.info("GUI Loading:");
 		LOG.info("Loading: Images");
-		Images.preLoadImages();
+		Images.preload();
 		LOG.info("Loading: Main Window");
 		mainWindow = new MainWindow(this);
 		SplashUpdater.setProgress(50);

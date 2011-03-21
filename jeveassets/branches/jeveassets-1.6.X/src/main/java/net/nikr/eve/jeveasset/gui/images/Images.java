@@ -134,7 +134,18 @@ public enum Images {
 		return image;
 	}
 
-	public static boolean preLoadImages(){
+	public String getFilename() {
+		return filename;
+	}
+
+	private boolean load(){
+		if (image == null){
+			image = getBufferedImage(filename);
+		}
+		return (image != null);
+	}
+
+	public static boolean preload(){
 		int count = 0;
 		boolean ok = true;
 		for (Images i : Images.values()){
@@ -145,13 +156,6 @@ public enum Images {
 			SplashUpdater.setSubProgress((int)(count * 100 / Images.values().length));
 		}
 		return ok;
-	}
-
-	private boolean load(){
-		if (image == null){
-			image = getBufferedImage(filename);
-		}
-		return (image != null);
 	}
 
 	public static BufferedImage getBufferedImage(String s) {
