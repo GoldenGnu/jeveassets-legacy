@@ -32,14 +32,13 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.AssetFilter;
-import net.nikr.eve.jeveasset.gui.dialogs.addsystem.AddSystemController;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 
@@ -50,7 +49,6 @@ public class ToolPanel extends JGroupLayoutPanel {
 	private final static String ACTION_CLEAR_FIELDS = "ACTION_RESET_FILTERS";
 	private final static String ACTION_SAVE_FILTER = "ACTION_SAVE_FILTER";
 	private final static String ACTION_OPEN_FILTER_MANAGER = "ACTION_OPEN_FILTER_MANAGER";
-	private final static String ACTION_ADD_SYSTEM = "ADD_SYSTEM";
 	private final static String ACTION_SHOW_FILTERS = "ACTION_SHOW_FILTERS";
 
 	//Data
@@ -62,7 +60,7 @@ public class ToolPanel extends JGroupLayoutPanel {
 	private JDropDownButton jLoadFilter;
 	private JLabel jRows;
 	private JToolBar jToolBar;
-	private JToggleButton jHideFilters;
+	private JCheckBox jShowFilters;
 
 	private Listener listener;
 
@@ -84,7 +82,7 @@ public class ToolPanel extends JGroupLayoutPanel {
 		//Add
 		JButton jAddField = new JButton("Add Field");
 		jAddField.setIcon(Images.EDIT_ADD.getIcon());
-		jAddField.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
+		jAddField.setMinimumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jAddField.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jAddField.setHorizontalAlignment(JButton.LEFT);
 		jAddField.setActionCommand(ACTION_ADD_FIELD);
@@ -94,29 +92,19 @@ public class ToolPanel extends JGroupLayoutPanel {
 		//Reset
 		JButton jClearFields = new JButton("Clear Fields");
 		jClearFields.setIcon(Images.ASSETS_CLEAR_FIELDS.getIcon());
-		jClearFields.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
+		jClearFields.setMinimumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jClearFields.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jClearFields.setHorizontalAlignment(JButton.LEFT);
 		jClearFields.setActionCommand(ACTION_CLEAR_FIELDS);
 		jClearFields.addActionListener(listener);
 		jToolBar.add(jClearFields);
 
-		jHideFilters = new JToggleButton("Hide Fields");
-		jHideFilters.setIcon(Images.ASSETS_HIDE_FIELDS.getIcon());
-		jHideFilters.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
-		jHideFilters.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
-		//jHideFilters.setHorizontalAlignment(JButton.LEFT);
-		jHideFilters.setActionCommand(ACTION_SHOW_FILTERS);
-		jHideFilters.addActionListener(listener);
-		//jHideFilters.setSelected(true);
-		jToolBar.add(jHideFilters);
-
 		jToolBar.addSeparator();
 
 		//Save Filter
 		JButton jSaveFilter = new JButton("Save Filter");
 		jSaveFilter.setIcon(Images.ASSETS_SAVE_FILTERS.getIcon());
-		jSaveFilter.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
+		jSaveFilter.setMinimumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jSaveFilter.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jSaveFilter.setHorizontalAlignment(JButton.LEFT);
 		jSaveFilter.setActionCommand(ACTION_SAVE_FILTER);
@@ -126,21 +114,21 @@ public class ToolPanel extends JGroupLayoutPanel {
 		//Load Filter
 		jLoadFilter = new JDropDownButton("Load Filter");
 		jLoadFilter.setIcon( Images.ASSETS_LOAD_FILTER.getIcon());
-		jLoadFilter.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
+		jLoadFilter.setMinimumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jLoadFilter.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jLoadFilter.setHorizontalAlignment(JButton.LEFT);
 		jToolBar.add(jLoadFilter);
 
-		//TODO Completly remove "Add System"
-		//Add System
-		JButton jAddSystem = new JButton("Add System");
-		jAddSystem.setMinimumSize( new Dimension(10, Program.BUTTONS_HEIGHT));
-		jAddSystem.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
-		jAddSystem.setHorizontalAlignment(JButton.LEFT);
-		jAddSystem.setActionCommand(ACTION_ADD_SYSTEM);
-		jAddSystem.addActionListener(listener);
-		
-		//jToolBar.add(jAddSystem);
+		jToolBar.addSeparator();
+
+		jShowFilters = new JCheckBox("Show");
+		jShowFilters.setMinimumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
+		jShowFilters.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
+		jShowFilters.setHorizontalAlignment(JButton.LEFT);
+		jShowFilters.setActionCommand(ACTION_SHOW_FILTERS);
+		jShowFilters.addActionListener(listener);
+		jShowFilters.setSelected(true);
+		jToolBar.add(jShowFilters);
 
 		jRows = new JLabel();
 		this.getPanel().add(jRows);
@@ -239,7 +227,7 @@ public class ToolPanel extends JGroupLayoutPanel {
 
 		pg = layout.createParallelGroup(GroupLayout.Alignment.LEADING);
 		pg.addGroup(sg);
-		if (!jHideFilters.isSelected()){
+		if (jShowFilters.isSelected()){
 			for (int a = 0; a < filters.size(); a++){
 				pg.addComponent(filters.get(a).getPanel());
 			}
@@ -257,7 +245,7 @@ public class ToolPanel extends JGroupLayoutPanel {
 		pg.addComponent(jRows, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT);
 		sg = layout.createSequentialGroup();
 		sg.addGroup(pg);
-		if (!jHideFilters.isSelected()){
+		if (jShowFilters.isSelected()){
 			for (int a = 0; a < filters.size(); a++){
 				sg.addComponent(filters.get(a).getPanel());
 			}
@@ -346,9 +334,6 @@ public class ToolPanel extends JGroupLayoutPanel {
 			if (ACTION_OPEN_FILTER_MANAGER.equals(e.getActionCommand())) {
 				program.getFiltersManagerDialog().setVisible(true);
 				return;
-			}
-			if (ACTION_ADD_SYSTEM.equals(e.getActionCommand())) {
-				new AddSystemController(program);
 			}
 			loadFilter(e.getActionCommand());
 		}

@@ -35,7 +35,6 @@ public enum Images {
 	ASSETS_CLEAR_FIELDS ("assets_clear_fields.png"),
 	ASSETS_SAVE_FILTERS ("assets_save_filters.png"),
 	ASSETS_LOAD_FILTER ("assets_load_filter.png"),
-	ASSETS_HIDE_FIELDS ("assets_hide_fields.png"),
 	ASSETS_AVERAGE ("assets_average.png"),
 	ASSETS_VOLUME ("assets_volume.png"),
 
