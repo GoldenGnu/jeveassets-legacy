@@ -21,18 +21,18 @@
 package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import java.util.Map;
-import javax.swing.Icon;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.UserItem;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class UserNameSettingsPanel extends JUserListPanel<Long, String> {
 
-	public UserNameSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon, DefaultMutableTreeNode parentNode) {
-		super(program, optionsDialog, icon, parentNode,
+	public UserNameSettingsPanel(Program program, SettingsDialog optionsDialog, DefaultMutableTreeNode parentNode) {
+		super(program, optionsDialog, Images.SETTINGS_USER_NAME.getIcon(), parentNode,
 				DialoguesSettings.get().names(),
 				DialoguesSettings.get().name(),
 				DialoguesSettings.get().namesInstruction()

@@ -22,10 +22,10 @@
 package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import javax.swing.GroupLayout;
-import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
@@ -34,8 +34,8 @@ public class AssetsToolSettingsPanel extends JSettingsPanel {
 		private JCheckBox jMarkSelectedRow;
 		private JCheckBox jReprocessColors;
 
-	public AssetsToolSettingsPanel(Program program, SettingsDialog settingsDialog, Icon icon, DefaultMutableTreeNode parentNode) {
-		super(program, settingsDialog, DialoguesSettings.get().assets(), icon, parentNode);
+	public AssetsToolSettingsPanel(Program program, SettingsDialog settingsDialog, DefaultMutableTreeNode parentNode) {
+		super(program, settingsDialog, DialoguesSettings.get().assets(), Images.TOOL_ASSETS.getIcon(), parentNode);
 
 		jEnterFilters = new JCheckBox(DialoguesSettings.get().enterFilter());
 

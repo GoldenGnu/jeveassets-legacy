@@ -59,8 +59,8 @@ public class AboutDialog extends JDialogCentered implements ActionListener, Hype
 	private JEditorPane jThanks;
 	private JWait jWait;
 	
-	public AboutDialog(Program program, Image image) {
-		super(program, DialoguesAbout.get().about(), image);
+	public AboutDialog(Program program) {
+		super(program, DialoguesAbout.get().about(), Images.DIALOG_ABOUT.getImage());
 
 		jWait = new JWait(this.getDialog());
 

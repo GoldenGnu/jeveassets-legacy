@@ -24,13 +24,13 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.GroupLayout;
-import javax.swing.Icon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
@@ -42,8 +42,8 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 	private JComboBox jPriceType;
 	private JComboBox jSource;
 	
-	public PriceDataSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon) {
-		super(program, optionsDialog, DialoguesSettings.get().priceData(), icon);
+	public PriceDataSettingsPanel(Program program, SettingsDialog optionsDialog) {
+		super(program, optionsDialog, DialoguesSettings.get().priceData(), Images.SETTINGS_PRICE_DATA.getIcon());
 		JTextArea jWarning = new JTextArea(DialoguesSettings.get().changeSourceWarning());
 		jWarning.setFont(this.getPanel().getFont());
 		jWarning.setBackground(this.getPanel().getBackground());

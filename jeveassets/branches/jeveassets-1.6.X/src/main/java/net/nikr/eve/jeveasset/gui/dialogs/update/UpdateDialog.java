@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs.update;
 
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -36,6 +35,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
 import net.nikr.eve.jeveasset.io.eveapi.AccountBalanceGetter;
@@ -72,8 +72,8 @@ public class UpdateDialog extends JDialogCentered implements ActionListener {
 	private JButton jCancel;
 	private List<JCheckBox> jCheckBoxes = new ArrayList<JCheckBox>();
 
-	public UpdateDialog(Program program, Image image) {
-		super(program, DialoguesUpdate.get().update(), image);
+	public UpdateDialog(Program program) {
+		super(program, DialoguesUpdate.get().update(), Images.DIALOG_UPDATE.getImage());
 
 		jCheckAll = new JCheckBox(DialoguesUpdate.get().all());
 		jCheckAll.setActionCommand(ACTION_CHECK_ALL);

@@ -25,18 +25,18 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 import java.util.Map;
-import javax.swing.Icon;
 import javax.swing.tree.DefaultMutableTreeNode;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.EveAsset;
 import net.nikr.eve.jeveasset.data.UserItem;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
 
 public class UserPriceSettingsPanel extends JUserListPanel<Integer, Double> {
 
-	public UserPriceSettingsPanel(Program program, SettingsDialog optionsDialog, Icon icon, DefaultMutableTreeNode parentNode) {
-		super(program, optionsDialog, icon, parentNode,
+	public UserPriceSettingsPanel(Program program, SettingsDialog optionsDialog, DefaultMutableTreeNode parentNode) {
+		super(program, optionsDialog, Images.SETTINGS_USER_PRICE.getIcon(), parentNode,
 				DialoguesSettings.get().pricePrices(),
 				DialoguesSettings.get().pricePrice(),
 				DialoguesSettings.get().priceInstructions()
