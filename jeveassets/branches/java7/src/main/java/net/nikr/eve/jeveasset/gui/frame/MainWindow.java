@@ -234,6 +234,8 @@ public class MainWindow implements WindowListener, ChangeListener {
 	}
 
 	private class TabCloseButton extends JPanel{
+		
+		private static final long serialVersionUID = 1L;
 
 		public TabCloseButton(final JMainTab jMainTab) {
 			super(new FlowLayout(FlowLayout.LEFT, 0, 0));

@@ -80,7 +80,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 	private JComboBox<FieldDelimiter> jFieldDelimiter;
 	private JComboBox<LineDelimiter> jLineDelimiter;
 	private JComboBox<DecimalSeperator> jDecimalSeparator;
-	private JMultiSelectionList jColumnSelection;
+	private JMultiSelectionList<String> jColumnSelection;
 	private JButton jOK;
 
 	private static DecimalFormat DoubleEn  = new DecimalFormat("0.##", new DecimalFormatSymbols(new Locale("en")));
@@ -229,20 +229,20 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 		jButtonGroup.add(jSavedFilter);
 		jButtonGroup.add(jCurrentFilter);
 
-		jFilters = new JComboBox<String>();
+		jFilters = new JComboBox<>();
 		jPanel.add(jFilters);
 		
 		JLabel jFieldDelimiterLabel = new JLabel(DialoguesCsvExport.get().fieldTerminated());
-		jFieldDelimiter = new JComboBox<FieldDelimiter>( FieldDelimiter.values() ); //new String[]{"Comma", "Semicolon"} );
+		jFieldDelimiter = new JComboBox<>( FieldDelimiter.values() ); //new String[]{"Comma", "Semicolon"} );
 
 		JLabel jLineDelimiterLabel = new JLabel(DialoguesCsvExport.get().linesTerminated());
-		jLineDelimiter = new JComboBox<LineDelimiter>( LineDelimiter.values() ); //new String[]{"\\n", "\\r\\n", "\\r"});
+		jLineDelimiter = new JComboBox<>( LineDelimiter.values() ); //new String[]{"\\n", "\\r\\n", "\\r"});
 
 		JLabel jDecimalSeparatorLabel = new JLabel(DialoguesCsvExport.get().decimalSeperator());
-		jDecimalSeparator = new JComboBox<DecimalSeperator>( DecimalSeperator.values() ); // new String[]{"Dot", "Comma"});
+		jDecimalSeparator = new JComboBox<>( DecimalSeperator.values() ); // new String[]{"Dot", "Comma"});
 
 		JLabel jColumnSelectionLabel = new JLabel(DialoguesCsvExport.get().columns());
-		jColumnSelection = new JMultiSelectionList( new Vector<String>(program.getSettings().getAssetTableSettings().getTableColumnNames()) );
+		jColumnSelection = new JMultiSelectionList<>( new ArrayList<>(program.getSettings().getAssetTableSettings().getTableColumnNames()) );
 		JScrollPane jColumnSelectionPanel = new JScrollPane(jColumnSelection);
 		jPanel.add(jColumnSelectionPanel);
 
@@ -370,7 +370,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 	}
 
 	private HashMap<String, ? super Object> getLine(String[] header, Asset eveAsset, String lang){
-		HashMap<String, ? super Object> line = new HashMap<String, Object>();
+		HashMap<String, ? super Object> line = new HashMap<>();
 		for (int a = 0; a < header.length; a++){
 			String headerName = header[a];
 			if (headerName.equals(DialoguesCsvExport.get().headerNameName())) line.put(headerName, eveAsset.getName());
@@ -430,18 +430,18 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 
 	@Override
 	protected void save() {
-		List<HashMap<String, ? super Object>> data = new ArrayList<HashMap<String, ? super Object>>();
+		List<HashMap<String, ? super Object>> data = new ArrayList<>();
 
-		Object[] columns = jColumnSelection.getSelectedValues();
+		List<String> columns = jColumnSelection.getSelectedValuesList();
 
-		if (columns.length == 0){
+		if (columns.isEmpty()){
 			JOptionPane.showMessageDialog(getDialog(), DialoguesCsvExport.get().selectOne(), DialoguesCsvExport.get().csvExport(), JOptionPane.PLAIN_MESSAGE);
 			return;
 		}
 
-		String[] header = new String[columns.length];
-		for (int a = 0; a < columns.length; a++){
-			header[a] = (String) columns[a];
+		String[] header = new String[columns.size()];
+		for (int a = 0; a < columns.size(); a++){
+			header[a] = columns.get(a);
 		}
 
 		char fieldDelimiter = ((FieldDelimiter)jFieldDelimiter.getSelectedItem()).getCharacter();
@@ -472,7 +472,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 		}
 		if (jCurrentFilter.isSelected()){
 			List<AssetFilter> assetFilters = program.getAssetsTab().getAssetFilters();
-			FilterList<Asset> assets = new FilterList<Asset>(program.getEveAssetEventList(), new AssetFilterLogicalMatcher(assetFilters));
+			FilterList<Asset> assets = new FilterList<>(program.getEveAssetEventList(), new AssetFilterLogicalMatcher(assetFilters));
 			for (int a = 0; a < assets.size(); a++){
 				Asset eveAsset = assets.get(a);
 				data.add(getLine(header, eveAsset, lang));
@@ -481,7 +481,7 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 		if (jSavedFilter.isSelected()){
 			String s = (String) jFilters.getSelectedItem();
 			List<AssetFilter> assetFilters = program.getSettings().getAssetFilters().get(s);
-			FilterList<Asset> assets = new FilterList<Asset>(program.getEveAssetEventList(), new AssetFilterLogicalMatcher(assetFilters));
+			FilterList<Asset> assets = new FilterList<>(program.getEveAssetEventList(), new AssetFilterLogicalMatcher(assetFilters));
 			for (int a = 0; a < assets.size(); a++){
 				Asset eveAsset = assets.get(a);
 				data.add(getLine(header, eveAsset, lang));
@@ -500,9 +500,9 @@ public class CsvExportDialog extends JDialogCentered implements ActionListener{
 	@Override
 	public void setVisible(boolean b) {
 		if (b){
-			Vector<String> assetFilters = new Vector<String>(program.getSettings().getAssetFilters().keySet());
+			Vector<String> assetFilters = new Vector<>(program.getSettings().getAssetFilters().keySet());
 			Collections.sort(assetFilters);
-			jFilters.setModel( new DefaultComboBoxModel<String>(assetFilters) );
+			jFilters.setModel( new DefaultComboBoxModel<>(assetFilters) );
 			jFilters.setEnabled(false);
 
 			if(assetFilters.isEmpty()){

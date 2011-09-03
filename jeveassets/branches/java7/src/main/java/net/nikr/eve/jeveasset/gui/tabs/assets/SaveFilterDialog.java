@@ -50,7 +50,7 @@ public class SaveFilterDialog extends JDialogCentered implements ActionListener 
 	public final static String ACTION_SELECTED = "ACTION_SELECTED";
 
 	private EventList<String> filters;
-	private JComboBox jName;
+	private JComboBox<String> jName;
 	private JButton jSave;
 
 	public SaveFilterDialog(Program program) {
@@ -58,12 +58,12 @@ public class SaveFilterDialog extends JDialogCentered implements ActionListener 
 		
 		JLabel jText = new JLabel(TabsAssets.get().enter());
 
-		jName = new JComboBox();
+		jName = new JComboBox<>();
 		jName.setActionCommand(ACTION_SELECTED);
 		jName.addActionListener(this);
 		JCopyPopup.install((JTextComponent) jName.getEditor().getEditorComponent());
-		filters = new BasicEventList<String>();
-		AutoCompleteSupport support = AutoCompleteSupport.install(jName, filters, new Filterator());
+		filters = new BasicEventList<>();
+		AutoCompleteSupport<String> support = AutoCompleteSupport.install(jName, filters, new Filterator());
 		
 		jSave = new JButton(TabsAssets.get().save1());
 		jSave.setActionCommand(ACTION_SAVE);

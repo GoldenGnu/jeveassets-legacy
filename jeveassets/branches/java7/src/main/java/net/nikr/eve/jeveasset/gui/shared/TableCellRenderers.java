@@ -28,6 +28,9 @@ import javax.swing.table.DefaultTableCellRenderer;
 public class TableCellRenderers {
 
 	public static class LongCellRenderer extends DefaultTableCellRenderer {
+		
+		private static final long serialVersionUID = 1L;
+		
 		public LongCellRenderer() {
 			this.setHorizontalTextPosition(DefaultTableCellRenderer.RIGHT);
 			this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
@@ -39,6 +42,9 @@ public class TableCellRenderers {
 	}
 
 	public static class DoubleCellRenderer extends DefaultTableCellRenderer {
+		
+		private static final long serialVersionUID = 1L;
+		
 		public DoubleCellRenderer() {
 			this.setHorizontalTextPosition(DefaultTableCellRenderer.RIGHT);
 			this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
@@ -50,6 +56,9 @@ public class TableCellRenderers {
 	}
 
 	public static class IntegerCellRenderer extends DefaultTableCellRenderer {
+		
+		private static final long serialVersionUID = 1L;
+		
 		public IntegerCellRenderer() {
 			this.setHorizontalTextPosition(DefaultTableCellRenderer.RIGHT);
 			this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
@@ -62,6 +71,9 @@ public class TableCellRenderers {
 	}
 
 	public static class FloatCellRenderer extends DefaultTableCellRenderer {
+		
+		private static final long serialVersionUID = 1L;
+		
 		public FloatCellRenderer() {
 			this.setHorizontalTextPosition(DefaultTableCellRenderer.RIGHT);
 			this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
@@ -73,6 +85,9 @@ public class TableCellRenderers {
 	}
 
 	public static class DateCellRenderer extends DefaultTableCellRenderer {
+		
+		private static final long serialVersionUID = 1L;
+		
 		public DateCellRenderer() {
 			this.setHorizontalTextPosition(DefaultTableCellRenderer.RIGHT);
 			this.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
@@ -84,6 +99,8 @@ public class TableCellRenderers {
 	}
 	
 	public static class ToStringCellRenderer extends DefaultTableCellRenderer {
+		
+		private static final long serialVersionUID = 1L;
 		
 		public ToStringCellRenderer() {	this(SwingConstants.RIGHT); }
 		public ToStringCellRenderer(int alignment) {

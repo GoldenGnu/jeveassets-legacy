@@ -26,8 +26,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
@@ -38,7 +38,7 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 
-public class JMultiSelectionList extends JList implements MouseListener, KeyListener, ListDataListener, MouseMotionListener  {
+public class JMultiSelectionList<E> extends JList<E> implements MouseListener, KeyListener, ListDataListener, MouseMotionListener  {
 	
 	private List<Integer> selectedList;
 	
@@ -46,26 +46,26 @@ public class JMultiSelectionList extends JList implements MouseListener, KeyList
 		this(new DefaultListModel());
 	}
 	
-	public JMultiSelectionList(final Vector<?> listData) {
+	public JMultiSelectionList(final List<E> listData) {
 		this (
-			new AbstractListModel() {
+			new AbstractListModel<E>() {
 				@Override
 				public int getSize() { return listData.size(); }
 				@Override
-				public Object getElementAt(int i) { return listData.elementAt(i); }
+				public E getElementAt(int i) { return listData.get(i); }
 			}
 		);
     }
 	
-	public JMultiSelectionList(ListModel model){
-		selectedList = new Vector<Integer>();
+	public JMultiSelectionList(ListModel<E> model){
+		super(model);
+		selectedList = new ArrayList<>();
 
 		this.addMouseListener(this);
 		this.addKeyListener(this);
 		this.addMouseMotionListener(this);
 		this.setDragEnabled(false);
 		
-		setModel( model );
 		this.setSelectionModel( new DefaultListSelectionModel() );
 		
 		//ListSelectionModel sm = this.getSelectionModel();
@@ -241,7 +241,7 @@ public class JMultiSelectionList extends JList implements MouseListener, KeyList
 	}
 	//Private Methods
 	private void updateList(int index, int fix){
-		List<Integer> fixedIndices = new Vector<Integer>(selectedList.size());
+		List<Integer> fixedIndices = new ArrayList<>(selectedList.size());
 		for (int a = 0; a < selectedList.size(); a++){
 			int item = selectedList.get(a).intValue();
 			if (item >= index){

@@ -39,7 +39,7 @@ public class HumanTableFormat implements AdvancedTableFormat<Object>, WritableTa
 	private List<String> columnNames;
 
 	public HumanTableFormat() {
-		columnNames = new ArrayList<String>();
+		columnNames = new ArrayList<>();
 		columnNames.add("");
 		columnNames.add(DialoguesAccount.get().tableFormatName());
 		columnNames.add(DialoguesAccount.get().tableFormatCorporation());
@@ -83,7 +83,7 @@ public class HumanTableFormat implements AdvancedTableFormat<Object>, WritableTa
 	}
 
 	@Override
-	public Class getColumnClass(int column) {
+	public Class<?> getColumnClass(int column) {
 		switch (column) {
 			case 0: return Boolean.class;
 			case 1: return String.class;
@@ -98,7 +98,7 @@ public class HumanTableFormat implements AdvancedTableFormat<Object>, WritableTa
 	}
 
 	@Override
-	public Comparator getColumnComparator(int column) {
+	public Comparator<?> getColumnComparator(int column) {
 		return GlazedLists.comparableComparator();
 	}
 

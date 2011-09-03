@@ -131,7 +131,7 @@ public class FiltersManagerDialog extends JDialogCentered {
 	public String getSelectedString(){
 		int selectedIndex =  jFilters.getSelectedIndex();
 		if (selectedIndex != -1){
-			return (String) listModel.get( jFilters.getSelectedIndex() );
+			return listModel.get( jFilters.getSelectedIndex() );
 		} else {
 			return null;
 		}

@@ -39,6 +39,7 @@ import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
+import javax.swing.ListCellRenderer;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingWorker;
 import net.nikr.eve.jeveasset.Program;
@@ -63,7 +64,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 	private final static String ACTION_DEFAULT_PROFILE = "ACTION_DEFAULT_PROFILE";
 	private final static String ACTION_CLOSE = "ACTION_CLOSE";
 
-	private JList jProfiles;
+	private JList<Profile> jProfiles;
 	private JButton jNew;
 	private JButton jLoad;
 	private JButton jRename;
@@ -79,7 +80,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 		jWait = new JWait(this.getDialog());
 		jValidatedInputDialog = new JValidatedInputDialog(program, this);
 
-		jProfiles = new JList();
+		jProfiles = new JList<>();
 		jProfiles.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		jProfiles.setVisibleRowCount(-1);
 		jProfiles.setCellRenderer( new JProfileListRenderer() );
@@ -152,7 +153,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 	}
 
 	private void updateProfiles(){
-		DefaultListModel listModel = new DefaultListModel();
+		DefaultListModel<Profile> listModel = new DefaultListModel<>();
 		List<Profile> profiles = program.getSettings().getProfiles();
 		Collections.sort(profiles);
 		for (int a = 0; a < profiles.size(); a++){
@@ -164,7 +165,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 
 
 	private void startLoadProfile(){
-		Profile profile = (Profile) jProfiles.getSelectedValue();
+		Profile profile = jProfiles.getSelectedValue();
 		if (profile.isActiveProfile()){
 			JOptionPane.showMessageDialog(this.getDialog(),
 					DialoguesProfiles.get().profileLoaded(),
@@ -243,7 +244,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 			startLoadProfile();
 		}
 		if(ACTION_RENAME_PROFILE.equals(e.getActionCommand())){
-			Profile profile = (Profile) jProfiles.getSelectedValue();
+			Profile profile = jProfiles.getSelectedValue();
 			if (profile != null){
 				String s = jValidatedInputDialog.show(DialoguesProfiles.get().renameProfile(),
 						DialoguesProfiles.get().enterNewName(),
@@ -264,7 +265,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 			}
 		}
 		if(ACTION_DELETE_PROFILE.equals(e.getActionCommand())){
-			Profile profile = (Profile) jProfiles.getSelectedValue();
+			Profile profile = jProfiles.getSelectedValue();
 			if (profile != null && profile.isActiveProfile()){
 				JOptionPane.showMessageDialog(this.getDialog(),
 						DialoguesProfiles.get().cannotDeleteActive(),
@@ -297,7 +298,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 			}
 		}
 		if(ACTION_DEFAULT_PROFILE.equals(e.getActionCommand())){
-			Profile profile = (Profile) jProfiles.getSelectedValue();
+			Profile profile = jProfiles.getSelectedValue();
 			if (profile != null && !profile.isDefaultProfile()){
 				List<Profile> profiles = program.getSettings().getProfiles();
 				for (int a = 0; a < profiles.size(); a++){
@@ -335,7 +336,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 	public void propertyChange(PropertyChangeEvent evt) {
 		Object o = evt.getSource();
 		if (o instanceof SwingWorker){
-			SwingWorker swingWorker = (SwingWorker) o;
+			SwingWorker<?, ?> swingWorker = (SwingWorker) o;
 			if (swingWorker.isDone()){
 				updateProfiles();
 				jProfiles.updateUI();
@@ -354,17 +355,16 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 		}
 	}
 
-	public class JProfileListRenderer extends DefaultListCellRenderer {
+	public class JProfileListRenderer implements ListCellRenderer<Profile> {
 
+		DefaultListCellRenderer renderer = new DefaultListCellRenderer();
+	
 		@Override
-		public Component getListCellRendererComponent(JList list, Object value, int index,  boolean isSelected, boolean cellHasFocus) {
-			Component component = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-			if (value instanceof Profile){
-				Profile profile = (Profile) value;
-				if (profile.isActiveProfile()){
-					Font font = component.getFont();
-					component.setFont(new Font(font.getName(), font.getStyle()+Font.BOLD, font.getSize()));
-				}
+		public Component getListCellRendererComponent(JList<? extends Profile> list, Profile value, int index,  boolean isSelected, boolean cellHasFocus) {
+			Component component = renderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+			if (value.isActiveProfile()){
+				Font font = component.getFont();
+				component.setFont(new Font(font.getName(), font.getStyle()+Font.BOLD, font.getSize()));
 			}
 			return component;
 		}

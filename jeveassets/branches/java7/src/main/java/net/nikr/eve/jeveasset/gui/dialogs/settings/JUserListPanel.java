@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.Icon;
@@ -46,7 +47,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 	public final static String ACTION_DELETE = "ACTION_DELETE";
 	public final static String ACTION_EDIT = "ACTION_EDIT";
 
-	private JComboBox<UserItem> jItems;
+	private JComboBox<UserItem<K,V>> jItems;
 	private JButton jEdit;
 	private JButton jDelete;
 
@@ -60,7 +61,7 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 
 		ListenerClass listener = new ListenerClass();
 
-		jItems = new JComboBox<UserItem>();
+		jItems = new JComboBox<UserItem<K,V>>();
 
 		jEdit = new JButton("Edit");
 		jEdit.setActionCommand(ACTION_EDIT);
@@ -163,12 +164,12 @@ public abstract class JUserListPanel<K, V extends Comparable<V>> extends JSettin
 	private void updateGUI(){
 		if (items.isEmpty()){
 			setEnabledAll(false);
-			jItems.setModel( new DefaultComboBoxModel<UserItem>() );
+			jItems.setModel( new DefaultComboBoxModel<UserItem<K,V>>() );
 			jItems.getModel().setSelectedItem("Empty");
 		} else {
 			setEnabledAll(true);
 			Collections.sort(listItems);
-			jItems.setModel( new DefaultComboBoxModel<UserItem>(listItems.toArray(new UserItem[listItems.size()])) );
+			jItems.setModel( new DefaultComboBoxModel<>( new Vector<>(listItems)));
 		}
 	}
 
