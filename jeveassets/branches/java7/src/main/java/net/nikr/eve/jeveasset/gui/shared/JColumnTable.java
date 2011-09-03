@@ -64,6 +64,8 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class JColumnTable extends JTable {
+	
+	private static final long serialVersionUID = 1L;
 
 	private final static String ACTION_AUTO_RESIZING_COLUMNS_TEXT = "ACTION_AUTO_RESIZING_COLUMNS_TEXT";
 	private final static String ACTION_AUTO_RESIZING_COLUMNS_WINDOW = "ACTION_AUTO_RESIZING_COLUMNS_WINDOW";
@@ -74,7 +76,7 @@ public class JColumnTable extends JTable {
 	private JDropDownButton jColumnsSelection;
 	private JMenu jColumnMenu;
 
-	private List<ColumnTableListener> listeners = new ArrayList<ColumnTableListener>();
+	private List<ColumnTableListener> listeners = new ArrayList<>();
 	private ListenerClass listenerClass = new ListenerClass();
 
 	private TableSettings columnTableSettings;

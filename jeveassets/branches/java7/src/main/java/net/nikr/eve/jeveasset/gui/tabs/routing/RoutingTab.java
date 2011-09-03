@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -86,8 +87,8 @@ public class RoutingTab extends JMainTab  {
 	private JButton jRemove;
 	private JButton jCalculate;
 	private JButton jAddSystem;
-	private JComboBox jAlgorithm;
-	private JComboBox jSource;
+	private JComboBox<RoutingAlgorithmContainer> jAlgorithm;
+	private JComboBox<SourceItem> jSource;
 	private JTextArea jDescription;
 	private MoveJList<SolarSystem> jAvailable;
 	private MoveJList<SolarSystem> jWaypoints;
@@ -128,13 +129,13 @@ public class RoutingTab extends JMainTab  {
 
 		jSourceLabel = new JLabel(TabsRouting.get().source());
 
-		jSource = new JComboBox();
+		jSource = new JComboBox<>();
 		jSource.setActionCommand(ACTION_SOURCE);
 		jSource.addActionListener(listener);
 
 		jAlgorithmLabel = new JLabel(TabsRouting.get().algorithm());
 
-		jAlgorithm = new JComboBox(RoutingAlgorithmContainer.getRegisteredList().toArray());
+		jAlgorithm = new JComboBox<>( new Vector<>(RoutingAlgorithmContainer.getRegisteredList()));
 		jAlgorithm.setSelectedIndex(0);
 		jAlgorithm.addItemListener(new ItemListener() {
 
@@ -162,9 +163,9 @@ public class RoutingTab extends JMainTab  {
 			}
 		};
 
-		jAvailable = new MoveJList<SolarSystem>(new EditableListModel<SolarSystem>());
+		jAvailable = new MoveJList<>(new EditableListModel<SolarSystem>());
 		jAvailable.getEditableModel().setSortComparator(comp);
-		jWaypoints = new MoveJList<SolarSystem>(new EditableListModel<SolarSystem>());
+		jWaypoints = new MoveJList<>(new EditableListModel<SolarSystem>());
 		jWaypoints.getEditableModel().setSortComparator(comp);
 		jWaypointsRemaining = new JLabel();
 		jAvailableRemaining = new JLabel();
@@ -306,7 +307,7 @@ public class RoutingTab extends JMainTab  {
 		int count = 0;
 		for (Jump jump : settings.getJumps()) { // this way we exclude the locations that are unreachable.
 			count++;
-			SplashUpdater.setSubProgress((int)(count * 100 / settings.getJumps().size()));
+			SplashUpdater.setSubProgress((count * 100 / settings.getJumps().size()));
 			SolarSystem f = null;
 			SolarSystem t = null;
 			for (Node n : filteredGraph.getNodes()) {
@@ -523,14 +524,14 @@ public class RoutingTab extends JMainTab  {
 		//Do everything the constructor does...
 		jAvailable.getEditableModel().clear();
 		jWaypoints.getEditableModel().clear();
-		List<SourceItem> sources = new ArrayList<SourceItem>();
+		List<SourceItem> sources = new ArrayList<>();
 		for (Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()){
 			sources.add(new SourceItem(entry.getKey(), true));
 		}
 		Collections.sort(sources);
 		sources.add(0, new SourceItem(TabsRouting.get().filteredAssets()));
 		sources.add(0, new SourceItem(TabsRouting.get().all()));
-		jSource.setModel( new DefaultComboBoxModel(sources.toArray()) );
+		jSource.setModel( new DefaultComboBoxModel<>( new Vector<>(sources)) );
 		jAlgorithm.setSelectedIndex(0);
 		jLastResultArea.setText(TabsRouting.get().once());
 		jLastResultArea.setCaretPosition(0);

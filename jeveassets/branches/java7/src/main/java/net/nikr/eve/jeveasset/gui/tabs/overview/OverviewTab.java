@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComboBox;
@@ -75,9 +76,9 @@ public class OverviewTab extends JMainTab {
 	private EventTableModel<Overview> overviewTableModel;
 	private EnumTableFormatAdaptor<OverviewTableFormat, Overview> overviewTableFormat;
 	private JOverviewTable jTable;
-	private JComboBox jViews;
-	private JComboBox jCharacters;
-	private JComboBox jSource;
+	private JComboBox<String> jViews;
+	private JComboBox<String> jCharacters;
+	private JComboBox<String> jSource;
 
 	private AddToGroup addToGroup = new AddToGroup();
 	private RemoveFromGroup removeFromGroup = new RemoveFromGroup();
@@ -87,32 +88,32 @@ public class OverviewTab extends JMainTab {
 		super(program, TabsOverview.get().overview(), Images.TOOL_OVERVIEW.getIcon(), true);
 
 		JLabel jViewsLabel = new JLabel(TabsOverview.get().view());
-		jViews = new JComboBox( new String[]  {TabsOverview.get().stations(), TabsOverview.get().systems(), TabsOverview.get().regions(), TabsOverview.get().groups()} );
+		jViews = new JComboBox<>( new String[]  {TabsOverview.get().stations(), TabsOverview.get().systems(), TabsOverview.get().regions(), TabsOverview.get().groups()} );
 		jViews.setActionCommand(ACTION_UPDATE_LIST);
 		jViews.addActionListener(listenerClass);
 
 		JLabel jCharactersLabel = new JLabel(TabsOverview.get().character());
-		jCharacters = new JComboBox();
+		jCharacters = new JComboBox<>();
 		jCharacters.setActionCommand(ACTION_UPDATE_LIST);
 		jCharacters.addActionListener(listenerClass);
 
 		JLabel jSourceLabel = new JLabel(TabsOverview.get().source());
-		jSource = new JComboBox( new String[]  {TabsOverview.get().allAssets(), TabsOverview.get().filteredAssets()} );
+		jSource = new JComboBox<>( new String[]  {TabsOverview.get().allAssets(), TabsOverview.get().filteredAssets()} );
 		jSource.setActionCommand(ACTION_UPDATE_LIST);
 		jSource.addActionListener(listenerClass);
 
 		//Table format
-		overviewTableFormat = new EnumTableFormatAdaptor<OverviewTableFormat, Overview>(OverviewTableFormat.class);
+		overviewTableFormat = new EnumTableFormatAdaptor<>(OverviewTableFormat.class);
 		//Backend
-		overviewEventList = new BasicEventList<Overview>();
+		overviewEventList = new BasicEventList<>();
 		//For soring the table
-		SortedList<Overview> overviewSortedList = new SortedList<Overview>(overviewEventList);
+		SortedList<Overview> overviewSortedList = new SortedList<>(overviewEventList);
 		//Table Model
-		overviewTableModel = new EventTableModel<Overview>(overviewSortedList, overviewTableFormat);
+		overviewTableModel = new EventTableModel<>(overviewSortedList, overviewTableFormat);
 		//Tables
 		jTable = new JOverviewTable(overviewTableModel);
 		//Table Selection
-		EventSelectionModel<Overview> selectionModel = new EventSelectionModel<Overview>(overviewSortedList);
+		EventSelectionModel<Overview> selectionModel = new EventSelectionModel<>(overviewSortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -277,9 +278,9 @@ public class OverviewTab extends JMainTab {
 	}
 
 	private List<Overview> getList(List<Asset> input, String character, String view){
-		List<Overview> locations = new ArrayList<Overview>();
-		Map<String, Overview> locationsMap = new HashMap<String, Overview>();
-		List<String> groupedLocations = new ArrayList<String>();
+		List<Overview> locations = new ArrayList<>();
+		Map<String, Overview> locationsMap = new HashMap<>();
+		List<String> groupedLocations = new ArrayList<>();
 		if (view.equals(TabsOverview.get().groups())){ //Add all groups
 			for (Map.Entry<String, OverviewGroup> entry : program.getSettings().getOverviewGroups().entrySet()){
 				OverviewGroup overviewGroup = entry.getValue();
@@ -399,7 +400,7 @@ public class OverviewTab extends JMainTab {
 	}
 
 	private List<OverviewLocation> getSelectedLocations(){
-		List<OverviewLocation> locations = new ArrayList<OverviewLocation>();
+		List<OverviewLocation> locations = new ArrayList<>();
 		for (int row : jTable.getSelectedRows()){
 			Overview overview = overviewTableModel.getElementAt(row);
 			OverviewLocation overviewLocation = null;
@@ -421,10 +422,10 @@ public class OverviewTab extends JMainTab {
 
 	@Override
 	public void updateData() {
-		List<String> characters = new ArrayList<String>();
+		List<String> characters = new ArrayList<>();
 		characters.add(TabsOverview.get().all());
-		List<String> chars = new ArrayList<String>();
-		List<String> corps = new ArrayList<String>();
+		List<String> chars = new ArrayList<>();
+		List<String> corps = new ArrayList<>();
 		for (Account account : program.getSettings().getAccounts()){
 			for (Human human : account.getHumans()){
 				if (human.isCorporation()){
@@ -439,7 +440,7 @@ public class OverviewTab extends JMainTab {
 		Collections.sort(corps);
 		characters.addAll(chars);
 		characters.addAll(corps);
-		jCharacters.setModel( new DefaultComboBoxModel(characters.toArray()));
+		jCharacters.setModel( new DefaultComboBoxModel<>( new Vector<>(characters)));
 		updateTable();
 	}
 
@@ -483,7 +484,7 @@ public class OverviewTab extends JMainTab {
 				int index = jTable.getSelectedRow();
 				Overview overview = overviewTableModel.getElementAt(index);
 				OverviewGroup overviewGroup = program.getSettings().getOverviewGroups().get(overview.getName());
-				List<AssetFilter> assetFilters = new ArrayList<AssetFilter>();
+				List<AssetFilter> assetFilters = new ArrayList<>();
 				for (OverviewLocation location : overviewGroup.getLocations()){
 					if (location.isStation()){
 						AssetFilter assetFilter = new AssetFilter("Location", location.getName(), AssetFilter.Mode.MODE_EQUALS, AssetFilter.Junction.OR, null);

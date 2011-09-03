@@ -62,9 +62,9 @@ public class ValuesTab extends JMainTab implements ActionListener {
 	private final String NAME_BEST_MODULE = TabsValues.get().best2();
 
 	//GUI
-	private JComboBox jOwners;
+	private JComboBox<String> jOwners;
 	private JEditorPane jOwner;
-	private JComboBox jCorps;
+	private JComboBox<String> jCorps;
 	private JEditorPane jCorp;
 	private JEditorPane jAll;
 
@@ -113,7 +113,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		gridHexColor = Integer.toHexString(jPanel.getBackground().darker().getRGB());
 		gridHexColor = gridHexColor.substring(2, gridHexColor.length());
 
-		jOwners = new JComboBox();
+		jOwners = new JComboBox<>();
 		jOwners.setActionCommand(ACTION_OWNER_SELECTED);
 		jOwners.addActionListener(this);
 
@@ -125,7 +125,7 @@ public class ValuesTab extends JMainTab implements ActionListener {
 		JScrollPane jOwnerScroll = new JScrollPane(jOwner);
 		jOwnerScroll.setBorder(null);
 
-		jCorps = new JComboBox();
+		jCorps = new JComboBox<>();
 		jCorps.setActionCommand(ACTION_CORP_SELECTED);
 		jCorps.addActionListener(this);
 

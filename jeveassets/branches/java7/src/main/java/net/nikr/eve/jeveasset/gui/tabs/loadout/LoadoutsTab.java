@@ -36,6 +36,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
@@ -79,8 +80,8 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 	private final static String ACTION_EXPAND = "ACTION_EXPAND";
 
 	//GUI
-	private JComboBox jCharacters;
-	private JComboBox jShips;
+	private JComboBox<String> jCharacters;
+	private JComboBox<String> jShips;
 	private JButton jExpand;
 	private JButton jCollapse;
 	private JSeparatorTable jTable;
@@ -116,12 +117,12 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 			}
 		}
 		JLabel jCharactersLabel = new JLabel(TabsLoadout.get().character());
-		jCharacters = new JComboBox();
+		jCharacters = new JComboBox<>();
 		jCharacters.setActionCommand(ACTION_CHARACTERS);
 		jCharacters.addActionListener(this);
 
 		JLabel jShipsLabel = new JLabel(TabsLoadout.get().ship1());
-		jShips = new JComboBox();
+		jShips = new JComboBox<>();
 		jShips.setActionCommand(ACTION_FILTER);
 		jShips.addActionListener(this);
 
@@ -141,11 +142,11 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		jExportAll.setActionCommand(ACTION_EXPORT_ALL_LOADOUTS);
 		jExportAll.addActionListener(this);
 		
-		EnumTableFormatAdaptor<ModuleTableFormat, Module> materialTableFormat = new EnumTableFormatAdaptor<ModuleTableFormat, Module>(ModuleTableFormat.class);
-		moduleEventList = new BasicEventList<Module>();
-		moduleFilterList = new FilterList<Module>(moduleEventList);
-		separatorList = new SeparatorList<Module>(moduleFilterList, new ModuleSeparatorComparator(), 1, Integer.MAX_VALUE);
-		moduleTableModel = new EventTableModel<Module>(separatorList, materialTableFormat);
+		EnumTableFormatAdaptor<ModuleTableFormat, Module> materialTableFormat = new EnumTableFormatAdaptor<>(ModuleTableFormat.class);
+		moduleEventList = new BasicEventList<>();
+		moduleFilterList = new FilterList<>(moduleEventList);
+		separatorList = new SeparatorList<>(moduleFilterList, new ModuleSeparatorComparator(), 1, Integer.MAX_VALUE);
+		moduleTableModel = new EventTableModel<>(separatorList, materialTableFormat);
 		//Tables
 		jTable = new JSeparatorTable(moduleTableModel);
 		jTable.setSeparatorRenderer(new ModuleSeparatorTableCell(jTable, separatorList));
@@ -154,7 +155,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		PaddingTableCellRenderer.install(jTable, 3);
 
 		//Selection Model
-		EventSelectionModel<Module> selectionModel = new EventSelectionModel<Module>(separatorList);
+		EventSelectionModel<Module> selectionModel = new EventSelectionModel<>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -292,7 +293,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 	}
 
 	private void updateTable(){
-		List<Module> ship = new ArrayList<Module>();
+		List<Module> ship = new ArrayList<>();
 		EventList<Asset> eveAssetEventList = program.getEveAssetEventList();
 		for (Asset eveAsset : eveAssetEventList){
 			String key = eveAsset.getName()+" #"+eveAsset.getItemID();
@@ -337,7 +338,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 
 	@Override
 	public void updateData() {
-		List<String > characters = new ArrayList<String>();
+		List<String > characters = new ArrayList<>();
 		List<Account> accounts = program.getSettings().getAccounts();
 		for (Account account : accounts){
 			for (Human human : account.getHumans()){
@@ -356,13 +357,13 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 			jCharacters.setEnabled(true);
 			Collections.sort(characters);
 			characters.add(0, "All");
-			jCharacters.setModel( new DefaultComboBoxModel(characters.toArray()));
+			jCharacters.setModel( new DefaultComboBoxModel<>( new Vector<>(characters)));
 			jCharacters.setSelectedIndex(0);
 		} else {
 			jCharacters.setEnabled(false);
-			jCharacters.setModel( new DefaultComboBoxModel());
+			jCharacters.setModel( new DefaultComboBoxModel<String>());
 			jCharacters.getModel().setSelectedItem(TabsLoadout.get().no());
-			jShips.setModel( new DefaultComboBoxModel());
+			jShips.setModel( new DefaultComboBoxModel<String>());
 			jShips.getModel().setSelectedItem(TabsLoadout.get().no());
 		}
 		updateTable();
@@ -372,7 +373,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_CHARACTERS.equals(e.getActionCommand())) {
 			String character = (String) jCharacters.getSelectedItem();
-			List<String> charShips = new ArrayList<String>();
+			List<String> charShips = new ArrayList<>();
 			EventList<Asset> eveAssetEventList = program.getEveAssetEventList();
 			for (Asset eveAsset : eveAssetEventList){
 				String key = eveAsset.getName()+" #"+eveAsset.getItemID();
@@ -394,7 +395,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 				jExportAll.setEnabled(true);
 				jCharacters.setEnabled(true);
 				jShips.setEnabled(true);
-				jShips.setModel( new DefaultComboBoxModel(charShips.toArray()));
+				jShips.setModel( new DefaultComboBoxModel<>( new Vector<>(charShips)));
 				jShips.setSelectedIndex(0);
 			} else {
 				jExpand.setEnabled(false);
@@ -402,7 +403,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 				jExport.setEnabled(false);
 				jExportAll.setEnabled(false);
 				jShips.setEnabled(false);
-				jShips.setModel( new DefaultComboBoxModel());
+				jShips.setModel( new DefaultComboBoxModel<String>());
 				jShips.getModel().setSelectedItem(TabsLoadout.get().no1());
 			}
 			
@@ -423,13 +424,13 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		}
 		if (ACTION_EXPORT_ALL_LOADOUTS.equals(e.getActionCommand())) {
 			String filename = browse();
-			List<Asset> ships = new ArrayList<Asset>();
+			List<Asset> ships = new ArrayList<>();
 			EventList<Asset> eveAssetEventList = program.getEveAssetEventList();
 			for (Asset eveAsset : eveAssetEventList){
 				if (!eveAsset.getCategory().equals("Ship") || !eveAsset.isSingleton() ) continue;
 				ships.add(eveAsset);
 			}
-			if (filename != null) EveFittingWriter.save(new ArrayList<Asset>(ships), filename);
+			if (filename != null) EveFittingWriter.save(new ArrayList<>(ships), filename);
 
 		}
 

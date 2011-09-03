@@ -23,14 +23,17 @@ package net.nikr.eve.jeveasset.gui.dialogs.settings;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Vector;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.Asset.PriceMode;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.FactionPrice;
+import net.nikr.eve.jeveasset.data.PriceDataSettings.RegionType;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
 
@@ -41,10 +44,10 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 
 	
 	
-	private JComboBox jRegions;
-	private JComboBox jPriceType;
-	private JComboBox jSource;
-	private JComboBox jFaction;
+	private JComboBox<RegionType> jRegions;
+	private JComboBox<PriceMode> jPriceType;
+	private JComboBox<String> jSource;
+	private JComboBox<FactionPrice> jFaction;
 	
 	public PriceDataSettingsPanel(Program program, SettingsDialog optionsDialog) {
 		super(program, optionsDialog, DialoguesSettings.get().priceData(), Images.SETTINGS_PRICE_DATA.getIcon());
@@ -57,19 +60,19 @@ public class PriceDataSettingsPanel extends JSettingsPanel {
 		jWarning.setEditable(false);
 
 		JLabel jRegionsLabel = new JLabel(DialoguesSettings.get().includeRegions());
-		jRegions = new JComboBox(PriceDataSettings.REGIONS_EVE_CENTRAL);
+		jRegions = new JComboBox<>(PriceDataSettings.REGIONS_EVE_CENTRAL);
 
 		JLabel jPriceTypeLabel = new JLabel(DialoguesSettings.get().price());
-		jPriceType = new JComboBox(Asset.getPriceTypes().toArray());
+		jPriceType = new JComboBox<>( new Vector<>(Asset.getPriceTypes()));
 
 		
 		JLabel jSourceLabel = new JLabel(DialoguesSettings.get().source());
-		jSource = new JComboBox(PriceDataSettings.SOURCES);
+		jSource = new JComboBox<>(PriceDataSettings.SOURCES);
 		jSource.setActionCommand(ACTION_SOURCE_SELECTED);
 		jSource.addActionListener(new ListenerClass());
 
 		JLabel jFactionLabel = new JLabel(DialoguesSettings.get().faction());
-		jFaction = new JComboBox(PriceDataSettings.FactionPrice.values());
+		jFaction = new JComboBox<>(PriceDataSettings.FactionPrice.values());
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)

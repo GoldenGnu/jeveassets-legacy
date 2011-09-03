@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.GroupLayout;
 import javax.swing.JComboBox;
@@ -65,8 +66,8 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 	private final static String ACTION_SELECTED = "ACTION_SELECTED";
 
 	
-	private JComboBox jCharacters;
-	private JComboBox jState;
+	private JComboBox<String> jCharacters;
+	private JComboBox<String> jState;
 	private EventTableModel<MarketOrder> sellOrdersTableModel;
 	private EventTableModel<MarketOrder> buyOrdersTableModel;
 	private EventList<MarketOrder> sellOrdersEventList;
@@ -84,36 +85,36 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 	public MarketOrdersTab(Program program) {
 		super(program, TabsOrders.get().market(), Images.TOOL_MARKET_ORDERS.getIcon(), true);
 
-		jCharacters = new JComboBox();
+		jCharacters = new JComboBox<>();
 		jCharacters.setActionCommand(ACTION_SELECTED);
 		jCharacters.addActionListener(this);
 
-		jState = new JComboBox();
+		jState = new JComboBox<>();
 		jState.setActionCommand(ACTION_SELECTED);
 		jState.addActionListener(this);
 
 		//Table format
 		EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> buyTableFormat =
-				new EnumTableFormatAdaptor<MarketTableFormat, MarketOrder>(MarketTableFormat.class);
+				new EnumTableFormatAdaptor<>(MarketTableFormat.class);
 		EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> sellTableFormat =
-				new EnumTableFormatAdaptor<MarketTableFormat, MarketOrder>(MarketTableFormat.class);
+				new EnumTableFormatAdaptor<>(MarketTableFormat.class);
 		//Backend
-		sellOrdersEventList = new BasicEventList<MarketOrder>();
-		buyOrdersEventList = new BasicEventList<MarketOrder>();
+		sellOrdersEventList = new BasicEventList<>();
+		buyOrdersEventList = new BasicEventList<>();
 		//For soring the table
-		SortedList<MarketOrder> sellOrdersSortedList = new SortedList<MarketOrder>(sellOrdersEventList);
-		SortedList<MarketOrder> buyOrdersSortedList = new SortedList<MarketOrder>(buyOrdersEventList);
+		SortedList<MarketOrder> sellOrdersSortedList = new SortedList<>(sellOrdersEventList);
+		SortedList<MarketOrder> buyOrdersSortedList = new SortedList<>(buyOrdersEventList);
 		//Table Model
-		sellOrdersTableModel = new EventTableModel<MarketOrder>(sellOrdersSortedList, sellTableFormat);
-		buyOrdersTableModel = new EventTableModel<MarketOrder>(buyOrdersSortedList, buyTableFormat);
+		sellOrdersTableModel = new EventTableModel<>(sellOrdersSortedList, sellTableFormat);
+		buyOrdersTableModel = new EventTableModel<>(buyOrdersSortedList, buyTableFormat);
 		//Tables
 		jSellOrders = new JAutoColumnTable(sellOrdersTableModel);
 		jBuyOrders = new JAutoColumnTable(buyOrdersTableModel);
 		//Table Selection
-		EventSelectionModel<MarketOrder> sellSelectionModel = new EventSelectionModel<MarketOrder>(sellOrdersEventList);
+		EventSelectionModel<MarketOrder> sellSelectionModel = new EventSelectionModel<>(sellOrdersEventList);
 		sellSelectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jSellOrders.setSelectionModel(sellSelectionModel);
-		EventSelectionModel<MarketOrder> buySelectionModel = new EventSelectionModel<MarketOrder>(buyOrdersEventList);
+		EventSelectionModel<MarketOrder> buySelectionModel = new EventSelectionModel<>(buyOrdersEventList);
 		buySelectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jBuyOrders.setSelectionModel(buySelectionModel);
 		//Listeners
@@ -227,15 +228,15 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 
 	@Override
 	public void updateData() {
-		characters = new ArrayList<String>();
-		orders = new HashMap<String, List<MarketOrder>>();
-		all = new ArrayList<MarketOrder>();
+		characters = new ArrayList<>();
+		orders = new HashMap<>();
+		all = new ArrayList<>();
 		List<Account> accounts = program.getSettings().getAccounts();
 		for (int a = 0; a < accounts.size(); a++){
 			List<Human> tempHumans = accounts.get(a).getHumans();
 			for (int b = 0; b < tempHumans.size(); b++){
 				Human human = tempHumans.get(b);
-				List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();
+				List<MarketOrder> marketOrders = new ArrayList<>();
 				orders.put(human.getName(), marketOrders);
 				if (human.isShowAssets()){
 					String name;
@@ -258,8 +259,8 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 			jBuyOrders.setEnabled(true);
 			Collections.sort(characters);
 			characters.add(0, "All");
-			jCharacters.setModel( new DefaultComboBoxModel(characters.toArray()));
-			jState.setModel( new DefaultComboBoxModel(orderStates));
+			jCharacters.setModel( new DefaultComboBoxModel<>( new Vector<>(characters)));
+			jState.setModel( new DefaultComboBoxModel<>(orderStates));
 			jCharacters.setSelectedIndex(0);
 			jState.setSelectedIndex(0);
 		} else {
@@ -267,9 +268,9 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 			jState.setEnabled(false);
 			jSellOrders.setEnabled(false);
 			jBuyOrders.setEnabled(false);
-			jCharacters.setModel( new DefaultComboBoxModel());
+			jCharacters.setModel( new DefaultComboBoxModel<String>());
 			jCharacters.getModel().setSelectedItem(TabsOrders.get().no());
-			jState.setModel( new DefaultComboBoxModel());
+			jState.setModel( new DefaultComboBoxModel<String>());
 			jState.getModel().setSelectedItem(TabsOrders.get().no());
 			sellOrdersEventList.clear();
 			buyOrdersEventList.clear();
@@ -282,8 +283,8 @@ public class MarketOrdersTab extends JMainTab implements ActionListener{
 			String selected = (String) jCharacters.getSelectedItem();
 			if (characters.size() > 1){
 				List<MarketOrder> marketOrders;
-				List<MarketOrder> sellMarketOrders = new ArrayList<MarketOrder>();
-				List<MarketOrder> buyMarketOrders = new ArrayList<MarketOrder>();
+				List<MarketOrder> sellMarketOrders = new ArrayList<>();
+				List<MarketOrder> buyMarketOrders = new ArrayList<>();
 				if (selected.equals("All")){
 					marketOrders = all;
 				} else {

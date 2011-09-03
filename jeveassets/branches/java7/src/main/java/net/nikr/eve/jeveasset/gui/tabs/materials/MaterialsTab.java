@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -65,7 +66,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 	private final static String ACTION_EXPAND = "ACTION_EXPAND";
 
 	//GUI
-	private JComboBox jCharacters;
+	private JComboBox<String> jCharacters;
 	private JButton jExpand;
 	private JButton jCollapse;
 	private JSeparatorTable jTable;
@@ -80,7 +81,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		//Category: Asteroid
 		//Category: Material
 
-		jCharacters = new JComboBox();
+		jCharacters = new JComboBox<>();
 		jCharacters.setActionCommand(ACTION_SELECTED);
 		jCharacters.addActionListener(this);
 
@@ -92,10 +93,10 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		jExpand.setActionCommand(ACTION_EXPAND);
 		jExpand.addActionListener(this);
 
-		EnumTableFormatAdaptor<MaterialTableFormat, Material> materialTableFormat = new EnumTableFormatAdaptor<MaterialTableFormat, Material>(MaterialTableFormat.class);
-		materialEventList = new BasicEventList<Material>();
-		separatorList = new SeparatorList<Material>(materialEventList, new MaterialSeparatorComparator(), 1, Integer.MAX_VALUE);
-		materialTableModel = new EventTableModel<Material>(separatorList, materialTableFormat);
+		EnumTableFormatAdaptor<MaterialTableFormat, Material> materialTableFormat = new EnumTableFormatAdaptor<>(MaterialTableFormat.class);
+		materialEventList = new BasicEventList<>();
+		separatorList = new SeparatorList<>(materialEventList, new MaterialSeparatorComparator(), 1, Integer.MAX_VALUE);
+		materialTableModel = new EventTableModel<>(separatorList, materialTableFormat);
 		//Tables
 		jTable = new JSeparatorTable(materialTableModel);
 		jTable.setSeparatorRenderer(new MaterialsSeparatorTableCell(jTable, separatorList));
@@ -103,7 +104,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 		PaddingTableCellRenderer.install(jTable, 3);
 
 		//Selection Model
-		EventSelectionModel<Material> selectionModel = new EventSelectionModel<Material>(separatorList);
+		EventSelectionModel<Material> selectionModel = new EventSelectionModel<>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -133,7 +134,7 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 
 	@Override
 	public void updateData() {
-		List<String > characters = new ArrayList<String>();
+		List<String > characters = new ArrayList<>();
 		List<Account> accounts = program.getSettings().getAccounts();
 		for (Account account : accounts){
 			for (Human human : account.getHumans()){
@@ -154,13 +155,13 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 			jCharacters.setEnabled(true);
 			Collections.sort(characters);
 			characters.add(0, "All");
-			jCharacters.setModel( new DefaultComboBoxModel(characters.toArray()));
+			jCharacters.setModel( new DefaultComboBoxModel<>( new Vector<>(characters)));
 			jCharacters.setSelectedIndex(0);
 		} else {
 			jExpand.setEnabled(false);
 			jCollapse.setEnabled(false);
 			jCharacters.setEnabled(false);
-			jCharacters.setModel( new DefaultComboBoxModel());
+			jCharacters.setModel( new DefaultComboBoxModel<String>());
 			jCharacters.getModel().setSelectedItem(TabsMaterials.get().no());
 		}
 	}
@@ -202,10 +203,10 @@ public class MaterialsTab extends JMainTab implements ActionListener{
 
 	private void updateTable(){
 		String character = (String) jCharacters.getSelectedItem();
-		List<Material> materials = new ArrayList<Material>();
-		Map<String, Material> uniqueMaterials = new HashMap<String, Material>();
-		Map<String, Material> summary = new HashMap<String, Material>();
-		Map<String, Material> total = new HashMap<String, Material>();
+		List<Material> materials = new ArrayList<>();
+		Map<String, Material> uniqueMaterials = new HashMap<>();
+		Map<String, Material> summary = new HashMap<>();
+		Map<String, Material> total = new HashMap<>();
 		EventList<Asset> eveAssetEventList = program.getEveAssetEventList();
 		Material allMaterials = new Material("2All", "2Summary", "2Grand Total", null);
 		for (Asset eveAsset : eveAssetEventList){

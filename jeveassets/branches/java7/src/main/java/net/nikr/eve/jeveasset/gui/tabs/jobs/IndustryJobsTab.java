@@ -34,7 +34,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -57,9 +56,9 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 
 	private final static String ACTION_SELECTED = "ACTION_SELECTED";
 
-	private JComboBox jCharacters;
-	private JComboBox jState;
-	private JComboBox jActivity;
+	private JComboBox<String> jCharacters;
+	private JComboBox<IndustryJob.IndustryJobState> jState;
+	private JComboBox<IndustryJob.IndustryActivity> jActivity;
 	private JAutoColumnTable jTable;
 
 	private EventList<IndustryJob> jobsEventList;
@@ -70,15 +69,15 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 	public IndustryJobsTab(Program program) {
 		super(program, TabsJobs.get().industry(), Images.TOOL_INDUSTRY_JOBS.getIcon(), true);
 
-		jCharacters = new JComboBox();
+		jCharacters = new JComboBox<>();
 		jCharacters.setActionCommand(ACTION_SELECTED);
 		jCharacters.addActionListener(this);
 
-		jState = new JComboBox();
+		jState = new JComboBox<>();
 		jState.setActionCommand(ACTION_SELECTED);
 		jState.addActionListener(this);
 
-		jActivity = new JComboBox();
+		jActivity = new JComboBox<>();
 		jActivity.setActionCommand(ACTION_SELECTED);
 		jActivity.addActionListener(this);
 
@@ -87,17 +86,17 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 		JLabel jActivityLabel = new JLabel(TabsJobs.get().activity());
 
 		//Table format
-		EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> industryJobsTableFormat = new EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob>(IndustryJobTableFormat.class);
+		EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> industryJobsTableFormat = new EnumTableFormatAdaptor<>(IndustryJobTableFormat.class);
 		//Backend
-		jobsEventList = new BasicEventList<IndustryJob>();
+		jobsEventList = new BasicEventList<>();
 		//For soring the table
-		SortedList<IndustryJob> jobsSortedList = new SortedList<IndustryJob>(jobsEventList);
+		SortedList<IndustryJob> jobsSortedList = new SortedList<>(jobsEventList);
 		//Table Model
-		jobsTableModel = new EventTableModel<IndustryJob>(jobsSortedList, industryJobsTableFormat);
+		jobsTableModel = new EventTableModel<>(jobsSortedList, industryJobsTableFormat);
 		//Tables
 		jTable = new JAutoColumnTable(jobsTableModel);
 		//Table Selection
-		EventSelectionModel<IndustryJob> selectionModel = new EventSelectionModel<IndustryJob>(jobsEventList);
+		EventSelectionModel<IndustryJob> selectionModel = new EventSelectionModel<>(jobsEventList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
@@ -161,9 +160,9 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 			jState.setEnabled(true);
 			Collections.sort(data.getCharacters());
 			data.getCharacters().add(0, TabsJobs.get().all());
-			jCharacters.setModel( new DefaultComboBoxModel(data.getCharacters()));
-			jActivity.setModel( new DefaultComboBoxModel(IndustryJob.IndustryActivity.values()));
-			jState.setModel( new DefaultComboBoxModel(IndustryJob.IndustryJobState.values()));
+			jCharacters.setModel( new DefaultComboBoxModel<>(data.getCharacters()));
+			jActivity.setModel( new DefaultComboBoxModel<>(IndustryJob.IndustryActivity.values()));
+			jState.setModel( new DefaultComboBoxModel<>(IndustryJob.IndustryJobState.values()));
 			jCharacters.setSelectedIndex(0);
 			jActivity.setSelectedIndex(0);
 			jState.setSelectedIndex(0);
@@ -172,11 +171,11 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 			jTable.setEnabled(false);
 			jActivity.setEnabled(false);
 			jState.setEnabled(false);
-			jCharacters.setModel( new DefaultComboBoxModel());
+			jCharacters.setModel( new DefaultComboBoxModel<String>());
 			jCharacters.getModel().setSelectedItem(TabsJobs.get().no());
-			jActivity.setModel( new DefaultComboBoxModel());
+			jActivity.setModel( new DefaultComboBoxModel<IndustryJob.IndustryActivity>());
 			jActivity.getModel().setSelectedItem(TabsJobs.get().no());
-			jState.setModel( new DefaultComboBoxModel());
+			jState.setModel( new DefaultComboBoxModel<IndustryJob.IndustryJobState>());
 			jState.getModel().setSelectedItem(TabsJobs.get().no());
 			jobsEventList.clear();
 		}
