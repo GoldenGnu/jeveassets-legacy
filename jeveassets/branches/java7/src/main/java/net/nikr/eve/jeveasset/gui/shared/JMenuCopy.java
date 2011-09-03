@@ -39,6 +39,8 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
  */
 public class JMenuCopy extends JMenuItem implements ActionListener, ClipboardOwner {
 
+	private static final long serialVersionUID = 1L;
+	
 	private static final String ACTION_COPY = "ACTION_COPY";
 
 	private JTable jTable;

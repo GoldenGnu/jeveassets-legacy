@@ -125,7 +125,7 @@ public class ApiConverter {
 	}
 
 	public static List<Asset> apiAsset(Human human, List<EveAsset> assets, Settings settings){
-		List<Asset> eveAssets = new ArrayList<Asset>();
+		List<Asset> eveAssets = new ArrayList<>();
 		apiAsset(human, assets, eveAssets, null, settings);
 		return eveAssets;
 	}

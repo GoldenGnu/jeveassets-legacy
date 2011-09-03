@@ -30,6 +30,8 @@ import net.nikr.eve.jeveasset.Program;
 
 
 public class EveAssetTableHeader extends JTableHeader {
+	
+	private static final long serialVersionUID = 1L;
 
 	private Program program;
 

@@ -29,10 +29,10 @@ import java.util.List;
 import javax.swing.AbstractListModel;
 import javax.swing.SwingUtilities;
 
-public class EditableListModel<T> extends AbstractListModel {
+public class EditableListModel<T> extends AbstractListModel<T> {
 
 	private static final long serialVersionUID = 1L;
-	List<T> backed = new ArrayList<T>();
+	List<T> backed = new ArrayList<>();
 	Comparator<T> sortComparator = new Comparator<T>() {
 		@Override
 		public int compare(T o1, T o2) {
@@ -70,7 +70,7 @@ public class EditableListModel<T> extends AbstractListModel {
 	}
 
 	@Override
-	public Object getElementAt(int index) {
+	public T getElementAt(int index) {
 		return backed.get(index);
 	}
 

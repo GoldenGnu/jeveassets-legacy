@@ -19,6 +19,8 @@ import net.nikr.eve.jeveasset.gui.shared.SeparatorTableCell;
  */
 public class MaterialsSeparatorTableCell extends SeparatorTableCell<Material> {
 
+	private static final long serialVersionUID = 1L;
+	
 	private final JLabel jLocation;
 	private final JLabel jGroup;
 

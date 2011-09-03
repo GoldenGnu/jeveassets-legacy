@@ -38,6 +38,8 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 public class JDropDownButton extends JButton implements PopupMenuListener, MouseListener, KeyListener {
 
+	private static final long serialVersionUID = 1L;
+	
 	private boolean showPopupMenuMouse = true;
 	private boolean showPopupMenuKey = true;
 	private boolean mouseOverThis = false;

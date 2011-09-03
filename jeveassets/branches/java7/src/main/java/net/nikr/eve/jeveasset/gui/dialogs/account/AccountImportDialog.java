@@ -373,6 +373,8 @@ public class AccountImportDialog extends JDialogCentered {
 	}
 
 	private class InputPanel extends JCardPanel {
+		
+		private static final long serialVersionUID = 1L;
 
 		public InputPanel() {
 			JLabel jUserIdLabel = new JLabel(DialoguesAccount.get().keyId());
@@ -425,6 +427,8 @@ public class AccountImportDialog extends JDialogCentered {
 	}
 
 	private class ValidatePanel extends JCardPanel{
+		
+		private static final long serialVersionUID = 1L;
 
 		public ValidatePanel() {
 			JLabel jHelp = new JLabel(DialoguesAccount.get().validatingMessage());
@@ -455,6 +459,8 @@ public class AccountImportDialog extends JDialogCentered {
 	}
 
 	private class DonePanel extends JCardPanel {
+		
+		private static final long serialVersionUID = 1L;
 
 		private JLabel jResult;
 

@@ -38,16 +38,18 @@ import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.LongCellRenderer;
 
 
 class JOverviewTable extends JAutoColumnTable{
+	
+	private static final long serialVersionUID = 1L;
 
 	private DoubleCellRenderer doubleCellRenderer;
 	private LongCellRenderer longCellRenderer;
 	private TableCellRenderer tableCellRenderer;
 	private IntegerCellRenderer integerCellRenderer;
 	private FloatCellRenderer floatCellRenderer;
-	private List<String> groupedLocations = new ArrayList<String>();
-	private EventTableModel eventTableModel;
+	private List<String> groupedLocations = new ArrayList<>();
+	private EventTableModel<?> eventTableModel;
 
-	public JOverviewTable(EventTableModel eventTableModel) {
+	public JOverviewTable(EventTableModel<?> eventTableModel) {
 		super(eventTableModel);
 		this.eventTableModel = eventTableModel;
 

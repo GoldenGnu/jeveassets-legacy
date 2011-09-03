@@ -40,15 +40,20 @@ import javax.swing.event.ListDataListener;
 
 public class JMultiSelectionList<E> extends JList<E> implements MouseListener, KeyListener, ListDataListener, MouseMotionListener  {
 	
+	private static final long serialVersionUID = 1L;
+	
 	private List<Integer> selectedList;
 	
 	public JMultiSelectionList(){
-		this(new DefaultListModel());
+		this(new DefaultListModel<E>());
 	}
 	
 	public JMultiSelectionList(final List<E> listData) {
 		this (
 			new AbstractListModel<E>() {
+				
+				private static final long serialVersionUID = 1L;
+				
 				@Override
 				public int getSize() { return listData.size(); }
 				@Override
@@ -138,7 +143,7 @@ public class JMultiSelectionList<E> extends JList<E> implements MouseListener, K
 	}
 	
 	@Override
-	public void setModel(ListModel model){
+	public void setModel(ListModel<E> model){
 		super.setModel(model);
 		model.addListDataListener(this);
 	}
@@ -255,7 +260,7 @@ public class JMultiSelectionList<E> extends JList<E> implements MouseListener, K
 	}
 	private void setAnchor(int nAnchor){
 		ListSelectionModel sm = this.getSelectionModel();
-		ListModel lm = this.getModel();
+		ListModel<E> lm = this.getModel();
 		if (nAnchor >= 0 && nAnchor < lm.getSize()){
 			if (this.isSelectedIndex(nAnchor)){
 				sm.removeSelectionInterval(nAnchor, nAnchor);
@@ -292,7 +297,7 @@ public class JMultiSelectionList<E> extends JList<E> implements MouseListener, K
 		setSelectedIndices(arr);
 	}
 	private void toggleSelectAll(){
-		ListModel lm = this.getModel();
+		ListModel<E> lm = this.getModel();
 		int size = selectedList.size();
 		selectedList.clear();
 		if (size != lm.getSize()){
@@ -304,7 +309,7 @@ public class JMultiSelectionList<E> extends JList<E> implements MouseListener, K
 		setAnchor(0);
 	}
 	public void selectAll(){
-		ListModel lm = this.getModel();
+		ListModel<E> lm = this.getModel();
 		selectedList.clear();
 		for (Integer a = 0; a < lm.getSize(); a++){
 			selectedList.add(a);

@@ -35,6 +35,8 @@ import org.slf4j.LoggerFactory;
 
 public class JMenuLookup extends JMenuTool implements ActionListener{
 
+	private static final long serialVersionUID = 1L;
+	
 	private final static Logger LOG = LoggerFactory.getLogger(JMenuLookup.class);
 
 	private static final String ACTION_BROWSE_EVE_CENTRAL = "ACTION_BROWSE_EVE_CENTRAL";

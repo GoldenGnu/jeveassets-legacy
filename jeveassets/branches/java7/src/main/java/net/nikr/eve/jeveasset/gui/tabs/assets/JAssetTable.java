@@ -39,6 +39,8 @@ import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.IntegerCellRenderer;
 
 public class JAssetTable extends JColumnTable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private EventTableModel<Asset> eventTableModel;
 	private DoubleCellRenderer doubleCellRenderer;
 	private LongCellRenderer longCellRenderer;

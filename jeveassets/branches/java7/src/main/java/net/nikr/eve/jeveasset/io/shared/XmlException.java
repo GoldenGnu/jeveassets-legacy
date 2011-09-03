@@ -23,6 +23,9 @@ package net.nikr.eve.jeveasset.io.shared;
 
 
 public class XmlException extends Exception {
+	
+	private static final long serialVersionUID = 1L;
+	
 	public XmlException(String message) {
 		super(message);
 	}

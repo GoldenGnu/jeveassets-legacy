@@ -54,15 +54,17 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 
 public class JAutoColumnTable extends JTable {
 
+	private static final long serialVersionUID = 1L;
+	
 	private JScrollPane jScroll;
-	private EventTableModel eventTableModel;
-	private EnumTableFormatAdaptor formatAdaptor = null;
+	private EventTableModel<?> eventTableModel;
+	private EnumTableFormatAdaptor<?, ?> formatAdaptor = null;
 
-	public JAutoColumnTable(EventTableModel eventTableModel) {
+	public JAutoColumnTable(EventTableModel<?> eventTableModel) {
 		setModel(eventTableModel);
 		this.eventTableModel = eventTableModel;
 
-		TableFormat tableFormat = eventTableModel.getTableFormat();
+		TableFormat<?> tableFormat = eventTableModel.getTableFormat();
 		if (tableFormat instanceof EnumTableFormatAdaptor){
 			formatAdaptor = (EnumTableFormatAdaptor) tableFormat;
 		}

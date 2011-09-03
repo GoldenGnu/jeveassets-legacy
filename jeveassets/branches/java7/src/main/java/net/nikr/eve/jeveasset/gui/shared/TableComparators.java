@@ -28,12 +28,12 @@ import java.util.regex.Pattern;
 
 public class TableComparators {
 
-	private static Comparator metaComparator = new MetaComparator();
+	private static Comparator<String> metaComparator = new MetaComparator();
 
 	private TableComparators() {
 	}
 
-	public static Comparator metaComparator() {
+	public static Comparator<String> metaComparator() {
 		return metaComparator;
 	}
 

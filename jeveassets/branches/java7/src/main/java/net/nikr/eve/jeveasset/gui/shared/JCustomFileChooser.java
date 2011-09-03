@@ -30,6 +30,8 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class JCustomFileChooser extends JFileChooser {
+	
+	private static final long serialVersionUID = 1L;
 
 	private String customExtension;
 	private String customDescription;

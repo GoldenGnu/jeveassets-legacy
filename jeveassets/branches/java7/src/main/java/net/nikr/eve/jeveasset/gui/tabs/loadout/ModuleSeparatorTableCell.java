@@ -19,6 +19,8 @@ import net.nikr.eve.jeveasset.i18n.TabsLoadout;
  * @author <a href="mailto:jesse@swank.ca">Jesse Wilson</a>
  */
 public class ModuleSeparatorTableCell extends SeparatorTableCell<Module> {
+	
+	private static final long serialVersionUID = 1L;
 
 	private final JLabel jOwner;
 	private final JLabel jLocation;

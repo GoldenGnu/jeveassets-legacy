@@ -26,28 +26,28 @@ import javax.swing.ListModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MoveJList<T> extends JList {
+public class MoveJList<E> extends JList<E> {
 
 	private final static Logger LOG = LoggerFactory.getLogger(MoveJList.class);
 
 	private static final long serialVersionUID = 1l;
 
 	public MoveJList() {
-		setModel(new EditableListModel<T>());
+		super(new EditableListModel<E>());
 	}
 
 	@SuppressWarnings("unchecked") // dealing with the non-generics ListModel
-	public MoveJList(ListModel dataModel) {
-		EditableListModel<T> m = new EditableListModel<T>();
+	public MoveJList(ListModel<E> dataModel) {
+		EditableListModel<E> m = new EditableListModel<>();
 		for (int i = 0; i < m.getSize(); ++i) {
-			m.add((T) m.getElementAt(i));
+			m.add(m.getElementAt(i));
 		}
 		setModel(m);
 	}
 
 	@SuppressWarnings("unchecked") // dealing with the non-generics ListModel/JList
-	public EditableListModel<T> getEditableModel() {
-		return (EditableListModel<T>) getModel();
+	public EditableListModel<E> getEditableModel() {
+		return (EditableListModel<E>) getModel();
 	}
 
 	/**
@@ -57,11 +57,10 @@ public class MoveJList<T> extends JList {
 	 * @return true if all the items were added.
 	 */
 	@SuppressWarnings("unchecked") // dealing with the non-generics ListModel/JList
-	public boolean move(MoveJList<T> to, int limit) {
-		EditableListModel<T> fModel = getEditableModel();
-		EditableListModel<T> tModel = to.getEditableModel();
-		for (Object obj : getSelectedValues()) {
-			T ss = (T) obj;
+	public boolean move(MoveJList<E> to, int limit) {
+		EditableListModel<E> fModel = getEditableModel();
+		EditableListModel<E> tModel = to.getEditableModel();
+		for (E ss : getSelectedValuesList()) {
 			if (fModel.contains(ss)) {
 				if (to.getModel().getSize() < limit) {
 					LOG.debug("Moving {}", ss);

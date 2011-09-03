@@ -50,7 +50,7 @@ public class EveAssetTableFormat implements AdvancedTableFormat<Asset> {
 	}
 
 	@Override
-	public Class getColumnClass(int i) {
+	public Class<?> getColumnClass(int i) {
 		String sColumn = settings.getAssetTableSettings().getTableColumnVisible().get(i);
 		if (sColumn.equals("Name")) return String.class;
 		if (sColumn.equals("Group")) return String.class;
@@ -79,7 +79,7 @@ public class EveAssetTableFormat implements AdvancedTableFormat<Asset> {
 	}
 
 	@Override
-	public Comparator getColumnComparator(int i) {
+	public Comparator<?> getColumnComparator(int i) {
 		String sColumn = settings.getAssetTableSettings().getTableColumnVisible().get(i);
 		if (sColumn.equals("Meta")) return TableComparators.metaComparator();
 		return GlazedLists.comparableComparator();

@@ -28,6 +28,8 @@ import javax.swing.JTextField;
 
 public class JNumberField extends JTextField implements FocusListener{
 
+	private static final long serialVersionUID = 1L;
+	
 	private String defaultValue;
 
 	public JNumberField() {

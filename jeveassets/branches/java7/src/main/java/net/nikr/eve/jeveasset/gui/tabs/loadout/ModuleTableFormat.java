@@ -56,18 +56,18 @@ enum ModuleTableFormat implements TableColumn<Module> {
 	},
 	;
 
-	Class type;
+	Class<?> type;
 	Comparator<?> comparator;
-	private ModuleTableFormat(Class type, Comparator<?> comparator) {
+	private ModuleTableFormat(Class<?> type, Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}
 	@Override
-	public Class getType() {
+	public Class<?> getType() {
 		return type;
 	}
 	@Override
-	public Comparator getComparator() {
+	public Comparator<?> getComparator() {
 		return comparator;
 	}
 }

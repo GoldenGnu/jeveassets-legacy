@@ -177,18 +177,18 @@ enum IndustryJobTableFormat implements TableColumn<IndustryJob> {
 	},
 	;
 
-	Class type;
+	Class<?> type;
 	Comparator<?> comparator;
-	private IndustryJobTableFormat(Class type, Comparator<?> comparator) {
+	private IndustryJobTableFormat(Class<?> type, Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}
 	@Override
-	public Class getType() {
+	public Class<?> getType() {
 		return type;
 	}
 	@Override
-	public Comparator getComparator() {
+	public Comparator<?> getComparator() {
 		return comparator;
 	}
 }

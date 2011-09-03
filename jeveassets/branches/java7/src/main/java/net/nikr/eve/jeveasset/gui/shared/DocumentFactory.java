@@ -42,6 +42,8 @@ public class DocumentFactory {
 	}
 
 	public static class IntegerPlainDocument extends PlainDocument {
+		
+		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void insertString(int offset, String string, AttributeSet attributes) throws BadLocationException {
@@ -69,6 +71,8 @@ public class DocumentFactory {
 
 
 	public static class DoublePlainDocument extends PlainDocument {
+		
+		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void insertString(int offset, String string, AttributeSet attributes) throws BadLocationException {
@@ -95,6 +99,8 @@ public class DocumentFactory {
 	}
 
 	public static class WordPlainDocument extends PlainDocument {
+		
+		private static final long serialVersionUID = 1L;
 
 		@Override
 		public void insertString(int offset, String string, AttributeSet attributes) throws BadLocationException {

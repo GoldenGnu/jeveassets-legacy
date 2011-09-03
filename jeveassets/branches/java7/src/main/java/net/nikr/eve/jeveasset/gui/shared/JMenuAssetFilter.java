@@ -31,6 +31,8 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class JMenuAssetFilter extends JMenuTool implements ActionListener {
+	
+	private static final long serialVersionUID = 1L;
 
 	private final static String ACTION_ADD_STATION_FILTER = "ACTION_ADD_STATION_FILTER";
 	private final static String ACTION_ADD_SYSTEM_FILTER = "ACTION_ADD_SYSTEM_FILTER";

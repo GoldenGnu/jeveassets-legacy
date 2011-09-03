@@ -38,10 +38,10 @@ public class FilterPanel extends JGroupLayoutPanel {
 	public final static String ACTION_REMOVE_FILTER = "ACTION_REMOVE_FILTER";
 
 	private JCheckBox jEnabled;
-	private JComboBox jAnd;
-	private JComboBox jColumn;
-	private JComboBox jMode;
-	private JComboBox jMatchColumn;
+	private JComboBox<AssetFilter.Junction> jAnd;
+	private JComboBox<String> jColumn;
+	private JComboBox<AssetFilter.Mode> jMode;
+	private JComboBox<String> jMatchColumn;
 	private JTextField jText;
 	private JPanel space;
 	private JButton jRemove;

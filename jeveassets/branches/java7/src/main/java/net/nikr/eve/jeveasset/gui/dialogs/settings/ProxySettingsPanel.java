@@ -48,7 +48,7 @@ public class ProxySettingsPanel extends JSettingsPanel {
 
 	public final static String ACTION_CANCEL = "ACTION_CANCEL";
 	public final static String ACTION_SAVE = "ACTION_SAVE";
-	private JComboBox proxyTypeField;
+	private JComboBox<Proxy.Type> proxyTypeField;
 	private JTextField proxyAddressField;
 	private JSpinner proxyPortField;
 	private JCheckBox enableApiProxy;
@@ -64,7 +64,7 @@ public class ProxySettingsPanel extends JSettingsPanel {
 		JLabel enableApiLabel = new JLabel(DialoguesSettings.get().enable());
 		JLabel apiProxyLabel = new JLabel(DialoguesSettings.get().apiProxy());
 
-		proxyTypeField = new JComboBox(new DefaultComboBoxModel(Proxy.Type.values()));
+		proxyTypeField = new JComboBox<>(new DefaultComboBoxModel<>(Proxy.Type.values()));
 		proxyTypeField.setEnabled(true);
 		proxyTypeField.setPreferredSize(new Dimension(200, (int) proxyTypeField.getPreferredSize().getHeight()));
 		proxyTypeField.setSelectedItem(Proxy.Type.DIRECT);

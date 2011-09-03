@@ -95,11 +95,11 @@ public class EnumTableFormatAdaptor<T extends Enum<T> & TableColumn<Q>, Q> imple
 		return shownColumns;
 	}
 
-	@Override public Class getColumnClass(int i) {
+	@Override public Class<?> getColumnClass(int i) {
 		return getColumn(i).getType();
 	}
 
-	@Override public Comparator getColumnComparator(int i) {
+	@Override public Comparator<?> getColumnComparator(int i) {
 		return getColumn(i).getComparator();
 	}
 

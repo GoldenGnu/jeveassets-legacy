@@ -166,6 +166,8 @@ public class LoadoutsExportDialog extends JDialogCentered implements ActionListe
 
 	private static class MaxLengthPlainDocument extends PlainDocument{
 
+		private static final long serialVersionUID = 1L;
+		
 		private int maxLength;
 
 		public MaxLengthPlainDocument(int maxLength) {
@@ -198,6 +200,8 @@ public class LoadoutsExportDialog extends JDialogCentered implements ActionListe
 
 	private static class MaxLengthStyledDocument extends DefaultStyledDocument{
 
+		private static final long serialVersionUID = 1L;
+		
 		private int maxLength;
 
 		public MaxLengthStyledDocument(int maxLength) {
