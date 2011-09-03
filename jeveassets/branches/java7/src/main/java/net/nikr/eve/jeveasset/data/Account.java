@@ -38,6 +38,19 @@ public class Account {
 	
 	private List<Human> humans = new ArrayList<Human>();;
 
+	public Account(Account account) {
+		this.keyID = account.getKeyID();
+		this.vCode = account.getVCode();
+		this.name = account.getName();
+		this.charactersNextUpdate = account.getCharactersNextUpdate();
+		this.accessMask = account.getAccessMask();
+		this.type = account.getType();
+		this.expires = account.getExpires();
+		for (Human human : account.getHumans()){
+			humans.add(new Human(this, human));
+		}
+	}
+
 	public Account(int keyID, String vCode) {
 		this(keyID, vCode, Integer.toString(keyID), Settings.getGmtNow(), 0, "", null);
 	}
@@ -169,5 +182,9 @@ public class Account {
 		hash = 53 * hash + this.keyID;
 		hash = 53 * hash + (this.vCode != null ? this.vCode.hashCode() : 0);
 		return hash;
+	}
+
+	public void setKeyID(int keyID) {
+		this.keyID = keyID;
 	}
 }

@@ -22,7 +22,7 @@
 package net.nikr.eve.jeveasset.io.eveapi;
 
 import com.beimin.eveapi.account.apikeyinfo.ApiKeyInfoResponse;
-import com.beimin.eveapi.account.characters.ApiCharacter;
+import com.beimin.eveapi.account.characters.EveCharacter;
 import com.beimin.eveapi.core.ApiException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -76,7 +76,7 @@ public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 		getAccount().setExpires(response.getExpires());
 		getAccount().setType(response.getType());
 		
-		List<ApiCharacter> characters = new ArrayList<ApiCharacter>(response.getEveCharacters());
+		List<EveCharacter> characters = new ArrayList<EveCharacter>(response.getEveCharacters());
 		List<Human> humans = new ArrayList<Human>();
 		
 		fails = 0;
@@ -86,22 +86,18 @@ public class HumansGetter extends AbstractApiGetter<ApiKeyInfoResponse> {
 			if (!getAccount().isMarketOrders()) fails++;
 			if (!getAccount().isAssetList()) fails = 4; //Can not work without it...
 		}
-		
-		for (int a = 0; a < characters.size(); a++){
-			ApiCharacter apiCharacter = characters.get(a);
-			Human human = new Human(getAccount(), getAccount().isCharacter() ? apiCharacter.getName() : apiCharacter.getCorporationName(), apiCharacter.getCharacterID());
-
-			if (!getAccount().getHumans().contains(human)){ //Add new account
-				humans.add(human);
-			} else { //Update existing account
-				for (int b = 0; b < getAccount().getHumans().size(); b++){
-					Human currentHuman = getAccount().getHumans().get(b);
-					if (currentHuman.equals(human)){
-						currentHuman.setName(human.getName());
-						humans.add(currentHuman);
-						break;
-					}
+		for (EveCharacter apiCharacter : characters){
+			boolean found = false;
+			for (Human human : getAccount().getHumans()){
+				if (human.getCharacterID() == apiCharacter.getCharacterID()){
+					human.setName(human.getName());
+					humans.add(human);
+					found = true;
+					break;
 				}
+			}
+			if (!found){ //Add
+				humans.add(new Human(getAccount(), getAccount().isCharacter() ? apiCharacter.getName() : apiCharacter.getCorporationName(), apiCharacter.getCharacterID()));
 			}
 		}
 		getAccount().setHumans(humans);

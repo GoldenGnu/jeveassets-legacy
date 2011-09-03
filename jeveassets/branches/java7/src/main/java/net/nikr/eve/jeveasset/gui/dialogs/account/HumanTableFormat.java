@@ -122,7 +122,7 @@ public class HumanTableFormat implements AdvancedTableFormat<Object>, WritableTa
 		return null;	
 	}
 	
-	public class YesNo{
+	public class YesNo implements Comparable<YesNo> {
 
 		private boolean b;
 
@@ -134,10 +134,15 @@ public class HumanTableFormat implements AdvancedTableFormat<Object>, WritableTa
 		public String toString(){
 			return b ? DialoguesAccount.get().tableFormatYes() : DialoguesAccount.get().tableFormatNo();
 		}
+
+		@Override
+		public int compareTo(YesNo o) {
+			return this.toString().compareTo(o.toString()); 
+		}
 		
 	}
 	
-	public class ExpirerDate{
+	public class ExpirerDate implements Comparable<ExpirerDate>{
 		private Date expirer;
 
 		public ExpirerDate(Date expirer) {
@@ -153,6 +158,11 @@ public class HumanTableFormat implements AdvancedTableFormat<Object>, WritableTa
 			} else {
 				return Formater.dateOnly(expirer);
 			}
+		}
+
+		@Override
+		public int compareTo(ExpirerDate o) {
+			return this.expirer.compareTo(o.expirer);
 		}
 	}
 
