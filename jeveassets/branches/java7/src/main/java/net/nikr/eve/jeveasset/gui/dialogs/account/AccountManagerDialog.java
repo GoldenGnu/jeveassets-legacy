@@ -84,11 +84,11 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 
 		accountImportDialog = new AccountImportDialog(this, program);
 
-		eventList = new BasicEventList<Human>();
+		eventList = new BasicEventList<>();
 
-		separatorList = new SeparatorList<Human>(eventList, new SeparatorListComparator(), 1, 3);
+		separatorList = new SeparatorList<>(eventList, new SeparatorListComparator(), 1, 3);
 		HumanTableFormat humanTableFormat = new HumanTableFormat();
-		tableModel = new EventTableModel<Human>(separatorList, humanTableFormat);
+		tableModel = new EventTableModel<>(separatorList, humanTableFormat);
 		jTable = new JSeparatorTable(tableModel);
 		jTable.getTableHeader().setReorderingAllowed(false);
 		jTable.setSeparatorRenderer(new HumanSeparatorTableCell(this, jTable, separatorList));
@@ -96,7 +96,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		jTable.setDefaultRenderer(YesNo.class, new ToStringCellRenderer(SwingConstants.CENTER));
 		jTable.setDefaultRenderer(ExpirerDate.class, new ToStringCellRenderer(SwingConstants.CENTER));
 
-		selectionModel = new EventSelectionModel<Human>(separatorList);
+		selectionModel = new EventSelectionModel<>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 
@@ -262,7 +262,7 @@ public class AccountManagerDialog extends JDialogCentered implements ActionListe
 		if (b){
 			forceUpdate = false;
 			updateTable();
-			shownAssets = new HashMap<Human, Boolean>();
+			shownAssets = new HashMap<>();
 			for (Account account : program.getSettings().getAccounts()){
 				for (Human human : account.getHumans()){
 					shownAssets.put(human, human.isShowAssets());
