@@ -78,10 +78,7 @@ public class Update1To2 implements LocalUpdate {
 			XMLWriter writer = new XMLWriter(fos, outformat);
 			writer.write(doc);
 			writer.flush();
-		} catch (IOException ex) {
-			LOG.error("", ex);
-			throw new RuntimeException(ex);
-		} catch (DocumentException ex) {
+		} catch (IOException | DocumentException ex) {
 			LOG.error("", ex);
 			throw new RuntimeException(ex);
 		}
@@ -89,8 +86,8 @@ public class Update1To2 implements LocalUpdate {
 
 	private void convertModes(Document doc) {
 		XPath xpathSelector = DocumentHelper.createXPath("/settings/filters/filter/row");
-		List results = xpathSelector.selectNodes(doc);
-		for (Iterator iter = results.iterator(); iter.hasNext();) {
+		List<?> results = xpathSelector.selectNodes(doc);
+		for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
 			Element elem = (Element) iter.next();
 			Attribute attr = elem.attribute("mode");
 			String currentValue = attr.getText();
@@ -100,8 +97,8 @@ public class Update1To2 implements LocalUpdate {
 
 	private void convertDefaultPriceModes(Document doc) {
 		XPath xpathSelector = DocumentHelper.createXPath("/settings/marketstat");
-		List results = xpathSelector.selectNodes(doc);
-		for (Iterator iter = results.iterator(); iter.hasNext();) {
+		List<?> results = xpathSelector.selectNodes(doc);
+		for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
 			Element elem = (Element) iter.next();
 			Attribute attr = elem.attribute("defaultprice");
 			if (attr != null){ //May not exist (in early versions)
@@ -113,10 +110,10 @@ public class Update1To2 implements LocalUpdate {
 
 	private void convertTableSettings(Document doc){
 		XPath xpathSelector = DocumentHelper.createXPath("/settings/columns/column");
-		List results = xpathSelector.selectNodes(doc);
-		List<String> tableColumnNames = new ArrayList<String>();
-		List<String> tableColumnVisible = new ArrayList<String>();
-		for (Iterator iter = results.iterator(); iter.hasNext();) {
+		List<?> results = xpathSelector.selectNodes(doc);
+		List<String> tableColumnNames = new ArrayList<>();
+		List<String> tableColumnVisible = new ArrayList<>();
+		for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
 			Element element = (Element) iter.next();
 			Attribute name = element.attribute("name");
 			Attribute visible = element.attribute("visible");
@@ -162,10 +159,10 @@ public class Update1To2 implements LocalUpdate {
 	
 	private ResizeMode convertFlag(Document doc){
 		XPath flagSelector = DocumentHelper.createXPath("/settings/flags/flag");
-		List flagResults = flagSelector.selectNodes(doc);
+		List<?> flagResults = flagSelector.selectNodes(doc);
 		boolean text = false;
 		boolean window = false;
-		for (Iterator iter = flagResults.iterator(); iter.hasNext();) {
+		for (Iterator<?> iter = flagResults.iterator(); iter.hasNext();) {
 			Element element = (Element) iter.next();
 			Attribute key = element.attribute("key");
 			Attribute visible = element.attribute("enabled");

@@ -41,7 +41,7 @@ public class ApiConverter {
 	private ApiConverter() {}
 
 	public static List<Asset> apiMarketOrder(List<ApiMarketOrder> marketOrders, Human human, Settings settings){
-		List<Asset> eveAssets = new ArrayList<Asset>();
+		List<Asset> eveAssets = new ArrayList<>();
 		for (ApiMarketOrder apiMarketOrder : marketOrders){
 			if (apiMarketOrder.getBid() == 0
 					&& apiMarketOrder.getOrderState() == 0
@@ -78,13 +78,13 @@ public class ApiConverter {
 		String security = ApiIdConverter.security(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		String solarSystem = ApiIdConverter.systemName(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		long solarSystemId = ApiIdConverter.systemID(locationID, null, settings.getConquerableStations(), settings.getLocations());
-		List<Asset> parents = new ArrayList<Asset>();
+		List<Asset> parents = new ArrayList<>();
 
 		return new Asset(name, group, category, owner, count, location, parents, flag, basePrice, meta, itemId, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity);
 	}
 
 	public static List<Asset> apiIndustryJob(List<ApiIndustryJob> industryJobs, Human human, Settings settings){
-		List<Asset> eveAssets = new ArrayList<Asset>();
+		List<Asset> eveAssets = new ArrayList<>();
 		for (ApiIndustryJob apiIndustryJob : industryJobs){
 			if (!apiIndustryJob.isCompleted()){
 				Asset eveAsset = apiIndustryJobToEveAsset(apiIndustryJob, human, settings);
@@ -119,28 +119,28 @@ public class ApiConverter {
 		String security = ApiIdConverter.security(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		String solarSystem = ApiIdConverter.systemName(locationID, null, settings.getConquerableStations(), settings.getLocations());
 		long solarSystemId = ApiIdConverter.systemID(locationID, null, settings.getConquerableStations(), settings.getLocations());
-		List<Asset> parents = new ArrayList<Asset>();
+		List<Asset> parents = new ArrayList<>();
 
 		return new Asset(name, group, category, owner, count, location, parents, flag, basePrice, meta, id, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity);
 	}
 
-	public static List<Asset> apiAsset(Human human, List<EveAsset> assets, Settings settings){
+	public static List<Asset> apiAsset(Human human, List<EveAsset<?>> assets, Settings settings){
 		List<Asset> eveAssets = new ArrayList<>();
 		apiAsset(human, assets, eveAssets, null, settings);
 		return eveAssets;
 	}
-	private static void apiAsset(Human human, List<EveAsset> assets, List<Asset> eveAssets, Asset parentEveAsset, Settings settings){
-		for (EveAsset asset : assets){
+	private static void apiAsset(Human human, List<EveAsset<?>> assets, List<Asset> eveAssets, Asset parentEveAsset, Settings settings){
+		for (EveAsset<?> asset : assets){
 			Asset eveAsset = apiAssetsToEveAsset(human, asset, parentEveAsset, settings);
 			if (parentEveAsset == null){
 				eveAssets.add(eveAsset);
 			} else {
 				parentEveAsset.addEveAsset(eveAsset);
 			}
-			apiAsset(human, new ArrayList<EveAsset>(asset.getAssets()), eveAssets, eveAsset, settings);
+			apiAsset(human, new ArrayList<>(asset.getAssets()), eveAssets, eveAsset, settings);
 		}
 	}
-	private static Asset apiAssetsToEveAsset(Human human, EveAsset apiAsset, Asset parentEveAsset, Settings settings){
+	private static Asset apiAssetsToEveAsset(Human human, EveAsset<?> apiAsset, Asset parentEveAsset, Settings settings){
 		long count = apiAsset.getQuantity();
 		String flag = ApiIdConverter.flag(apiAsset.getFlag(), settings.getItemFlags());
 		long itemId = apiAsset.getItemID();
@@ -169,7 +169,7 @@ public class ApiConverter {
 		return new Asset(name, group, category, owner, count, location, parents, flag, basePrice, meta, itemId, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity);
 	}
 	public static List<MarketOrder> apiMarketOrdersToMarketOrders(List<ApiMarketOrder> apiMarketOrders, Settings settings){
-		List<MarketOrder> marketOrders = new ArrayList<MarketOrder>();
+		List<MarketOrder> marketOrders = new ArrayList<>();
 		for (ApiMarketOrder apiMarketOrder : apiMarketOrders){
 			marketOrders.add(apiMarketOrderToMarketOrder(apiMarketOrder, settings));
 		}
@@ -183,7 +183,7 @@ public class ApiConverter {
 		return new MarketOrder(apiMarketOrder, name, location, system, region);
 	}
 	public static List<IndustryJob> apiIndustryJobsToIndustryJobs(List<ApiIndustryJob> apiIndustryJobs, String owner, Settings settings){
-		List<IndustryJob> industryJobs = new ArrayList<IndustryJob>();
+		List<IndustryJob> industryJobs = new ArrayList<>();
 		for (ApiIndustryJob apiIndustryJob : apiIndustryJobs){
 			industryJobs.add(apiIndustryJobToIndustryJob(apiIndustryJob, owner, settings));
 		}

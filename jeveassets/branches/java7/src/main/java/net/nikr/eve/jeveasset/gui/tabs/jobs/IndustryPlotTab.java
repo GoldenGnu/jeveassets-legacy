@@ -37,6 +37,7 @@ import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -177,7 +178,7 @@ public class IndustryPlotTab extends JMainTab {
 		SymbolAxis symbolAxis = new SymbolAxis(null, seriesNames.toArray(new String[]{}));
 		plot.setDomainAxis(symbolAxis);
 		plot.setBackgroundPaint(transparant);
-		DateAxis xAxis = new DateAxis(null, TimeZone.getTimeZone("GMT"));
+		DateAxis xAxis = new DateAxis(null, TimeZone.getTimeZone("GMT"), Locale.ENGLISH);
 		xAxis.setVerticalTickLabels(true);
 		plot.setRangeAxis(xAxis);
 
@@ -253,17 +254,17 @@ public class IndustryPlotTab extends JMainTab {
 
 	private TaskSeriesCollection createTasks() {
 		TaskSeriesCollection seriesList = new TaskSeriesCollection();
-		seriesNames = new ArrayList<String>();
+		seriesNames = new ArrayList<>();
 		chartDataInformation = new ChartDataInformation(jobColours);
 
 		// map of series IDs to the series.
-		Map<Long, TaskSeries> seriesMap = new HashMap<Long, TaskSeries>();
+		Map<Long, TaskSeries> seriesMap = new HashMap<>();
 		// map of series IDs to series counters.
-		Map<Long, Integer> seriesIdListId = new HashMap<Long, Integer>();
+		Map<Long, Integer> seriesIdListId = new HashMap<>();
 		// count how many we have added to each series.
-		Map<Integer, AtomicInteger> seriesCounters = new HashMap<Integer, AtomicInteger>();
+		Map<Integer, AtomicInteger> seriesCounters = new HashMap<>();
 
-		List<IndustryJob> jobsSorted = new ArrayList<IndustryJob>(data.getAll());
+		List<IndustryJob> jobsSorted = new ArrayList<>(data.getAll());
 		Collections.sort(jobsSorted, new Comparator<IndustryJob>() {
 			@Override
 			public int compare(IndustryJob o1, IndustryJob o2) {
@@ -308,8 +309,8 @@ public class IndustryPlotTab extends JMainTab {
 
 		ChartDataInformation(final Map<IndustryActivity, List<Color>> jobColours) {
 			this.jobColours = jobColours;
-			assemblyLineActivities = new HashMap<Long, IndustryActivity>();
-			rowColJobMap = new HashMap<Integer, Map<Integer, IndustryJob>>();
+			assemblyLineActivities = new HashMap<>();
+			rowColJobMap = new HashMap<>();
 		}
 
 		public void addIndustryJob(IndustryJob job, int x, int y) {
@@ -341,7 +342,7 @@ public class IndustryPlotTab extends JMainTab {
 	static class JobInformationPanel extends JPanel {
 		private static final long serialVersionUID = 1L;
 
-		static Map<IndustryActivity, JobInformationPanel> panels = new EnumMap<IndustryActivity, JobInformationPanel>(IndustryActivity.class);
+		static Map<IndustryActivity, JobInformationPanel> panels = new EnumMap<>(IndustryActivity.class);
 		static JobInformationPanel getPanelForJob(IndustryJob job) {
 			IndustryActivity activity;
 			if (job == null) {

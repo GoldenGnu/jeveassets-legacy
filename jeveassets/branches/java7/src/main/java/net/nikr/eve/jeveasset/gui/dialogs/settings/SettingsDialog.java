@@ -71,8 +71,8 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 	public SettingsDialog(Program program) {
 		super(program, DialoguesSettings.get().settings(Program.PROGRAM_NAME), Images.DIALOG_SETTINGS.getImage());
 
-		settingsPanels = new HashMap<String, JSettingsPanel>();
-		icons = new HashMap<Object, Icon>();
+		settingsPanels = new HashMap<>();
+		icons = new HashMap<>();
 
 		rootNode = new DefaultMutableTreeNode(DialoguesSettings.get().root());
 		treeModel = new DefaultTreeModel(rootNode);
@@ -154,7 +154,7 @@ public class SettingsDialog extends JDialogCentered implements ActionListener, T
 	private void expandAll(TreePath parent, boolean expand) {
 		TreeNode node = (TreeNode)parent.getLastPathComponent();
 		if (node.getChildCount() >= 0) {
-			for (Enumeration e=node.children(); e.hasMoreElements(); ) {
+			for (Enumeration<?> e=node.children(); e.hasMoreElements(); ) {
 				TreeNode n = (TreeNode)e.nextElement();
 				TreePath path = parent.pathByAddingChild(n);
 				expandAll(path, expand);

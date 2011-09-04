@@ -52,8 +52,8 @@ public class Update {
 		Document doc = xmlReader.read(xml);
 
 		XPath xpathSelector = DocumentHelper.createXPath("/settings");
-		List results = xpathSelector.selectNodes(doc);
-		for (Iterator iter = results.iterator(); iter.hasNext();) {
+		List<?> results = xpathSelector.selectNodes(doc);
+		for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
 			Element element = (Element) iter.next();
 			Attribute attr = element.attribute("version");
 			if (attr == null) {
@@ -70,8 +70,8 @@ public class Update {
 		Document doc = xmlReader.read(xml);
 
 		XPath xpathSelector = DocumentHelper.createXPath("/settings");
-		List results = xpathSelector.selectNodes(doc);
-		for (Iterator iter = results.iterator(); iter.hasNext();) {
+		List<?> results = xpathSelector.selectNodes(doc);
+		for (Iterator<?> iter = results.iterator(); iter.hasNext();) {
 			Element element = (Element) iter.next();
 			Attribute attr = element.attribute("version");
 			if (attr == null) {
