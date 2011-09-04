@@ -96,7 +96,7 @@ public class IndustryPlotTab extends JMainTab {
 
 	public IndustryPlotTab(Program program) {
 		super(program, "Industry Plot", Images.TOOL_INDUSTRY_JOBS.getIcon(), true);
-		jobColours = new EnumMap<IndustryJob.IndustryActivity, List<Color>>(IndustryJob.IndustryActivity.class);
+		jobColours = new EnumMap<>(IndustryJob.IndustryActivity.class);
 		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_COPYING, Arrays.asList(Color.YELLOW, new Color(180, 180, 0)));
 		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_DUPLICATING, Arrays.asList(Color.LIGHT_GRAY));
 		jobColours.put(IndustryJob.IndustryActivity.ACTIVITY_MANUFACTURING, Arrays.asList(Color.GREEN, new Color(0, 180, 0)));

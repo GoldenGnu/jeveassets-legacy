@@ -30,6 +30,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -79,20 +80,20 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<Asset>{
 		jEnabled.setActionCommand(ACTION_ENABLED);
 		jEnabled.addActionListener(listener);
 
-		jAnd = new JComboBox<AssetFilter.Junction>(AssetFilter.Junction.values());
+		jAnd = new JComboBox<>(AssetFilter.Junction.values());
 		jAnd.addActionListener(listener);
 
-		List<String> columns = new ArrayList<String>();
+		List<String> columns = new ArrayList<>();
 		columns.add("All");
 		columns.addAll( program.getSettings().getAssetTableSettings().getTableColumnNames() );
 		//Collections.
-		jColumn = new JComboBox<String>(columns.toArray(new String[columns.size()]));
+		jColumn = new JComboBox<>( new Vector<>(columns));
 		jColumn.setActionCommand(ACTION_COLUMN_SELECTED);
 		jColumn.addActionListener(listener);
-		jMatchColumn = new JComboBox<String>( program.getSettings().getAssetTableNumberColumns().toArray(new String[program.getSettings().getAssetTableNumberColumns().size()]) );
+		jMatchColumn = new JComboBox<>( new Vector<>(program.getSettings().getAssetTableNumberColumns()));
 		jMatchColumn.addActionListener(listener);
 
-		jMode = new JComboBox<AssetFilter.Mode>(new AssetFilter.Mode[] {AssetFilter.Mode.MODE_CONTAIN,
+		jMode = new JComboBox<>(new AssetFilter.Mode[] {AssetFilter.Mode.MODE_CONTAIN,
 											AssetFilter.Mode.MODE_CONTAIN_NOT,
 											AssetFilter.Mode.MODE_EQUALS,
 											AssetFilter.Mode.MODE_EQUALS_NOT
@@ -163,10 +164,10 @@ public class EveAssetMatcherEditor extends AbstractMatcherEditor<Asset>{
 				String column = (String) jColumn.getSelectedItem();
 				int index = jMode.getSelectedIndex();
 				if (program.getSettings().getAssetTableNumberColumns().contains(column)){
-					jMode.setModel( new DefaultComboBoxModel<AssetFilter.Mode>(AssetFilter.Mode.values()) );
+					jMode.setModel( new DefaultComboBoxModel<>(AssetFilter.Mode.values()) );
 					jMode.setSelectedIndex(index);
 				} else {
-					jMode.setModel( new DefaultComboBoxModel<AssetFilter.Mode>(
+					jMode.setModel( new DefaultComboBoxModel<>(
 							new AssetFilter.Mode[] {AssetFilter.Mode.MODE_CONTAIN,
 										  AssetFilter.Mode.MODE_CONTAIN_NOT,
 										  AssetFilter.Mode.MODE_EQUALS,
