@@ -37,16 +37,13 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import net.nikr.eve.jeveasset.Program;
 
-/**
- *
- * @author Niklas
- */
+
 public abstract class JMainTab{
 
 	private String title;
 	private Icon icon;
 	private boolean closeable;
-	private List<JLabel> statusbarLabels = new ArrayList<JLabel>();
+	private List<JLabel> statusbarLabels = new ArrayList<>();
 	protected Program program;
 	protected JPanel jPanel;
 	protected GroupLayout layout;
