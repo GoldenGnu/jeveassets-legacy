@@ -23,16 +23,14 @@ package net.nikr.eve.jeveasset.data;
 
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
-/**
- *
- * @author Niklas
- */
-public class ISK{
+
+public class ISK implements Comparable<ISK>{
 
 	double isk;
 
 	public ISK(double isk) {
 		this.isk = isk;
+		Double h;
 	}
 
 	public double getIsk() {
@@ -42,5 +40,10 @@ public class ISK{
 	@Override
 	public String toString() {
 		return Formater.iskFormat(isk);
+	}
+
+	@Override
+	public int compareTo(ISK o) {
+		return Double.compare(this.getIsk(), o.getIsk());
 	}
 }

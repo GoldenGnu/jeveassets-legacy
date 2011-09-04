@@ -25,10 +25,7 @@ package net.nikr.eve.jeveasset.data;
 import ca.odell.glazedlists.matchers.Matcher;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
-/**
- *
- * @author Niklas
- */
+
 public class Module implements Comparable<Module> {
 	private String name;
 	private String typeName;
@@ -201,7 +198,7 @@ public class Module implements Comparable<Module> {
 		return this.getCompare().compareTo(o.getCompare());
 	}
 
-	public static class ModulePriceValue{
+	public static class ModulePriceValue implements Comparable<ModulePriceValue> {
 		private double price;
 		private double value;
 		private long count;
@@ -219,6 +216,11 @@ public class Module implements Comparable<Module> {
 			} else {
 				return Formater.iskFormat(value);
 			}
+		}
+
+		@Override
+		public int compareTo(ModulePriceValue o) {
+			return this.toString().compareTo(o.toString());
 		}
 	}
 
