@@ -124,23 +124,23 @@ public class ApiConverter {
 		return new Asset(name, group, category, owner, count, location, parents, flag, basePrice, meta, id, typeID, marketGroup, corporation, volume, region, locationID, singleton, security, solarSystem, solarSystemId, rawQuantity);
 	}
 
-	public static List<Asset> apiAsset(Human human, List<EveAsset> assets, Settings settings){
+	public static List<Asset> apiAsset(Human human, List<EveAsset<?>> assets, Settings settings){
 		List<Asset> eveAssets = new ArrayList<Asset>();
 		apiAsset(human, assets, eveAssets, null, settings);
 		return eveAssets;
 	}
-	private static void apiAsset(Human human, List<EveAsset> assets, List<Asset> eveAssets, Asset parentEveAsset, Settings settings){
-		for (EveAsset asset : assets){
+	private static void apiAsset(Human human, List<EveAsset<?>> assets, List<Asset> eveAssets, Asset parentEveAsset, Settings settings){
+		for (EveAsset<?> asset : assets){
 			Asset eveAsset = apiAssetsToEveAsset(human, asset, parentEveAsset, settings);
 			if (parentEveAsset == null){
 				eveAssets.add(eveAsset);
 			} else {
 				parentEveAsset.addEveAsset(eveAsset);
 			}
-			apiAsset(human, new ArrayList<EveAsset>(asset.getAssets()), eveAssets, eveAsset, settings);
+			apiAsset(human, new ArrayList<EveAsset<?>>(asset.getAssets()), eveAssets, eveAsset, settings);
 		}
 	}
-	private static Asset apiAssetsToEveAsset(Human human, EveAsset apiAsset, Asset parentEveAsset, Settings settings){
+	private static Asset apiAssetsToEveAsset(Human human, EveAsset<?> apiAsset, Asset parentEveAsset, Settings settings){
 		long count = apiAsset.getQuantity();
 		String flag = ApiIdConverter.flag(apiAsset.getFlag(), settings.getItemFlags());
 		long itemId = apiAsset.getItemID();
