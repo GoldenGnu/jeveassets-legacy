@@ -44,6 +44,8 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.online.FactionGetter;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
@@ -83,6 +85,13 @@ public class SettingsReader extends AbstractXmlReader {
 			throw new XmlException("Wrong root element name.");
 		}
 
+		//CsvExport
+		NodeList stockpilesNodes = element.getElementsByTagName("stockpiles");
+		if (stockpilesNodes.getLength() == 1){
+			Element stockpilesElement = (Element) stockpilesNodes.item(0);
+			parseStockpiles(stockpilesElement, settings);
+		}
+		
 		//CsvExport
 		NodeList csvNodes = element.getElementsByTagName("csvexport");
 		if (csvNodes.getLength() == 1){
@@ -191,6 +200,33 @@ public class SettingsReader extends AbstractXmlReader {
 				break;
 			default:
 				throw new XmlException("Wrong apiProxy element count.");
+		}
+	}
+	
+	private static void parseStockpiles(Element stockpilesElement, Settings settings) {
+		NodeList stockpileNodes = stockpilesElement.getElementsByTagName("stockpile");
+		for (int a = 0; a < stockpileNodes.getLength(); a++){
+			Element stockpileNode = (Element) stockpileNodes.item(a);
+			String name = AttributeGetters.getString(stockpileNode, "name");
+
+			long characterID = AttributeGetters.getLong(stockpileNode, "characterid");
+			String container = AttributeGetters.getString(stockpileNode, "container");
+			int flagID = AttributeGetters.getInt(stockpileNode, "flagid");
+			long locationID = AttributeGetters.getLong(stockpileNode, "locationid");
+			
+			Stockpile stockpile = new Stockpile(name, characterID, locationID, flagID, container);
+			settings.getStockpiles().add(stockpile);
+			NodeList itemNodes = stockpileNode.getElementsByTagName("item");
+			for (int b = 0; b < itemNodes.getLength(); b++){
+				Element itemNode = (Element) itemNodes.item(b);
+				int typeID = AttributeGetters.getInt(itemNode, "typeid");
+				long countMinimum = AttributeGetters.getLong(itemNode, "minimum");
+				if (typeID > 0){ //Ignore Total
+					StockpileItem item = new StockpileItem(stockpile, settings.getItems().get(typeID).getName(), typeID, countMinimum);
+					stockpile.add(item);
+				}
+				
+			}
 		}
 	}
 

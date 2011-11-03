@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Item {
+public class Item implements Comparable<Item> {
 
 	private int typeID; //TypeID : int
 	private String name;
@@ -90,15 +90,40 @@ public class Item {
 	public float getVolume() {
 		return volume;
 	}
+	
+	public boolean isPiMaterial() {
+		return piMaterial;
+	}
 
 	@Override
 	public String toString(){
 		return name;
 	}
 
-	public boolean isPiMaterial() {
-		return piMaterial;
+	@Override
+	public int compareTo(Item o) {
+		return this.getName().compareTo(o.getName());
 	}
 
-	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Item other = (Item) obj;
+		if (this.typeID != other.typeID) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 3;
+		hash = 17 * hash + this.typeID;
+		return hash;
+	}	
 }

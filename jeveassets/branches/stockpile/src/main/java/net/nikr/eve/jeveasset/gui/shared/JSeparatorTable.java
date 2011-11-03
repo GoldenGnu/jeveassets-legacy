@@ -27,7 +27,8 @@ public class JSeparatorTable extends JAutoColumnTable {
 	/** working with separator cells */
 	private TableCellRenderer separatorRenderer;
 	private TableCellEditor separatorEditor;
-
+	private boolean revalidateLocked = false;
+	
 	
 	public JSeparatorTable(EventTableModel tableModel) {
 		super(tableModel);
@@ -86,7 +87,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 		// to an editor being installed before a bunch of rows were removed.
 		// In this case, just return an empty rectangle, since it's going to
 		// be discarded anyway
-		if(row >= eventTableModel.getRowCount()) {
+		if(row >= eventTableModel.getRowCount() || row < 0) {
 			return new Rectangle();
 		}
 
@@ -177,8 +178,43 @@ public class JSeparatorTable extends JAutoColumnTable {
 		// handle the change event
 		super.tableChanged(e);
 	}
-}
 
+	public boolean isRowHeightValid(){
+		if (separatorRenderer != null){
+			for (int row = 0; row < this.getRowCount(); row++){
+				TableCellRenderer renderer = this.getCellRenderer(row, 0);
+				Component component = this.prepareRenderer(renderer, row, 0);
+				if (this.getRowHeight(row) != component.getPreferredSize().height){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	//XXX - Dirty hack is dirty
+	@Override
+	public void revalidate() {
+		if (isRowHeightValid()){
+			super.revalidate();
+		} else {
+			if (!revalidateLocked){
+				revalidateLocked = true;
+				if (separatorRenderer != null){
+					for (int row = 0; row < this.getRowCount(); row++){
+						TableCellRenderer renderer = this.getCellRenderer(row, 0);
+						Component component = this.prepareRenderer(renderer, row, 0);
+						if (this.getRowHeight(row) != component.getPreferredSize().height){
+							this.setRowHeight(row, component.getPreferredSize().height);
+						}
+					}
+				}
+				super.revalidate();
+				revalidateLocked = false;
+			}
+		}
+	}
+}
 /**
  * Modified from BasicTableUI to allow for spanning cells.
  */
@@ -322,7 +358,7 @@ class SpanTableUI extends BasicTableUI {
 		Rectangle minCell = table.getCellRect(rMin, cMin, true);
 		Rectangle maxCell = table.getCellRect(rMax, cMax, true);
 		Rectangle damagedArea = minCell.union( maxCell );
-
+		
 		if (table.getShowHorizontalLines()) {
 			int tableWidth = damagedArea.x + damagedArea.width;
 			int y = damagedArea.y;
@@ -336,11 +372,11 @@ class SpanTableUI extends BasicTableUI {
 			int tableHeight = damagedArea.y + damagedArea.height;
 			int x;
 			if (table.getComponentOrientation().isLeftToRight()) {
-				x = damagedArea.x;
+				x = 0; //damagedArea.x;
 				for (int column = 0; column <= cMax; column++) {
 					x += cm.getColumn(column).getWidth();
-
-					   // redraw the grid lines for this column if it is damaged
+					 
+					// redraw the grid lines for this column if it is damaged
 					if (column >= cMin)
 						g.drawLine(x - 1, 0, x - 1, tableHeight - 1);
 				}

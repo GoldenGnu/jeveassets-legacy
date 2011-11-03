@@ -45,6 +45,7 @@ import java.util.TimeZone;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.model.Galaxy;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.io.local.AssetsReader;
 import net.nikr.eve.jeveasset.io.local.AssetsWriter;
 import net.nikr.eve.jeveasset.io.local.ConquerableStationsReader;
@@ -104,6 +105,7 @@ public class Settings{
 	private Map<Integer, UserItem<Integer,Double>> userPrices; //TypeID : int
 	private Map<Long, UserItem<Long, String>> userNames; //ItemID : long
 	private List<Asset> eventListAssets = null;
+	private final List<Stockpile> stockpiles = new ArrayList<Stockpile>();
 	private List<Account> accounts;
 	private Map<String, List<AssetFilter>> assetFilters;
 	private final List<String> assetTableColumns = new ArrayList<String>();
@@ -738,10 +740,9 @@ public class Settings{
 	public void setReprocessColors(boolean updateDev) {
 		flags.put(FLAG_REPROCESS_COLORS, updateDev);
 	}
-
-
-
-
+	public List<Stockpile> getStockpiles() {
+		return stockpiles;
+	}
 	//Window
 	public Point getWindowLocation() {
 		return windowLocation;

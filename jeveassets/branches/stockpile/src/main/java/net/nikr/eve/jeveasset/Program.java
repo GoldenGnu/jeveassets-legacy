@@ -68,6 +68,7 @@ import net.nikr.eve.jeveasset.gui.tabs.loadout.LoadoutsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.routing.RoutingTab;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.io.online.ProgramUpdateChecker;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import org.slf4j.Logger;
@@ -114,6 +115,7 @@ public class Program implements ActionListener, Listener<Asset>{
 	private IndustryPlotTab industryPlotTab;
 	private AssetsTab assetsTab;
 	private OverviewTab overviewTab;
+	private StockpileTab stockpileTab;
 
 	//Settings Panels
 	private GeneralSettingsPanel generalSettingsPanel;
@@ -191,6 +193,11 @@ public class Program implements ActionListener, Listener<Asset>{
 		SplashUpdater.setProgress(70);
 		LOG.info("Loading: Overview Tab");
 		overviewTab = new OverviewTab(this);
+		SplashUpdater.setProgress(72);
+		LOG.info("Loading: Stockpile Tab");
+		stockpileTab = new StockpileTab(this);
+		//FIXME do not open Stockpile on load...
+		mainWindow.addTab(stockpileTab);
 		SplashUpdater.setProgress(72);
 	//Dialogs
 		LOG.info("Loading: Save Filters Dialog");
@@ -458,6 +465,9 @@ public class Program implements ActionListener, Listener<Asset>{
 		}
 		if (MainMenu.ACTION_OPEN_ROUTING.equals(e.getActionCommand())) {
 			mainWindow.addTab(routingTab);
+		}
+		if (MainMenu.ACTION_OPEN_STOCKPILE.equals(e.getActionCommand())) {
+			mainWindow.addTab(stockpileTab);
 		}
 	//Settings
 		if (MainMenu.ACTION_OPEN_ACCOUNT_MANAGER.equals(e.getActionCommand())) {
