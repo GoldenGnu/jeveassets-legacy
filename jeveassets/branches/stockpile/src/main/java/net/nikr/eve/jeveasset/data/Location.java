@@ -54,13 +54,13 @@ public class Location implements Comparable<Location> {
 	}
 	
 	public boolean isRegion(){
-		return regionID == 0;
+		return regionID == locationID && locationID > 0;
 	}
 	public boolean isSystem(){
-		return systemID == locationID;
+		return systemID == locationID && locationID > 0;
 	}
 	public boolean isStation(){
-		return !isSystem() && !isRegion();
+		return !isSystem() && !isRegion() && locationID > 0;
 	}
 
 	@Override

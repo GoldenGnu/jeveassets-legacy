@@ -58,6 +58,7 @@ import net.nikr.eve.jeveasset.io.local.SettingsReader;
 import net.nikr.eve.jeveasset.io.local.SettingsWriter;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -676,6 +677,13 @@ public class Settings{
 
 	public Map<Long, ApiStation> getConquerableStations() {
 		return conquerableStations;
+	}
+
+	public void setConquerableStations(Map<Long, ApiStation> conquerableStations) {
+		this.conquerableStations = conquerableStations;
+		for (ApiStation station : conquerableStations.values()){
+			ApiIdConverter.addLocation(station, getLocations());
+		}
 	}
 
 	public Map<Integer, ItemFlag> getItemFlags() {

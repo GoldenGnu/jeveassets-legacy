@@ -32,6 +32,7 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.AssetFilter;
 import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.CsvSettings;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.Jump;
@@ -45,6 +46,7 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.TableSettings;
 import net.nikr.eve.jeveasset.data.UserItem;
 import net.nikr.eve.jeveasset.data.model.Galaxy;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 
 /**
@@ -416,4 +418,21 @@ public abstract class FakeSettings extends Settings {
 	public Map<Integer, PriceData> getPriceFactionData() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public CsvSettings getCsvSettings() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public List<Stockpile> getStockpiles() {
+		throw new UnsupportedOperationException("not implemented");
+	}
+
+	@Override
+	public void setCsvSettings(CsvSettings csvSettings) {
+		throw new UnsupportedOperationException("not implemented");
+	}
+	
+	
 }

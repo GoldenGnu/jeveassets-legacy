@@ -38,6 +38,7 @@ import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
@@ -47,10 +48,14 @@ import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
+import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
+import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
+import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
 import net.nikr.eve.jeveasset.gui.shared.JSeparatorTable;
 import net.nikr.eve.jeveasset.gui.shared.PaddingTableCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileSeparatorTableCell.JStockpileMenuItem;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
@@ -100,10 +105,10 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		jTable.setSeparatorRenderer(new StockpileSeparatorTableCell(jTable, separatorList, this));
 		jTable.setSeparatorEditor(new StockpileSeparatorTableCell(jTable, separatorList, this));
 		PaddingTableCellRenderer.install(jTable, 3);
-
+		//Listeners
+		installTableMenu(jTable);
+		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
-		
-		
 		//Selection Model
 		EventSelectionModel<StockpileItem> selectionModel = new EventSelectionModel<StockpileItem>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -130,13 +135,38 @@ public class StockpileTab extends JMainTab implements ActionListener {
 	}
 
 	@Override
-	public void updateTableMenu(JComponent jComponent) {
-		jComponent.removeAll();
-		jComponent.setEnabled(false);
+	protected void showTablePopupMenu(MouseEvent e) {
+		JPopupMenu jTablePopupMenu = new JPopupMenu();
+		jTable.setRowSelectionInterval(jTable.rowAtPoint(e.getPoint()), jTable.rowAtPoint(e.getPoint()));
+		jTable.setColumnSelectionInterval(0, jTable.getColumnCount()-1);
+
+		updateTableMenu(jTablePopupMenu);
+
+		if (jTable.getSelectedRows().length == 1){
+			Object o = stockpileTableModel.getElementAt(jTable.getSelectedRow());
+			if (o instanceof StockpileItem){
+				jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
+			}
+		}
 	}
 
 	@Override
-	protected void showTablePopupMenu(MouseEvent e) {}
+	public void updateTableMenu(JComponent jComponent){
+		jComponent.removeAll();
+		jComponent.setEnabled(true);
+
+		boolean isSingleRow = jTable.getSelectedRows().length == 1;
+		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
+
+		Object obj = isSingleRow ? (Object) stockpileTableModel.getElementAt(jTable.getSelectedRow()) : null;
+	//COPY
+		if (isSelected && jComponent instanceof JPopupMenu){
+			jComponent.add(new JMenuCopy(jTable));
+			addSeparator(jComponent);
+		}
+		jComponent.add(new JMenuAssetFilter(program, obj));
+		jComponent.add(new JMenuLookup(program, obj));
+	}
 
 	@Override
 	public void updateData() {

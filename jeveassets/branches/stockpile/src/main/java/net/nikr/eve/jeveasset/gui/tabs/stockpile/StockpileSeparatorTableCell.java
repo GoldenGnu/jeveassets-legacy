@@ -171,7 +171,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		if ((e.getChangeFlags() & HierarchyEvent.PARENT_CHANGED) == HierarchyEvent.PARENT_CHANGED){
 			JViewport jViewport = getParentViewport();
 			if (jViewport != null){
-				Container container = getParentViewport().getParent();;
+				Container container = getParentViewport().getParent();
 				if (container instanceof JScrollPane){
 					JScrollPane jScroll = (JScrollPane) container;
 					jScroll.getVerticalScrollBar().removeAdjustmentListener(this);

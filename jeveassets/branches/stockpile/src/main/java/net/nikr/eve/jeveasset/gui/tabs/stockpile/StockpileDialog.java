@@ -58,6 +58,7 @@ import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class StockpileDialog extends JDialogCentered implements ActionListener, ItemListener, CaretListener {
@@ -83,7 +84,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 	private List<String> myLocations;
 	private final Human humanAll = new Human(null, TabsStockpile.get().all(), -1);
 	private final ItemFlag itemFlagAll = new ItemFlag(-1, TabsStockpile.get().all(), "");
-	private final Location locationAll = new Location(-1, TabsStockpile.get().allLocations(), -1, "", -1);
+	public static final Location locationAll = new Location(-1, TabsStockpile.get().allLocations(), -1, "", -1);
 	private Stockpile stockpile;
 	private Stockpile cloneStockpile;
 	AutoCompleteSupport<Location> locationsAutoComplete;
@@ -230,14 +231,27 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		Human human = (Human) jCharacters.getSelectedItem();
 		//Location
 		Location location = (Location) jLocations.getSelectedItem();
-		long locationID = -1;
-		if (location != null) locationID = location.getLocationID();
+		
+		String station = null;
+		String system = null;
+		String region = null;
+		if (location.isRegion() || location.isSystem() || location.isStation()){
+			region = ApiIdConverter.regionName(location.getLocationID(), null, program.getSettings().getLocations());
+		}
+		if (location.isSystem() || location.isStation()){
+			system = ApiIdConverter.systemName(location.getLocationID(), null, program.getSettings().getLocations());
+		}
+		if (location.isStation()){
+			station = ApiIdConverter.locationName(location.getLocationID(), null, program.getSettings().getLocations());
+		}
+		System.out.println("station: "+station+" system: "+system+" region: "+region);
 		//Flag
 		ItemFlag flag = (ItemFlag) jFlag.getSelectedItem();
 		//Container
 		String container = (String)jContainer.getSelectedItem();
 		//Add
-		return new Stockpile(name, human.getCharacterID(), locationID, flag.getFlagID(), container);
+		
+		return new Stockpile(name, human.getCharacterID(), location.getLocationID(), station, system, region, flag.getFlagID(), container);
 	}
 	
 	private void autoValidate(){

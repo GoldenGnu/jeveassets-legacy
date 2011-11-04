@@ -35,6 +35,7 @@ import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.CsvSettings.DecimalSeperator;
 import net.nikr.eve.jeveasset.data.CsvSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.CsvSettings.LineDelimiter;
+import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.OverviewGroup;
 import net.nikr.eve.jeveasset.data.OverviewLocation;
 import net.nikr.eve.jeveasset.data.PriceDataSettings;
@@ -46,9 +47,11 @@ import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserNam
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileDialog;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.online.FactionGetter;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.io.shared.AttributeGetters;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
 import org.slf4j.Logger;
@@ -214,7 +217,23 @@ public class SettingsReader extends AbstractXmlReader {
 			int flagID = AttributeGetters.getInt(stockpileNode, "flagid");
 			long locationID = AttributeGetters.getLong(stockpileNode, "locationid");
 			
-			Stockpile stockpile = new Stockpile(name, characterID, locationID, flagID, container);
+			//FIXME Conquerable Stations is not added...
+			Location location = settings.getLocations().get(locationID);
+			String station = null;
+			String system = null;
+			String region = null;
+			if (location == null) location = StockpileDialog.locationAll;
+			if (location.isRegion() || location.isSystem() || location.isStation()){
+				region = ApiIdConverter.regionName(location.getLocationID(), null, settings.getLocations());
+			}
+			if (location.isSystem() || location.isStation()){
+				system = ApiIdConverter.systemName(location.getLocationID(), null, settings.getLocations());
+			}
+			if (location.isStation()){
+				station = ApiIdConverter.locationName(location.getLocationID(), null, settings.getLocations());
+			}
+			
+			Stockpile stockpile = new Stockpile(name, characterID, locationID, station, system, region, flagID, container);
 			settings.getStockpiles().add(stockpile);
 			NodeList itemNodes = stockpileNode.getElementsByTagName("item");
 			for (int b = 0; b < itemNodes.getLength(); b++){

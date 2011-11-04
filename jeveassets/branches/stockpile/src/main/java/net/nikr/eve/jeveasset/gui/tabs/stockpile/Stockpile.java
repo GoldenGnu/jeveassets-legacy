@@ -31,6 +31,9 @@ public class Stockpile {
 	private String name;
 	private long characterID;
 	private long locationID;
+	private String location;
+	private String system;
+	private String region;
 	private int flagID;
 	private String container;
 	private List<StockpileItem> items = new ArrayList<StockpileItem>();
@@ -49,11 +52,14 @@ public class Stockpile {
 		}
 		items.add(totalItem);
 	}
-	
-	public Stockpile(String name, long characterID, long locationID, int flagID, String container) {
+
+	public Stockpile(String name, long characterID, long locationID, String location, String system, String region, int flagID, String container) {
 		this.name = name;
 		this.characterID = characterID;
 		this.locationID = locationID;
+		this.location = location;
+		this.system = system;
+		this.region = region;
 		this.flagID = flagID;
 		this.container = container;
 		items.add(totalItem);
@@ -63,6 +69,9 @@ public class Stockpile {
 		this.name = stockpile.getName();
 		this.characterID = stockpile.getCharacterID();
 		this.locationID = stockpile.getLocationID();
+		this.location = stockpile.getLocation();
+		this.system = stockpile.getSystem();
+		this.region = stockpile.getRegion();
 		this.flagID = stockpile.getFlagID();
 		this.container = stockpile.getContainer();
 	}
@@ -123,6 +132,18 @@ public class Stockpile {
 		return locationID;
 	}
 
+	public String getLocation() {
+		return location;
+	}
+
+	public String getRegion() {
+		return region;
+	}
+
+	public String getSystem() {
+		return system;
+	}
+
 	public List<StockpileItem> getItems() {
 		return items;
 	}
@@ -169,6 +190,7 @@ public class Stockpile {
 		private String name;
 		private int typeID;
 		private long countMinimum;
+		private boolean marketGroup;
 		
 		private long countNow = 0;
 		private double price = 0.0;
@@ -200,11 +222,13 @@ public class Stockpile {
 			countNow = 0;
 			price = 0.0;
 			volume = 0.0f;
+			marketGroup = false;
 		}
 		public void match(Asset asset, Integer flagID, Long characterID, Long regionID){
 			if (asset.getTypeID() == typeID){
 				price = asset.getPrice();
 				volume = asset.getVolume();
+				marketGroup = asset.isMarketGroup();
 				if ((stockpile.getCharacterID() == characterID || stockpile.getCharacterID() < 0)
 						&& (stockpile.getContainer().equals(asset.getContainer()) || stockpile.getContainer().equals(TabsStockpile.get().all()))
 						&& (stockpile.getFlagID() == flagID || stockpile.getFlagID() < 0)
@@ -271,6 +295,10 @@ public class Stockpile {
 
 		public float getVolumeNeeded() {
 			return getCountNeeded() * volume;
+		}
+		
+		public boolean isMarketGroup() {
+			return marketGroup;
 		}
 		
 		@Override
@@ -394,8 +422,10 @@ public class Stockpile {
 		public float getVolumeNow() {
 			return volumeNow;
 		}
-		
-		
-		
+
+		@Override
+		public boolean isMarketGroup() {
+			return false;
+		}
 	}
 }

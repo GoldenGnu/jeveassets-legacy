@@ -29,6 +29,8 @@ import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.data.Material;
 import net.nikr.eve.jeveasset.data.Module;
 import net.nikr.eve.jeveasset.data.Overview;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
@@ -73,6 +75,10 @@ public abstract class JMenuTool extends JMenu {
 		if (object instanceof Overview){
 			Overview overview = (Overview) object;
 			return init(program, false, null, 0, overview.isStation() && !overview.isGroup() ? overview.getName() : null, !overview.isRegion() && !overview.isGroup() ? overview.getSolarSystem() : null, !overview.isGroup() ? overview.getRegion() : null);
+		}
+		if (object instanceof StockpileItem){
+			StockpileItem item = (StockpileItem) object;
+			return init(program, item.isMarketGroup(), (object instanceof StockpileTotal) ? GuiShared.get().emptyString() : item.getName(), item.getTypeID(), item.getStockpile().getLocation(), item.getStockpile().getSystem(), item.getStockpile().getRegion());
 		}
 		return init(program, false, GuiShared.get().emptyString(), 0, null, null, null);
 	}
