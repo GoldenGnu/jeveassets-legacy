@@ -36,6 +36,7 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 	public final static String ACTION_DELETE_STOCKPILE = "ACTION_DELETE_STOCKPILE";
 	public final static String ACTION_EDIT_STOCKPILE = "ACTION_EDIT_STOCKPILE";
 	public final static String ACTION_CLONE_STOCKPILE = "ACTION_CLONE_STOCKPILE";
+	public final static String ACTION_CLIPBOARD_STOCKPILE = "ACTION_CLIPBOARD_STOCKPILE";
 	public final static String ACTION_ADD_ITEM = "ACTION_ADD_ITEM";
 	public final static String ACTION_EDIT_ITEM = "ACTION_EDIT_ITEM";
 	public final static String ACTION_DELETE_ITEM = "ACTION_DELETE_ITEM";
@@ -77,6 +78,13 @@ public class StockpileSeparatorTableCell extends SeparatorTableCell<StockpileIte
 		
 		jMenuItem = new JMenuItem(TabsStockpile.get().deleteStockpile());
 		jMenuItem.setActionCommand(ACTION_DELETE_STOCKPILE);
+		jMenuItem.addActionListener(actionListener);
+		jStockpile.add(jMenuItem);
+		
+		jStockpile.addSeparator();	
+		
+		jMenuItem = new JMenuItem(TabsStockpile.get().clipboardStockpile());
+		jMenuItem.setActionCommand(ACTION_CLIPBOARD_STOCKPILE);
 		jMenuItem.addActionListener(actionListener);
 		jStockpile.add(jMenuItem);
 		

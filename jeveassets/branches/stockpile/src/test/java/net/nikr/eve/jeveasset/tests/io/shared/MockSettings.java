@@ -27,6 +27,7 @@ import java.util.Map;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.io.local.ConquerableStationsReader;
 import net.nikr.eve.jeveasset.io.local.LocationsReader;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.tests.mocks.FakeSettings;
 
 
@@ -48,6 +49,13 @@ public class MockSettings extends FakeSettings{
 	public Map<Long, ApiStation> getConquerableStations() {
 		return conquerableStations;
 	}
-	
-	
+
+	@Override
+	public void setConquerableStations(Map<Long, ApiStation> conquerableStations) {
+		this.conquerableStations = conquerableStations;
+		for (ApiStation station : conquerableStations.values()){
+			ApiIdConverter.addLocation(station, getLocations());
+		}
+	}
+
 }

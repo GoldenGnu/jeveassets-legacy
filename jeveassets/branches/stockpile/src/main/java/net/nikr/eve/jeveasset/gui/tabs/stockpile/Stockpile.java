@@ -20,10 +20,15 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
+import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
+import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.Item;
+import net.nikr.eve.jeveasset.data.ItemFlag;
+import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
@@ -36,15 +41,15 @@ public class Stockpile {
 	private String region;
 	private int flagID;
 	private String container;
+	private boolean inventory;
+	private boolean sellOrders;
+	private boolean buyOrders;
+	private boolean jobs;
 	private List<StockpileItem> items = new ArrayList<StockpileItem>();
 	private StockpileTotal totalItem = new StockpileTotal(this, TabsStockpile.get().totalStockpile());
 
 	private Stockpile(Stockpile stockpile) {
-		this.name = stockpile.getName();
-		this.characterID = stockpile.getCharacterID();
-		this.locationID = stockpile.getLocationID();
-		this.flagID = stockpile.getFlagID();
-		this.container = stockpile.getContainer();
+		update(stockpile);
 		for (StockpileItem item : stockpile.getItems()){
 			if (item.getTypeID() > 0){ //Ignore Total
 				items.add( new StockpileItem(this, item) );
@@ -53,7 +58,7 @@ public class Stockpile {
 		items.add(totalItem);
 	}
 
-	public Stockpile(String name, long characterID, long locationID, String location, String system, String region, int flagID, String container) {
+	public Stockpile(String name, long characterID, long locationID, String location, String system, String region, int flagID, String container, boolean inventory, boolean sellOrders, boolean buyOrders, boolean jobs) {
 		this.name = name;
 		this.characterID = characterID;
 		this.locationID = locationID;
@@ -62,10 +67,16 @@ public class Stockpile {
 		this.region = region;
 		this.flagID = flagID;
 		this.container = container;
+		this.inventory = inventory;
+		this.sellOrders = sellOrders;
+		this.buyOrders = buyOrders;
+		this.jobs = jobs;
 		items.add(totalItem);
 	}
+
 	
-	void update(Stockpile stockpile) {
+	
+	final void update(Stockpile stockpile) {
 		this.name = stockpile.getName();
 		this.characterID = stockpile.getCharacterID();
 		this.locationID = stockpile.getLocationID();
@@ -74,6 +85,10 @@ public class Stockpile {
 		this.region = stockpile.getRegion();
 		this.flagID = stockpile.getFlagID();
 		this.container = stockpile.getContainer();
+		this.inventory = stockpile.isInventory();
+		this.sellOrders = stockpile.isSellOrders();
+		this.buyOrders = stockpile.isBuyOrders();
+		this.jobs = stockpile.isJobs();
 	}
 	
 	public boolean isOK(){
@@ -114,6 +129,22 @@ public class Stockpile {
 
 	public String getName() {
 		return name;
+	}
+
+	public boolean isBuyOrders() {
+		return buyOrders;
+	}
+
+	public boolean isInventory() {
+		return inventory;
+	}
+
+	public boolean isJobs() {
+		return jobs;
+	}
+
+	public boolean isSellOrders() {
+		return sellOrders;
 	}
 
 	public long getCharacterID() {
@@ -158,6 +189,10 @@ public class Stockpile {
 		
 	}
 
+	public StockpileTotal getTotal() {
+		return totalItem;
+	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {
@@ -190,13 +225,15 @@ public class Stockpile {
 		private String name;
 		private int typeID;
 		private long countMinimum;
-		private boolean marketGroup;
 		
-		private long countNow = 0;
+		private boolean marketGroup;
+		private long inventoryCountNow = 0;
+		private long sellOrdersCountNow = 0;
+		private long buyOrdersCountNow = 0;
+		private long jobsCountNow = 0;
 		private double price = 0.0;
-		//FIXME for ships volumn if differend is packaged
 		private float volume = 0.0f;
-
+		
 		public StockpileItem(Stockpile stockpile, StockpileItem stockpileItem) {
 			this.stockpile = stockpile;
 			this.name = stockpileItem.getName();
@@ -219,28 +256,67 @@ public class Stockpile {
 		}
 		
 		private void reset(){
-			countNow = 0;
+			inventoryCountNow = 0;
+			sellOrdersCountNow = 0;
+			buyOrdersCountNow = 0;
+			jobsCountNow = 0;
 			price = 0.0;
 			volume = 0.0f;
 			marketGroup = false;
 		}
-		public void match(Asset asset, Integer flagID, Long characterID, Long regionID){
-			if (asset.getTypeID() == typeID){
-				price = asset.getPrice();
-				volume = asset.getVolume();
-				marketGroup = asset.isMarketGroup();
-				if ((stockpile.getCharacterID() == characterID || stockpile.getCharacterID() < 0)
-						&& (stockpile.getContainer().equals(asset.getContainer()) || stockpile.getContainer().equals(TabsStockpile.get().all()))
-						&& (stockpile.getFlagID() == flagID || stockpile.getFlagID() < 0)
-						&& (stockpile.getLocationID() == asset.getLocationID()
-						|| stockpile.getLocationID() == asset.getSolarSystemID()
-						|| stockpile.getLocationID() == regionID
-						|| stockpile.getLocationID() < 0)
-						){
-					countNow = countNow + asset.getCount();
+		public void updateValues(double price, float volume, boolean marketGroup){
+			this.price = price;
+			this.volume = volume;
+			this.marketGroup = marketGroup;
+		}
+		
+		public void updateAsset(Asset asset,  ItemFlag itemFlag, Long characterID, Long regionID){
+			if (asset != null && itemFlag != null && characterID != null && regionID != null //better save then sorry
+					&& typeID == asset.getTypeID()
+					&& (stockpile.getCharacterID() == characterID || stockpile.getCharacterID() < 0)
+					&& (stockpile.getContainer().equals(asset.getContainer()) || stockpile.getContainer().equals(TabsStockpile.get().all()))
+					&& (stockpile.getFlagID() == itemFlag.getFlagID() || stockpile.getFlagID() < 0)
+					&& (stockpile.getLocationID() == asset.getLocationID()
+					|| stockpile.getLocationID() == asset.getSolarSystemID()
+					|| stockpile.getLocationID() == regionID
+					|| stockpile.getLocationID() < 0)
+					){
+				inventoryCountNow = inventoryCountNow + asset.getCount();
+			}
+		}
+		
+		void updateMarketOrder(ApiMarketOrder marketOrder, Long characterID, Location location) {
+			if (marketOrder != null && characterID != null && location != null //better save then sorry
+					&& typeID == marketOrder.getTypeID()
+					&& (stockpile.getCharacterID() == characterID || stockpile.getCharacterID() < 0)
+					&& (stockpile.getLocationID() == location.getLocationID()
+					|| stockpile.getLocationID() == location.getSystemID()
+					|| stockpile.getLocationID() == location.getRegionID()
+					|| stockpile.getLocationID() < 0)
+					){
+				if (marketOrder.getBid() < 1){ //Sell
+					if (stockpile.isSellOrders()) sellOrdersCountNow = sellOrdersCountNow + marketOrder.getVolRemaining();
+				} else { //Buy
+					if (stockpile.isBuyOrders())  buyOrdersCountNow = buyOrdersCountNow + marketOrder.getVolRemaining();
 				}
 			}
-			
+		}
+		
+		void updateIndustryJob(ApiIndustryJob industryJob, ItemFlag itemFlag, Long characterID, Location location, Item itemType) {
+			if (industryJob != null && itemFlag != null && characterID != null && location != null && itemType != null //better save then sorry
+					&& typeID == industryJob.getOutputTypeID() //Produced only
+					&& (stockpile.getCharacterID() == characterID || stockpile.getCharacterID() < 0)
+					&& (stockpile.getFlagID() == itemFlag.getFlagID() || stockpile.getFlagID() < 0)
+					&& (stockpile.getLocationID() == location.getLocationID()
+					|| stockpile.getLocationID() == location.getSystemID()
+					|| stockpile.getLocationID() == location.getRegionID()
+					|| stockpile.getLocationID() < 0)
+					){
+				//Manufacturing && Inprogress AKA not delivered
+				if (industryJob.getActivityID() == 1 && industryJob.getCompletedStatus() == 0){
+					jobsCountNow = jobsCountNow + (industryJob.getRuns() * itemType.getPortion());
+				}
+			}
 		}
 
 		public String getSeperator() {
@@ -258,13 +334,31 @@ public class Stockpile {
 		public long getCountMinimum() {
 			return countMinimum;
 		}
+		
+		
 
 		public long getCountNow() {
-			return countNow;
+			return inventoryCountNow + buyOrdersCountNow + jobsCountNow + sellOrdersCountNow;
+		}
+		
+		public long getInventoryCountNow() {
+			return inventoryCountNow;
+		}
+
+		public long getBuyOrdersCountNow() {
+			return buyOrdersCountNow;
+		}
+
+		public long getJobsCountNow() {
+			return jobsCountNow;
+		}
+
+		public long getSellOrdersCountNow() {
+			return sellOrdersCountNow;
 		}
 		
 		public long getCountNeeded() {
-			long countNeeded = countNow - countMinimum;
+			long countNeeded = getCountNow() - countMinimum;
 			if (countNeeded > 0) countNeeded = 0;
 			return Math.abs(countNeeded);
 		}
@@ -282,7 +376,7 @@ public class Stockpile {
 		}
 
 		public double getValueNow() {
-			return countNow * price;
+			return getCountNow() * price;
 		}
 
 		public double getValueNeeded() {
@@ -290,7 +384,7 @@ public class Stockpile {
 		}
 
 		public float getVolumeNow() {
-			return countNow * volume;
+			return getCountNow() * volume;
 		}
 
 		public float getVolumeNeeded() {
@@ -341,7 +435,10 @@ public class Stockpile {
 	public static class StockpileTotal extends StockpileItem{
 
 		private boolean ok = true;
-		private long countNow = 0;
+		private long inventoryCountNow = 0;
+		private long sellOrdersCountNow = 0;
+		private long buyOrdersCountNow = 0;
+		private long jobsCountNow = 0;
 		private long countNeeded = 0;
 		private long countMinimum = 0;
 		private double price = 0;
@@ -356,7 +453,10 @@ public class Stockpile {
 		
 		private void reset(){
 			ok = true;
-			countNow = 0;
+			inventoryCountNow = 0;
+			sellOrdersCountNow = 0;
+			buyOrdersCountNow = 0;
+			jobsCountNow = 0;
 			countNeeded = 0;
 			countMinimum = 0;
 			price = 0;
@@ -367,7 +467,11 @@ public class Stockpile {
 		}
 		
 		private void updateTotal(StockpileItem item){
-			countNow = countNow + item.getCountNow();
+			inventoryCountNow = inventoryCountNow + item.getInventoryCountNow();
+			sellOrdersCountNow = sellOrdersCountNow + item.getSellOrdersCountNow();
+			buyOrdersCountNow = buyOrdersCountNow + item.getBuyOrdersCountNow();
+			jobsCountNow = jobsCountNow + item.getJobsCountNow();
+			jobsCountNow = 0;
 			countNeeded = countNeeded + item.getCountNeeded();
 			countMinimum = countMinimum + item.getCountMinimum();
 			price = price + item.getPrice() / 2;
@@ -394,9 +498,26 @@ public class Stockpile {
 		}
 
 		@Override
-		public long getCountNow() {
-			return countNow;
+		public long getInventoryCountNow() {
+			return inventoryCountNow;
 		}
+
+		@Override
+		public long getBuyOrdersCountNow() {
+			return buyOrdersCountNow;
+		}
+
+		@Override
+		public long getJobsCountNow() {
+			return jobsCountNow;
+		}
+
+		@Override
+		public long getSellOrdersCountNow() {
+			return sellOrdersCountNow;
+		}
+		
+		
 
 		@Override
 		public double getPrice() {

@@ -93,6 +93,10 @@ public class Module implements Comparable<Module> {
 	public long getCount() {
 		return count;
 	}
+	
+	public double getPrice() {
+		return price;
+	}
 
 	public String getFlag() {
 		return convertFlat(flag).substring(1);

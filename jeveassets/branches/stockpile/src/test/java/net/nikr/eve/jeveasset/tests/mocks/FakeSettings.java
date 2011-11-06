@@ -95,11 +95,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public Map<Integer, PriceData> getPriceData() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public PriceDataGetter getPriceDataGetter() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -433,6 +428,9 @@ public abstract class FakeSettings extends Settings {
 	public void setCsvSettings(CsvSettings csvSettings) {
 		throw new UnsupportedOperationException("not implemented");
 	}
-	
-	
+
+	@Override
+	public void setConquerableStations(Map<Long, ApiStation> conquerableStations) {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }

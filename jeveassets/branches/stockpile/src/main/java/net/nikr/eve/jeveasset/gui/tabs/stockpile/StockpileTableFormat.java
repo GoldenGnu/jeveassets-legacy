@@ -48,6 +48,46 @@ enum StockpileTableFormat implements TableColumn<StockpileItem> {
 			return from.getCountNow();
 		}
 	},
+	COUNT_NOW_INVENTORY(Long.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnCountNowInventory();
+		}
+		@Override
+		public Object getColumnValue(StockpileItem from) {
+			return from.getInventoryCountNow();
+		}
+	},
+	COUNT_NOW_BUY_ORDERS(Long.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnCountNowBuyOrders();
+		}
+		@Override
+		public Object getColumnValue(StockpileItem from) {
+			return from.getBuyOrdersCountNow();
+		}
+	},
+	COUNT_NOW_SELL_ORDERS(Long.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnCountNowSellOrders();
+		}
+		@Override
+		public Object getColumnValue(StockpileItem from) {
+			return from.getSellOrdersCountNow();
+		}
+	},
+	COUNT_NOW_JOBS(Long.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnCountNowJobs();
+		}
+		@Override
+		public Object getColumnValue(StockpileItem from) {
+			return from.getJobsCountNow();
+		}
+	},
 	COUNT_NEEDED(Long.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {

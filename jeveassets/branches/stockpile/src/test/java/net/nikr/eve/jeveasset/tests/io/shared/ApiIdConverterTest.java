@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
 
 public class ApiIdConverterTest {
 	
-	MockSettings settings = new MockSettings();
+	private MockSettings settings = new MockSettings();
 	
 	public ApiIdConverterTest() {
 	}

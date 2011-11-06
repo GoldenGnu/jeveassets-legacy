@@ -77,6 +77,10 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 	private JRadioButton jSystems;
 	private JRadioButton jRegions;
 	private JRadioButton jAllLocations;
+	private JCheckBox jInventory;
+	private JCheckBox jSellOrders;
+	private JCheckBox jBuyOrders;
+	private JCheckBox jJobs;
 	private JButton jOK;
 	private JButton jCancel;
 	private EventList<Location> locations = new BasicEventList<Location>();
@@ -88,6 +92,8 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 	private Stockpile stockpile;
 	private Stockpile cloneStockpile;
 	AutoCompleteSupport<Location> locationsAutoComplete;
+	
+	boolean updated = false;
 	
 	public StockpileDialog(Program program) {
 		super(program, TabsStockpile.get().addStockpileTitle(), Images.TOOL_STOCKPILE.getImage());
@@ -133,6 +139,18 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		jAll.setActionCommand(ACTION_FILTER_LOCATIONS);
 		jAll.addActionListener(this);
 		
+		
+		JLabel jIncludeLabel = new JLabel(TabsStockpile.get().include());
+		
+		jInventory = new JCheckBox(TabsStockpile.get().inventory());
+	
+		jSellOrders = new JCheckBox(TabsStockpile.get().sellOrders());
+		
+		jBuyOrders = new JCheckBox(TabsStockpile.get().buyOrders());
+		
+		jJobs = new JCheckBox(TabsStockpile.get().jobs());
+		
+		
 		JLabel jLocationsLabel = new JLabel(TabsStockpile.get().locations());
 		jLocations = new JComboBox();
 		jLocations.addItemListener(this);
@@ -164,6 +182,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 						.addComponent(jNameLabel)
 						.addComponent(jCharactersLabel)
 						.addComponent(jLocationsLabel)
+						.addComponent(jIncludeLabel)
 						.addComponent(jFlagLabel)
 						.addComponent(jContainerLabel)
 					)
@@ -174,6 +193,12 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 							.addComponent(jRegions)
 							.addComponent(jAllLocations)
 							.addComponent(jAll)
+						)
+						.addGroup(layout.createSequentialGroup()
+							.addComponent(jInventory)
+							.addComponent(jSellOrders)
+							.addComponent(jBuyOrders)
+							.addComponent(jJobs)
 						)
 						.addComponent(jName, 300, 300, 300)
 						.addComponent(jLocations, 300, 300, 300)
@@ -204,6 +229,13 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 					.addComponent(jAll, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 				.addComponent(jLocations, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jIncludeLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jInventory, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jSellOrders, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jBuyOrders, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jJobs, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				)
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jCharactersLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jCharacters, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
@@ -251,7 +283,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		String container = (String)jContainer.getSelectedItem();
 		//Add
 		
-		return new Stockpile(name, human.getCharacterID(), location.getLocationID(), station, system, region, flag.getFlagID(), container);
+		return new Stockpile(name, human.getCharacterID(), location.getLocationID(), station, system, region, flag.getFlagID(), container, jInventory.isSelected(), jSellOrders.isSelected(), jBuyOrders.isSelected(), jJobs.isSelected());
 	}
 	
 	private void autoValidate(){
@@ -276,6 +308,12 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		this.stockpile = stockpile;
 		//Title
 		this.getDialog().setTitle(TabsStockpile.get().editStockpileTitle());
+		
+		//Include
+		jInventory.setSelected(stockpile.isInventory());
+		jSellOrders.setSelected(stockpile.isSellOrders());
+		jBuyOrders.setSelected(stockpile.isBuyOrders());
+		jJobs.setSelected(stockpile.isJobs());
 		
 		//Name
 		jName.setText(stockpile.getName());
@@ -322,11 +360,63 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		show();
 	}
 	
+	public boolean showAdd(Asset asset) {
+		updateData();
+		//Title
+		this.getDialog().setTitle(TabsStockpile.get().addStockpileTitle());
+		
+		//Characters
+		Human humanSelected = humanAll;
+		for (Account account : program.getSettings().getAccounts()){
+			for (Human human : account.getHumans()){
+				if (human.getName().equals(asset.getOwner())){
+					humanSelected = human;
+				}
+			}
+		}
+		jCharacters.setSelectedItem(humanSelected);
+		
+		//Location
+		Location location = program.getSettings().getLocations().get(asset.getLocationID());
+		if (location == null) location = locationAll;
+		if (location.getLocationID() < 0){
+			jAllLocations.setSelected(true);
+		} else if (location.isRegion()){
+			jRegions.setSelected(true);
+		} else if (location.isSystem()){
+			jSystems.setSelected(true);
+		} else if (location.isStation()){
+			jStations.setSelected(true);
+		}
+		refilter();
+		jLocations.setSelectedItem(location);
+		
+		//Flag
+		ItemFlag itemFlag = itemFlagAll;
+		for (ItemFlag flag : program.getSettings().getItemFlags().values()){
+			if (asset.getFlag().equals(flag.getFlagName())){
+				itemFlag = flag;
+			}
+		}
+		jFlag.setSelectedItem(itemFlag);
+		
+		//Container
+		jContainer.setSelectedItem(asset.getContainer());
+		show();
+		return updated;
+	}
+	
 	void showClone(Stockpile stockpile) {
 		updateData();
 		this.cloneStockpile = stockpile.clone();
 		//Title
 		this.getDialog().setTitle(TabsStockpile.get().cloneStockpileTitle());
+		
+		//Include
+		jInventory.setSelected(stockpile.isInventory());
+		jSellOrders.setSelected(stockpile.isSellOrders());
+		jBuyOrders.setSelected(stockpile.isBuyOrders());
+		jJobs.setSelected(stockpile.isJobs());
 		
 		//Characters
 		Human humanSelected = humanAll;
@@ -385,6 +475,14 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 	private void updateData(){
 		stockpile = null;
 		cloneStockpile = null;
+		updated = false;
+		
+		//Include
+		jInventory.setSelected(true);
+		jSellOrders.setSelected(false);
+		jBuyOrders.setSelected(false);
+		jJobs.setSelected(false);
+		
 		//Name
 		jName.setText("");
 
@@ -405,7 +503,6 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 			jCharacters.setModel( new DefaultComboBoxModel(characters.toArray()));
 			jCharacters.setEnabled(true);
 		}
-		//FIXME Conquerable Stations is not added...
 		//Locations
 		List<Location> locationsList = new ArrayList<Location>(program.getSettings().getLocations().values());
 		Collections.sort(locationsList);
@@ -481,6 +578,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 			stockpile = getStockpile();
 			program.getSettings().getStockpiles().add(stockpile);
 		}
+		updated = true;
 		this.setVisible(false);
 	}
 

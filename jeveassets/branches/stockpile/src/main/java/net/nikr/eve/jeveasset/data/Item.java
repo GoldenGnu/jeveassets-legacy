@@ -36,9 +36,10 @@ public class Item implements Comparable<Item> {
 	private String meta;
 	private boolean marketGroup;
 	private boolean piMaterial;
-	private List<ReprocessedMaterial> reprocessedMaterials;
+	private int portion;
+	private List<ReprocessedMaterial> reprocessedMaterials = new ArrayList<ReprocessedMaterial>();
 
-	public Item(int typeID, String name, String group, String category, long price, float volume, String meta, boolean marketGroup, boolean piMaterial) {
+	public Item(int typeID, String name, String group, String category, long price, float volume, String meta, boolean marketGroup, boolean piMaterial, int portion) {
 		this.typeID = typeID;
 		this.name = name;
 		this.group = group;
@@ -48,7 +49,7 @@ public class Item implements Comparable<Item> {
 		this.meta = meta;
 		this.marketGroup = marketGroup;
 		this.piMaterial = piMaterial;
-		reprocessedMaterials = new ArrayList<ReprocessedMaterial>();
+		this.portion = portion;
 	}
 
 	public void addReprocessedMaterial(ReprocessedMaterial material){
@@ -93,6 +94,10 @@ public class Item implements Comparable<Item> {
 	
 	public boolean isPiMaterial() {
 		return piMaterial;
+	}
+
+	public int getPortion() {
+		return portion;
 	}
 
 	@Override

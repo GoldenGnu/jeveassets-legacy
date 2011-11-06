@@ -217,7 +217,6 @@ public class SettingsReader extends AbstractXmlReader {
 			int flagID = AttributeGetters.getInt(stockpileNode, "flagid");
 			long locationID = AttributeGetters.getLong(stockpileNode, "locationid");
 			
-			//FIXME Conquerable Stations is not added...
 			Location location = settings.getLocations().get(locationID);
 			String station = null;
 			String system = null;
@@ -232,8 +231,12 @@ public class SettingsReader extends AbstractXmlReader {
 			if (location.isStation()){
 				station = ApiIdConverter.locationName(location.getLocationID(), null, settings.getLocations());
 			}
+			boolean inventory = AttributeGetters.getBoolean(stockpileNode, "inventory");
+			boolean sellOrders = AttributeGetters.getBoolean(stockpileNode, "sellorders");
+			boolean buyOrders = AttributeGetters.getBoolean(stockpileNode, "buyorders");
+			boolean jobs = AttributeGetters.getBoolean(stockpileNode, "jobs");
 			
-			Stockpile stockpile = new Stockpile(name, characterID, locationID, station, system, region, flagID, container);
+			Stockpile stockpile = new Stockpile(name, characterID, locationID, station, system, region, flagID, container, inventory, sellOrders, buyOrders, jobs);
 			settings.getStockpiles().add(stockpile);
 			NodeList itemNodes = stockpileNode.getElementsByTagName("item");
 			for (int b = 0; b < itemNodes.getLength(); b++){

@@ -64,6 +64,7 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 	private EventList<Item> items = new BasicEventList<Item>();
 	private Stockpile stockpile;
 	private StockpileItem stockpileItem;
+	private boolean updated = false;
 	
 	public StockpileItemDialog(Program program) {
 		super(program, TabsStockpile.get().addStockpileItem(), Images.TOOL_STOCKPILE.getImage());
@@ -146,9 +147,21 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		show();
 	}
 	
+	public boolean showAdd(Stockpile stockpile, int typeID) {
+		updateData();
+		this.stockpile = stockpile;
+		Item item = program.getSettings().getItems().get(typeID);
+		jItems.setSelectedItem(item);
+		jItems.setEnabled(false);
+		this.getDialog().setTitle(TabsStockpile.get().addStockpileItem());
+		show();
+		return updated;
+	}
+	
 	private void updateData(){
 		stockpile = null;
 		stockpileItem = null;
+		updated = false;
 		List<Item> itemsList = new ArrayList<Item>(program.getSettings().getItems().values());
 		//FIXME the item list need to be filtered - only market items or published = 1?
 		//Or something else - there is to much is in there
@@ -162,6 +175,7 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		}
 		jItems.setSelectedIndex(0);
 		jCountMinimum.setText("");
+		jItems.setEnabled(true);
 	}
 	
 	private void show(){
@@ -225,6 +239,7 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		}
 		//ADD & EDIT
 		stockpile.add(getStockpileItem());
+		updated = true;
 		super.setVisible(false);
 	}
 

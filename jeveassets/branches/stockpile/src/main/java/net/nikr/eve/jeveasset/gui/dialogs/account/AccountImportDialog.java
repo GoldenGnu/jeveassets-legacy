@@ -62,12 +62,12 @@ public class AccountImportDialog extends JDialogCentered {
 
 	private final static Logger LOG = LoggerFactory.getLogger(AccountImportDialog.class);
 
-	// TODO (Candle, 2010-09-13) more string enum pattern, to be converted to an enum
+	// TODO enum - more string enum pattern, to be converted to an enum
 	public final static String ACTION_ADD_KEY_CANCEL = "ACTION_ADD_KEY_CANCEL";
 	public final static String ACTION_NEXT = "ACTION_NEXT";
 	public final static String ACTION_PREVIOUS = "ACTION_PREVIOUS";
 
-	// TODO (Candle, 2010-09-13) more string enum pattern, to be converted to an enum
+	// TODO enum - more string enum pattern, to be converted to an enum
 	public final static String TAB_ADD = "TAB_ADD";
 	public final static String TAB_VALIDATE = "TAB_VALIDATE";
 	public final static String TAB_DONE = "TAB_DONE";

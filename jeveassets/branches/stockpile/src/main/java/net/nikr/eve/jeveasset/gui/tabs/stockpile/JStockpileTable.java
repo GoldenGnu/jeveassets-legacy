@@ -49,7 +49,7 @@ public class JStockpileTable extends JSeparatorTable{
 		component.setForeground(isSelected ? this.getSelectionForeground() : Color.BLACK);
 		if (object instanceof StockpileTotal){
 			StockpileTotal stockpileTotal = (StockpileTotal) object;
-			if (columnName.equals("Name")){ //TODO no translation
+			if (columnName.equals("Name")){ //TODO i18n breaks when translated
 				component.setForeground(Color.BLACK);
 				if (stockpileTotal.isOK()){
 					component.setBackground( new Color(200,255,200) );
@@ -61,10 +61,10 @@ public class JStockpileTable extends JSeparatorTable{
 			} else {
 				component.setBackground( new Color(255,255,200) );
 			}
-			if (columnName.contains("Needed") && !stockpileTotal.isOK()){ //TODO no translation
+			if (columnName.contains("Needed") && !stockpileTotal.isOK()){ //TODO i18n breaks when translated
 				 component.setForeground(Color.RED.darker());
 			}
-		} else if ( (object instanceof StockpileItem) && columnName.equals("Name") ){ //TODO no translation
+		} else if ( (object instanceof StockpileItem) && columnName.equals("Name") ){ //TODO i18n breaks when translated
 			StockpileItem stockpileItem = (StockpileItem) object;
 			component.setForeground(Color.BLACK);
 			if (stockpileItem.isOK()){
@@ -73,7 +73,7 @@ public class JStockpileTable extends JSeparatorTable{
 			} else {
 				component.setBackground( new Color(255,200,200) );
 			}
-		} else if ( (object instanceof StockpileItem) && columnName.contains("Needed") ){ //TODO no translation
+		} else if ( (object instanceof StockpileItem) && columnName.contains("Needed") ){ //TODO i18n breaks when translated
 			StockpileItem stockpileItem = (StockpileItem) object;
 			if (!stockpileItem.isOK()) component.setForeground(Color.RED.darker());
 		} else if (object instanceof SeparatorList.Separator){

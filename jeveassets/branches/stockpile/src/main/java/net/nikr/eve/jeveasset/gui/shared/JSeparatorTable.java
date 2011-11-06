@@ -27,7 +27,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 	/** working with separator cells */
 	private TableCellRenderer separatorRenderer;
 	private TableCellEditor separatorEditor;
-	private boolean revalidateLocked = false;
+	private Boolean revalidateLocked = null;
 	
 	
 	public JSeparatorTable(EventTableModel tableModel) {
@@ -37,6 +37,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 		this.getTableHeader().setReorderingAllowed(false);
 		// use a toString() renderer for the separator
 		this.separatorRenderer = getDefaultRenderer(Object.class);
+		revalidateLocked = false;
 	}
 
 
@@ -180,7 +181,7 @@ public class JSeparatorTable extends JAutoColumnTable {
 	}
 
 	public boolean isRowHeightValid(){
-		if (separatorRenderer != null){
+		if (revalidateLocked != null){
 			for (int row = 0; row < this.getRowCount(); row++){
 				TableCellRenderer renderer = this.getCellRenderer(row, 0);
 				Component component = this.prepareRenderer(renderer, row, 0);
@@ -198,15 +199,13 @@ public class JSeparatorTable extends JAutoColumnTable {
 		if (isRowHeightValid()){
 			super.revalidate();
 		} else {
-			if (!revalidateLocked){
+			if (revalidateLocked != null && !revalidateLocked){
 				revalidateLocked = true;
-				if (separatorRenderer != null){
-					for (int row = 0; row < this.getRowCount(); row++){
-						TableCellRenderer renderer = this.getCellRenderer(row, 0);
-						Component component = this.prepareRenderer(renderer, row, 0);
-						if (this.getRowHeight(row) != component.getPreferredSize().height){
-							this.setRowHeight(row, component.getPreferredSize().height);
-						}
+				for (int row = 0; row < this.getRowCount(); row++){
+					TableCellRenderer renderer = this.getCellRenderer(row, 0);
+					Component component = this.prepareRenderer(renderer, row, 0);
+					if (this.getRowHeight(row) != component.getPreferredSize().height){
+						this.setRowHeight(row, component.getPreferredSize().height);
 					}
 				}
 				super.revalidate();
@@ -307,7 +306,7 @@ class SpanTableUI extends BasicTableUI {
 		int columnWidth;
 		if (table.getComponentOrientation().isLeftToRight()) {
 			for(int row = rMin; row <= rMax; row++) {
-				for(int column = cMin; column <= cMax; column++) {
+				for(int column = 0; column <= cMax; column++) {
 					aColumn = cm.getColumn(column);
 					cellRect = table.getCellRect(row, column, false);
 					if (aColumn != draggedColumn) {
