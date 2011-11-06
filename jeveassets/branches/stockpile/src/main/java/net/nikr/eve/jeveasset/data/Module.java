@@ -25,10 +25,7 @@ package net.nikr.eve.jeveasset.data;
 import ca.odell.glazedlists.matchers.Matcher;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 
-/**
- *
- * @author Niklas
- */
+
 public class Module implements Comparable<Module> {
 	private String name;
 	private String typeName;

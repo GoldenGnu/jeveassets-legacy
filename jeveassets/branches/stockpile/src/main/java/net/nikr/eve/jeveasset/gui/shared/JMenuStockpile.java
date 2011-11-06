@@ -25,17 +25,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
-/**
- *
- * @author Niklas
- */
+
 public class JMenuStockpile  extends JMenuTool implements ActionListener {
 
 	public final static String ACTION_ADD_STOCKPILE_ITEM = "ACTION_ADD_STOCKPILE_ITEM";
@@ -63,8 +59,10 @@ public class JMenuStockpile  extends JMenuTool implements ActionListener {
 		
 		jMenu = new JMenu(GuiShared.get().addStockpileItem());
 		jMenu.setIcon(Images.EDIT_ADD.getIcon());
-		jMenu.setEnabled(typeId != 0);
+		jMenu.setEnabled(typeId != 0 && !program.getSettings().getStockpiles().isEmpty());
 		add(jMenu);
+		
+		//FIXME add to new stockpile
 		
 		for (Stockpile stockpile : program.getSettings().getStockpiles()){
 			jMenuItem = new JStockpileMenu(stockpile);

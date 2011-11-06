@@ -30,7 +30,6 @@ import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 
 /**
  *
- * @author Niklas
  * @author Candle
  */
 enum ModuleTableFormat implements TableColumn<Module> {
