@@ -540,6 +540,18 @@ public class Settings{
 		return Asset.getDefaultPrice(priceData);
 	}
 	
+	public float getVolume(int typeID, boolean packaged) {
+		Item item = getItems().get(typeID);
+		if (item != null){
+			if (packaged && packagedVolume.containsKey(item.getGroup())){
+				return packagedVolume.get(item.getGroup());
+			} else {
+				return item.getVolume();
+			}
+		}
+		return 0;
+	}
+	
 	public Date getConquerableStationsNextUpdate() {
 		return conquerableStationsNextUpdate;
 	}

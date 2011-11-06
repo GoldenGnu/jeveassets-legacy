@@ -93,8 +93,6 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 	private Stockpile cloneStockpile;
 	AutoCompleteSupport<Location> locationsAutoComplete;
 	
-	boolean updated = false;
-	
 	public StockpileDialog(Program program) {
 		super(program, TabsStockpile.get().addStockpileTitle(), Images.TOOL_STOCKPILE.getImage());
 		
@@ -354,13 +352,14 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		show();
 	}
 
-	public void showAdd() {
+	public Stockpile showAdd() {
 		updateData();
 		this.getDialog().setTitle(TabsStockpile.get().addStockpileTitle());
 		show();
+		return stockpile;
 	}
 	
-	public boolean showAdd(Asset asset) {
+	public Stockpile showAdd(Asset asset) {
 		updateData();
 		//Title
 		this.getDialog().setTitle(TabsStockpile.get().addStockpileTitle());
@@ -403,7 +402,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		//Container
 		jContainer.setSelectedItem(asset.getContainer());
 		show();
-		return updated;
+		return stockpile;
 	}
 	
 	void showClone(Stockpile stockpile) {
@@ -475,8 +474,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 	private void updateData(){
 		stockpile = null;
 		cloneStockpile = null;
-		updated = false;
-		
+
 		//Include
 		jInventory.setSelected(true);
 		jSellOrders.setSelected(false);
@@ -578,7 +576,6 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 			stockpile = getStockpile();
 			program.getSettings().getStockpiles().add(stockpile);
 		}
-		updated = true;
 		this.setVisible(false);
 	}
 

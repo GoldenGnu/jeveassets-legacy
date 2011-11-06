@@ -166,10 +166,15 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		updateData();
 		return updated;
 	}
-	public boolean showAddStockpile(Asset asset) {
-		boolean updated = stockpileDialog.showAdd(asset);
+	public Stockpile showAddStockpile(Asset asset) {
+		Stockpile stockpile = stockpileDialog.showAdd(asset);
 		updateData();
-		return updated;
+		return stockpile;
+	}
+	public Stockpile showAddStockpile() {
+		Stockpile stockpile = stockpileDialog.showAdd();
+		updateData();
+		return stockpile;
 	}
 
 	@Override
@@ -242,8 +247,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 				for (StockpileItem item : stockpile.getItems()){
 					int typeID = item.getTypeID();
 					double price = program.getSettings().getPrice(typeID, false);
-					//FIXME Volume of packaged ships might be wrong...
-					float volume = ApiIdConverter.volume(typeID, program.getSettings().getItems());
+					float volume = program.getSettings().getVolume(typeID, true);
 					boolean marketGroup = ApiIdConverter.marketGroup(typeID, program.getSettings().getItems());
 					item.updateValues(price, volume, marketGroup);
 					//Inventory AKA Assets

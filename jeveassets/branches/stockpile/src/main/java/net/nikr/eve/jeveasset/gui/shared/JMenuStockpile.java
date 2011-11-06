@@ -23,7 +23,6 @@ package net.nikr.eve.jeveasset.gui.shared;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
@@ -34,8 +33,8 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 public class JMenuStockpile  extends JMenuTool implements ActionListener {
 
-	public final static String ACTION_ADD_STOCKPILE_ITEM = "ACTION_ADD_STOCKPILE_ITEM";
-	public final static String ACTION_ADD_STOCKPILE = "ACTION_ADD_STOCKPILE";
+	private final static String ACTION_ADD_TO_EXISTING = "ACTION_ADD_TO_EXISTING";
+	private final static String ACTION_ADD_TO_NEW = "ACTION_ADD_TO_NEW";
 	
 	private Asset asset = null;
 	
@@ -44,54 +43,48 @@ public class JMenuStockpile  extends JMenuTool implements ActionListener {
 		this.setIcon(Images.TOOL_STOCKPILE.getIcon());
 
 		JMenuItem jMenuItem;
-		JMenu jMenu;
 		
-		if (object instanceof Asset){
-			asset = (Asset) object;
-			jMenuItem = new JMenuItem(GuiShared.get().addStockpile());
-			jMenuItem.setIcon(Images.TOOL_STOCKPILE.getIcon());
-			jMenuItem.setEnabled(typeId != 0);
-			jMenuItem.setActionCommand(ACTION_ADD_STOCKPILE);
-			jMenuItem.addActionListener(this);
-			add(jMenuItem);
-			this.addSeparator();
-		}
+		if (object instanceof Asset) asset = (Asset) object;
 		
-		jMenu = new JMenu(GuiShared.get().addStockpileItem());
-		jMenu.setIcon(Images.EDIT_ADD.getIcon());
-		jMenu.setEnabled(typeId != 0 && !program.getSettings().getStockpiles().isEmpty());
-		add(jMenu);
+		jMenuItem = new JMenuItem(GuiShared.get().newStockpile());
+		jMenuItem.setIcon(Images.EDIT_ADD.getIcon());
+		jMenuItem.setEnabled(typeId != 0);
+		jMenuItem.setActionCommand(ACTION_ADD_TO_NEW);
+		jMenuItem.addActionListener(this);
+		add(jMenuItem);
 		
-		//FIXME add to new stockpile
+		this.addSeparator();
 		
 		for (Stockpile stockpile : program.getSettings().getStockpiles()){
 			jMenuItem = new JStockpileMenu(stockpile);
 			jMenuItem.setIcon(Images.TOOL_STOCKPILE.getIcon());
-			jMenuItem.setActionCommand(ACTION_ADD_STOCKPILE_ITEM);
+			jMenuItem.setActionCommand(ACTION_ADD_TO_EXISTING);
 			jMenuItem.addActionListener(this);
-			jMenu.add(jMenuItem);
+			add(jMenuItem);
 		}
-
-		
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if (ACTION_ADD_STOCKPILE.equals(e.getActionCommand())) {
-			boolean updated = program.getStockpileTool().showAddStockpile(asset);
-			if (updated) {
+		if (ACTION_ADD_TO_NEW.equals(e.getActionCommand())){
+			Stockpile stockpile;
+			if (asset != null){
+				stockpile = program.getStockpileTool().showAddStockpile(asset);
+			} else {
+				stockpile = program.getStockpileTool().showAddStockpile();
+			}
+			if (stockpile != null){
+				program.getStockpileTool().showAddItem(stockpile, typeId);
 				program.getMainWindow().addTab(program.getStockpileTool());
 			}
 		}
-		if (ACTION_ADD_STOCKPILE_ITEM.equals(e.getActionCommand())){
+		if (ACTION_ADD_TO_EXISTING.equals(e.getActionCommand())){
 			Object source = e.getSource();
 			if (source instanceof JStockpileMenu){
 				JStockpileMenu jStockpileMenu = (JStockpileMenu) source;
 				Stockpile stockpile = jStockpileMenu.getStockpile();
 				boolean updated = program.getStockpileTool().showAddItem(stockpile, typeId);
-				if (updated) { 
-					program.getMainWindow().addTab(program.getStockpileTool());
-				}
+				if (updated) program.getMainWindow().addTab(program.getStockpileTool());
 			}
 		}
 	}
@@ -101,7 +94,7 @@ public class JMenuStockpile  extends JMenuTool implements ActionListener {
 		private Stockpile stockpile;
 		
 		public JStockpileMenu(Stockpile stockpile) {
-			super(stockpile.getName());
+			super(stockpile.getName()+"...");
 			this.stockpile = stockpile;
 		}
 

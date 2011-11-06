@@ -163,8 +163,6 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 		stockpileItem = null;
 		updated = false;
 		List<Item> itemsList = new ArrayList<Item>(program.getSettings().getItems().values());
-		//FIXME the item list need to be filtered - only market items or published = 1?
-		//Or something else - there is to much is in there
 		Collections.sort(itemsList);
 		try {
 			items.getReadWriteLock().writeLock().lock();
@@ -220,7 +218,11 @@ public class StockpileItemDialog extends JDialogCentered implements ActionListen
 
 	@Override
 	protected JComponent getDefaultFocus() {
-		return jItems;
+		if (jItems.isEnabled()){
+			return jItems;
+		} else {
+			return jCountMinimum;
+		}
 	}
 
 	@Override

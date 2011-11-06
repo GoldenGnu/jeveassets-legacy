@@ -40,7 +40,6 @@ public abstract class GuiShared extends Bundle {
 	}
 
 	public abstract String add();
-	public abstract String addStockpile();
 	public abstract String addStockpileItem();
 	public abstract String autoText();
 	public abstract String autoWindow();
@@ -60,6 +59,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String eveOnline();
 	public abstract String item();
 	public abstract String lookup();
+	public abstract String newStockpile();
 	public abstract String overwrite();
 	public abstract String overwriteFile();
 	public abstract String paste();
