@@ -28,15 +28,12 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Candle
  */
 public class EnumTableFormatAdaptor<T extends Enum<T> & TableColumn<Q>, Q> implements AdvancedTableFormat<Q>, WritableTableFormat<Q> {
-	private static final Logger LOG = LoggerFactory.getLogger(EnumTableFormatAdaptor.class);
 
 	List<T> shownColumns;
 	List<T> orderColumns;

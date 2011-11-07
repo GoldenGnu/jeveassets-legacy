@@ -892,10 +892,6 @@ public class Settings{
 		return userDir.getAbsolutePath()+File.separator;
 	}
 
-	private static String getLocalFile(String filename){
-    return getLocalFile(filename, true);
-  }
-
   /**
    *
    * @param filename the name of the data file to obtain

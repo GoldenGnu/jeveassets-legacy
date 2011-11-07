@@ -76,9 +76,7 @@ public class JStockpileTable extends JSeparatorTable{
 		} else if ( (object instanceof StockpileItem) && columnName.contains("Needed") ){ //TODO i18n breaks when translated
 			StockpileItem stockpileItem = (StockpileItem) object;
 			if (!stockpileItem.isOK()) component.setForeground(Color.RED.darker());
-		} else if (object instanceof SeparatorList.Separator){
-			//Do nothing
-		} else {
+		} else if (!(object instanceof SeparatorList.Separator)){ //Not Separator
 			if (isSelected){
 				component.setBackground(this.getSelectionBackground());
 			} else {

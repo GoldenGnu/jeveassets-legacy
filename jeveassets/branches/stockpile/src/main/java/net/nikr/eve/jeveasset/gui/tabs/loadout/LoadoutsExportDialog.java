@@ -179,6 +179,7 @@ public class LoadoutsExportDialog extends JDialogCentered implements ActionListe
 				Toolkit.getDefaultToolkit().beep();
 				return;
 			}
+			//FIXME something is wrong here....
 			String newValue;
 			if (length == 0) {
 				newValue = string;

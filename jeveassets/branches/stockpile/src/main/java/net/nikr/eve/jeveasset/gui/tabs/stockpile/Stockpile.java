@@ -311,11 +311,10 @@ public class Stockpile {
 					|| stockpile.getLocationID() == location.getSystemID()
 					|| stockpile.getLocationID() == location.getRegionID()
 					|| stockpile.getLocationID() < 0)
+					&& industryJob.getActivityID() == 1 //Manufacturing
+					&& industryJob.getCompletedStatus() == 0 //Inprogress AKA not delivered
 					){
-				//Manufacturing && Inprogress AKA not delivered
-				if (industryJob.getActivityID() == 1 && industryJob.getCompletedStatus() == 0){
 					jobsCountNow = jobsCountNow + (industryJob.getRuns() * itemType.getPortion());
-				}
 			}
 		}
 

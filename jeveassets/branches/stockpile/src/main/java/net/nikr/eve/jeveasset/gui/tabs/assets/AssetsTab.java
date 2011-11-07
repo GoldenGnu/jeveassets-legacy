@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import javax.swing.GroupLayout;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -56,14 +55,9 @@ import net.nikr.eve.jeveasset.gui.shared.JMenuEditItem;
 import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
 import net.nikr.eve.jeveasset.gui.shared.JMenuStockpile;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
-public class AssetsTab extends JMainTab
-		implements ActionListener, JColumnTable.ColumnTableListener {
-	
-	private final static Logger LOG = LoggerFactory.getLogger(AssetsTab.class);
+public class AssetsTab extends JMainTab implements ActionListener, JColumnTable.ColumnTableListener {
 
 	public final static String ACTION_ADD_FILTER_CONTAIN = "ACTION_ADD_FILTER_CONTAIN";
 	public final static String ACTION_ADD_FILTER_CONTAIN_NOT = "ACTION_ADD_FILTER_CONTAIN_NOT";
@@ -113,7 +107,7 @@ public class AssetsTab extends JMainTab
 		jTable.setRowSelectionAllowed(true);
 		jTable.setColumnSelectionAllowed(true);
 		//install the sorting/filtering
-		TableComparatorChooser<Asset> eveAssetSorter = TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, eveAssetTableFormat);
+		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, eveAssetTableFormat);
 		//Table Selection
 		EventSelectionModel<Asset> selectionModel = new EventSelectionModel<Asset>(filterList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -279,7 +273,6 @@ public class AssetsTab extends JMainTab
 		jComponent.setEnabled(true);
 
 		JMenuItem  jMenuItem;
-		JCheckBoxMenuItem jCheckBoxMenuItem;
 		JMenu jSubMenu;
 	//Logic
 		int[] selectedRows = jTable.getSelectedRows();
