@@ -53,7 +53,7 @@ public class JMenuStockpile  extends JMenuTool implements ActionListener {
 		jMenuItem.addActionListener(this);
 		add(jMenuItem);
 		
-		this.addSeparator();
+		if (!program.getSettings().getStockpiles().isEmpty()) this.addSeparator();
 		
 		for (Stockpile stockpile : program.getSettings().getStockpiles()){
 			jMenuItem = new JStockpileMenu(stockpile);
