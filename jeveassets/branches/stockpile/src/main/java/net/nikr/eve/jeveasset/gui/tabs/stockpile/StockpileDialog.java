@@ -352,6 +352,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		show();
 	}
 
+	//FIXME Add locationID here...
 	public Stockpile showAdd() {
 		updateData();
 		this.getDialog().setTitle(TabsStockpile.get().addStockpileTitle());
@@ -537,7 +538,9 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		}
 		jAll.setSelected(false);
 		jStations.setSelected(true);
+		locationsAutoComplete.removeFirstItem();
 		locationsFilter.setMatcher(new LocationsMatcher(myLocations));
+		jLocations.setEnabled(true);
 		jLocations.setSelectedIndex(0);
 		//Containers
 		if (containers.isEmpty()){
