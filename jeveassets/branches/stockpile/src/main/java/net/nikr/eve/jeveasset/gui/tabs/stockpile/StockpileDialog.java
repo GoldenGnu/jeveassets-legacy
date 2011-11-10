@@ -274,7 +274,6 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		if (location.isStation()){
 			station = ApiIdConverter.locationName(location.getLocationID(), null, program.getSettings().getLocations());
 		}
-		System.out.println("station: "+station+" system: "+system+" region: "+region);
 		//Flag
 		ItemFlag flag = (ItemFlag) jFlag.getSelectedItem();
 		//Container

@@ -22,12 +22,13 @@ package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
-import net.nikr.eve.jeveasset.gui.shared.table.TableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 
-enum StockpileTableFormat implements TableColumn<StockpileItem> {
+enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 	NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -38,6 +39,31 @@ enum StockpileTableFormat implements TableColumn<StockpileItem> {
 			return from.getName();
 		}
 	},
+	COUNT_MINIMUM(Long.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnCountMinimum();
+		}
+		@Override
+		public Object getColumnValue(StockpileItem from) {
+			return from.getCountMinimum();
+		}
+		@Override
+		public boolean isColumnEditable(StockpileItem baseObject) {
+			if (baseObject instanceof StockpileTotal){
+				return false;
+			} else {
+				return true;
+			}
+		}
+		@Override public StockpileItem setColumnValue(StockpileItem baseObject, Object editedValue) {
+			if (editedValue instanceof Long){
+				long l = (Long) editedValue;
+				baseObject.setCountMinimum(l);
+			}
+			return baseObject;
+		}
+	},
 	COUNT_NOW(Long.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -46,6 +72,16 @@ enum StockpileTableFormat implements TableColumn<StockpileItem> {
 		@Override
 		public Object getColumnValue(StockpileItem from) {
 			return from.getCountNow();
+		}
+	},
+	COUNT_NEEDED(Long.class, GlazedLists.comparableComparator()) {
+		@Override
+		public String getColumnName() {
+			return TabsStockpile.get().columnCountNeeded();
+		}
+		@Override
+		public Object getColumnValue(StockpileItem from) {
+			return from.getCountNeeded();
 		}
 	},
 	COUNT_NOW_INVENTORY(Long.class, GlazedLists.comparableComparator()) {
@@ -88,26 +124,6 @@ enum StockpileTableFormat implements TableColumn<StockpileItem> {
 			return from.getJobsCountNow();
 		}
 	},
-	COUNT_NEEDED(Long.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsStockpile.get().columnCountNeeded();
-		}
-		@Override
-		public Object getColumnValue(StockpileItem from) {
-			return from.getCountNeeded();
-		}
-	},
-	COUNT_MINIMUM(Long.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return TabsStockpile.get().columnCountMinimum();
-		}
-		@Override
-		public Object getColumnValue(StockpileItem from) {
-			return from.getCountMinimum();
-		}
-	},
 	PRICE(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -138,7 +154,7 @@ enum StockpileTableFormat implements TableColumn<StockpileItem> {
 			return from.getValueNeeded();
 		}
 	},
-	VOLUME_NOW(Float.class, GlazedLists.comparableComparator()) {
+	VOLUME_NOW(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnVolumeNow();
@@ -148,7 +164,7 @@ enum StockpileTableFormat implements TableColumn<StockpileItem> {
 			return from.getVolumeNow();
 		}
 	},
-	VOLUME_NEEDED(Float.class, GlazedLists.comparableComparator()) {
+	VOLUME_NEEDED(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsStockpile.get().columnVolumeNeeded();
@@ -174,4 +190,16 @@ enum StockpileTableFormat implements TableColumn<StockpileItem> {
 	public Comparator getComparator() {
 		return comparator;
 	}
+	@Override
+	public String getColumnName() {
+		return getColumnName();
+	}
+	@Override public boolean isColumnEditable(StockpileItem baseObject) {
+		return false;
+	}
+	@Override public StockpileItem setColumnValue(StockpileItem baseObject, Object editedValue) {
+		return null;
+	}
+
+	
 }

@@ -38,6 +38,7 @@ public class HumanTableFormat implements AdvancedTableFormat<Object>, WritableTa
 
 	private List<String> columnNames;
 
+	//FIXME Change to EnumTableFormatAdaptor
 	public HumanTableFormat() {
 		columnNames = new ArrayList<String>();
 		columnNames.add("");

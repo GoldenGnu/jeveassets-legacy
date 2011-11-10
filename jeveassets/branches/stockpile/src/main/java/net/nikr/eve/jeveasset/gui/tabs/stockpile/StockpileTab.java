@@ -119,6 +119,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		jTable = new JStockpileTable(stockpileTableModel);
 		jTable.setSeparatorRenderer(new StockpileSeparatorTableCell(jTable, separatorList, this));
 		jTable.setSeparatorEditor(new StockpileSeparatorTableCell(jTable, separatorList, this));
+		jTable.getTableHeader().setReorderingAllowed(true);
 		PaddingTableCellRenderer.install(jTable, 3);
 		//Listeners
 		installTableMenu(jTable);
@@ -235,8 +236,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 				regions.put(location.getName(), location.getLocationID());
 			}
 		}
-		float volumnNow = 0;
-		float volumnNeeded = 0;
+		double volumnNow = 0;
+		double volumnNeeded = 0;
 		double valueNow = 0;
 		double valueNeeded = 0;
 		

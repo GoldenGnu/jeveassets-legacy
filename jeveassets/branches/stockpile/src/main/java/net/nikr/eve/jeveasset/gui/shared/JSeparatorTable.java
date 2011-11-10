@@ -181,7 +181,8 @@ public class JSeparatorTable extends JAutoColumnTable {
 	}
 
 	public boolean isRowHeightValid(){
-		if (revalidateLocked != null){
+		if (revalidateLocked != null
+				&& this.getTableHeader().getColumnModel().getColumnCount() != 0){ //Allow reordering of columns
 			for (int row = 0; row < this.getRowCount(); row++){
 				TableCellRenderer renderer = this.getCellRenderer(row, 0);
 				Component component = this.prepareRenderer(renderer, row, 0);

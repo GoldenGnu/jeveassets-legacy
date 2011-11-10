@@ -21,7 +21,6 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
-import ca.odell.glazedlists.SeparatorList;
 import ca.odell.glazedlists.swing.EventTableModel;
 import java.awt.Color;
 import java.awt.Component;
@@ -46,41 +45,36 @@ public class JStockpileTable extends JSeparatorTable{
 		boolean isSelected = isCellSelected(row, column);
 		Object object = tableModel.getElementAt(row);
 		String columnName = (String) this.getTableHeader().getColumnModel().getColumn(column).getHeaderValue();
+		
+		//Default Foreground
 		component.setForeground(isSelected ? this.getSelectionForeground() : Color.BLACK);
-		if (object instanceof StockpileTotal){
-			StockpileTotal stockpileTotal = (StockpileTotal) object;
-			if (columnName.equals("Name")){ //TODO i18n breaks when translated
+		
+		if (object instanceof StockpileItem){
+			StockpileItem stockpileItem = (StockpileItem) object;
+			//Background
+			if (columnName.equals(StockpileTableFormat.NAME.getColumnName())){
 				component.setForeground(Color.BLACK);
-				if (stockpileTotal.isOK()){
+				if (stockpileItem.isOK()){
 					component.setBackground( new Color(200,255,200) );
 				} else {
 					component.setBackground( new Color(255,200,200) );
 				}
-			} else if (isSelected){
-				component.setBackground( this.getSelectionBackground().darker() );
-			} else {
-				component.setBackground( new Color(255,255,200) );
-			}
-			if (columnName.contains("Needed") && !stockpileTotal.isOK()){ //TODO i18n breaks when translated
-				 component.setForeground(Color.RED.darker());
-			}
-		} else if ( (object instanceof StockpileItem) && columnName.equals("Name") ){ //TODO i18n breaks when translated
-			StockpileItem stockpileItem = (StockpileItem) object;
-			component.setForeground(Color.BLACK);
-			if (stockpileItem.isOK()){
-				component.setBackground( new Color(200,255,200) );
-				
-			} else {
-				component.setBackground( new Color(255,200,200) );
-			}
-		} else if ( (object instanceof StockpileItem) && columnName.contains("Needed") ){ //TODO i18n breaks when translated
-			StockpileItem stockpileItem = (StockpileItem) object;
-			if (!stockpileItem.isOK()) component.setForeground(Color.RED.darker());
-		} else if (!(object instanceof SeparatorList.Separator)){ //Not Separator
-			if (isSelected){
+			} else if (isSelected){ //Selected
 				component.setBackground(this.getSelectionBackground());
-			} else {
+			} else if (object instanceof StockpileTotal){ //Total
+				component.setBackground( new Color(255,255,200) );
+			} else { //Default
 				component.setBackground(Color.WHITE);
+			}
+			//Foreground
+			if (columnName.equals(StockpileTableFormat.COUNT_NEEDED.getColumnName()) && stockpileItem.getCountNeeded() < 0){
+				component.setForeground(Color.RED.darker());
+			}
+			if (columnName.equals(StockpileTableFormat.VALUE_NEEDED.getColumnName()) && stockpileItem.getValueNeeded() < 0){
+				component.setForeground(Color.RED.darker());
+			}
+			if (columnName.equals(StockpileTableFormat.VOLUME_NEEDED.getColumnName()) && stockpileItem.getVolumeNeeded() < 0){
+				component.setForeground(Color.RED.darker());
 			}
 		}
 		return component;

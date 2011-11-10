@@ -232,7 +232,7 @@ public class Stockpile {
 		private long buyOrdersCountNow = 0;
 		private long jobsCountNow = 0;
 		private double price = 0.0;
-		private float volume = 0.0f;
+		private double volume = 0.0f;
 		
 		public StockpileItem(Stockpile stockpile, StockpileItem stockpileItem) {
 			this.stockpile = stockpile;
@@ -252,7 +252,7 @@ public class Stockpile {
 		}
 		
 		public boolean isOK() {
-			return getCountNeeded() == 0;
+			return getCountNeeded() >= 0;
 		}
 		
 		private void reset(){
@@ -318,6 +318,11 @@ public class Stockpile {
 			}
 		}
 
+		public void setCountMinimum(long countMinimum) {
+			this.countMinimum = countMinimum;
+			this.getStockpile().updateTotal();
+		}
+
 		public String getSeperator() {
 			return stockpile.getName();
 		}
@@ -333,8 +338,6 @@ public class Stockpile {
 		public long getCountMinimum() {
 			return countMinimum;
 		}
-		
-		
 
 		public long getCountNow() {
 			return inventoryCountNow + buyOrdersCountNow + jobsCountNow + sellOrdersCountNow;
@@ -358,8 +361,7 @@ public class Stockpile {
 		
 		public long getCountNeeded() {
 			long countNeeded = getCountNow() - countMinimum;
-			if (countNeeded > 0) countNeeded = 0;
-			return Math.abs(countNeeded);
+			return countNeeded;
 		}
 
 		public double getPrice() {
@@ -370,7 +372,7 @@ public class Stockpile {
 			return typeID;
 		}
 
-		public float getVolume() {
+		public double getVolume() {
 			return volume;
 		}
 
@@ -382,11 +384,11 @@ public class Stockpile {
 			return getCountNeeded() * price;
 		}
 
-		public float getVolumeNow() {
+		public double getVolumeNow() {
 			return getCountNow() * volume;
 		}
 
-		public float getVolumeNeeded() {
+		public double getVolumeNeeded() {
 			return getCountNeeded() * volume;
 		}
 		
@@ -440,11 +442,12 @@ public class Stockpile {
 		private long jobsCountNow = 0;
 		private long countNeeded = 0;
 		private long countMinimum = 0;
-		private double price = 0;
+		private double totalPrice;
+		private double totalPriceCount;
 		private double valueNow = 0;
 		private double valueNeeded = 0;
-		private float volumeNow = 0;
-		private float volumeNeeded = 0;
+		private double volumeNow = 0;
+		private double volumeNeeded = 0;
 		
 		public StockpileTotal(Stockpile stockpile, String name) {
 			super(stockpile, name, 0, 0);
@@ -458,7 +461,8 @@ public class Stockpile {
 			jobsCountNow = 0;
 			countNeeded = 0;
 			countMinimum = 0;
-			price = 0;
+			totalPrice = 0;
+			totalPriceCount = 0;
 			valueNow = 0;
 			valueNeeded = 0;
 			volumeNow = 0;
@@ -470,10 +474,12 @@ public class Stockpile {
 			sellOrdersCountNow = sellOrdersCountNow + item.getSellOrdersCountNow();
 			buyOrdersCountNow = buyOrdersCountNow + item.getBuyOrdersCountNow();
 			jobsCountNow = jobsCountNow + item.getJobsCountNow();
-			jobsCountNow = 0;
 			countNeeded = countNeeded + item.getCountNeeded();
 			countMinimum = countMinimum + item.getCountMinimum();
-			price = price + item.getPrice() / 2;
+			if (item.getPrice() > 0){ //FIXME ignore zero price
+				totalPrice = totalPrice + item.getPrice();
+				totalPriceCount++;
+			}
 			valueNow = valueNow + item.getValueNow();
 			valueNeeded = valueNeeded + item.getValueNeeded();
 			volumeNow = volumeNow + item.getVolumeNow();
@@ -497,6 +503,11 @@ public class Stockpile {
 		}
 
 		@Override
+		public long getCountNow() {
+			return inventoryCountNow + buyOrdersCountNow + jobsCountNow + sellOrdersCountNow;
+		}
+
+		@Override
 		public long getInventoryCountNow() {
 			return inventoryCountNow;
 		}
@@ -515,12 +526,10 @@ public class Stockpile {
 		public long getSellOrdersCountNow() {
 			return sellOrdersCountNow;
 		}
-		
-		
 
 		@Override
 		public double getPrice() {
-			return price;
+			return totalPrice / totalPriceCount;
 		}
 
 		@Override
@@ -534,12 +543,12 @@ public class Stockpile {
 		}
 
 		@Override
-		public float getVolumeNeeded() {
+		public double getVolumeNeeded() {
 			return volumeNeeded;
 		}
 
 		@Override
-		public float getVolumeNow() {
+		public double getVolumeNow() {
 			return volumeNow;
 		}
 

@@ -25,14 +25,14 @@ import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import net.nikr.eve.jeveasset.data.Module;
 import net.nikr.eve.jeveasset.data.Module.ModulePriceValue;
-import net.nikr.eve.jeveasset.gui.shared.table.TableColumn;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsLoadout;
 
 /**
  *
  * @author Candle
  */
-enum ModuleTableFormat implements TableColumn<Module> {
+enum ModuleTableFormat implements EnumTableColumn<Module> {
 	NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -68,5 +68,11 @@ enum ModuleTableFormat implements TableColumn<Module> {
 	@Override
 	public Comparator getComparator() {
 		return comparator;
+	}
+	@Override public boolean isColumnEditable(Module baseObject) {
+		return false;
+	}
+	@Override public Module setColumnValue(Module baseObject, Object editedValue) {
+		return null;
 	}
 }
