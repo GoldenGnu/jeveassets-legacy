@@ -136,10 +136,10 @@ enum OverviewTableFormat implements EnumTableColumn<Overview> {
 	public Comparator getComparator() {
 		return comparator;
 	}
-	@Override public boolean isColumnEditable(Overview baseObject) {
+	@Override public boolean isColumnEditable(Object baseObject) {
 		return false;
 	}
-	@Override public Overview setColumnValue(Overview baseObject, Object editedValue) {
+	@Override public Overview setColumnValue(Object baseObject, Object editedValue) {
 		return null;
 	}
 }

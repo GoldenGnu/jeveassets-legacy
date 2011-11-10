@@ -49,19 +49,21 @@ enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 			return from.getCountMinimum();
 		}
 		@Override
-		public boolean isColumnEditable(StockpileItem baseObject) {
+		public boolean isColumnEditable(Object baseObject) {
 			if (baseObject instanceof StockpileTotal){
 				return false;
 			} else {
 				return true;
 			}
 		}
-		@Override public StockpileItem setColumnValue(StockpileItem baseObject, Object editedValue) {
-			if (editedValue instanceof Long){
+		@Override public StockpileItem setColumnValue(Object baseObject, Object editedValue) {
+			if ((editedValue instanceof Long) && (baseObject instanceof StockpileItem)){
+				StockpileItem item = (StockpileItem) baseObject;
 				long l = (Long) editedValue;
-				baseObject.setCountMinimum(l);
+				item.setCountMinimum(l);
+				return item;
 			}
-			return baseObject;
+			return null;
 		}
 	},
 	COUNT_NOW(Long.class, GlazedLists.comparableComparator()) {
@@ -194,10 +196,10 @@ enum StockpileTableFormat implements EnumTableColumn<StockpileItem> {
 	public String getColumnName() {
 		return getColumnName();
 	}
-	@Override public boolean isColumnEditable(StockpileItem baseObject) {
+	@Override public boolean isColumnEditable(Object baseObject) {
 		return false;
 	}
-	@Override public StockpileItem setColumnValue(StockpileItem baseObject, Object editedValue) {
+	@Override public StockpileItem setColumnValue(Object baseObject, Object editedValue) {
 		return null;
 	}
 

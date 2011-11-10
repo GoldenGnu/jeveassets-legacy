@@ -69,10 +69,10 @@ enum ModuleTableFormat implements EnumTableColumn<Module> {
 	public Comparator getComparator() {
 		return comparator;
 	}
-	@Override public boolean isColumnEditable(Module baseObject) {
+	@Override public boolean isColumnEditable(Object baseObject) {
 		return false;
 	}
-	@Override public Module setColumnValue(Module baseObject, Object editedValue) {
+	@Override public Module setColumnValue(Object baseObject, Object editedValue) {
 		return null;
 	}
 }

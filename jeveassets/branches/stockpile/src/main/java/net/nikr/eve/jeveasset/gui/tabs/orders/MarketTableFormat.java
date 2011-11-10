@@ -135,10 +135,10 @@ enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 	public Comparator getComparator() {
 		return comparator;
 	}
-	@Override public boolean isColumnEditable(MarketOrder baseObject) {
+	@Override public boolean isColumnEditable(Object baseObject) {
 		return false;
 	}
-	@Override public MarketOrder setColumnValue(MarketOrder baseObject, Object editedValue) {
+	@Override public MarketOrder setColumnValue(Object baseObject, Object editedValue) {
 		return null;
 	}
 }

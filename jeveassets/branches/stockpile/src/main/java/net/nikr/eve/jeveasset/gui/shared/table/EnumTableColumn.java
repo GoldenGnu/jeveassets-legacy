@@ -32,6 +32,6 @@ public interface EnumTableColumn<Q> {
 	Comparator getComparator();
 	String getColumnName();
 	Object getColumnValue(Q from);
-	boolean isColumnEditable(Q baseObject);
-	Q setColumnValue(Q baseObject, Object editedValue);
+	boolean isColumnEditable(Object baseObject);
+	Q setColumnValue(Object baseObject, Object editedValue);
 }

@@ -191,10 +191,10 @@ enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 	public Comparator getComparator() {
 		return comparator;
 	}
-	@Override public boolean isColumnEditable(IndustryJob baseObject) {
+	@Override public boolean isColumnEditable(Object baseObject) {
 		return false;
 	}
-	@Override public IndustryJob setColumnValue(IndustryJob baseObject, Object editedValue) {
+	@Override public IndustryJob setColumnValue(Object baseObject, Object editedValue) {
 		return null;
 	}
 }
