@@ -476,7 +476,7 @@ public class Stockpile {
 			jobsCountNow = jobsCountNow + item.getJobsCountNow();
 			countNeeded = countNeeded + item.getCountNeeded();
 			countMinimum = countMinimum + item.getCountMinimum();
-			if (item.getPrice() > 0){ //FIXME ignore zero price
+			if (item.getPrice() > 0){ //FIXME Should total average price ignore zero price?
 				totalPrice = totalPrice + item.getPrice();
 				totalPriceCount++;
 			}

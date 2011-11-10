@@ -65,7 +65,6 @@ public class DocumentFactory {
 				newValue = currentBuffer.toString();
 			}
 			try {
-				//FIXME Integer might be to small to hold the KeyID?
 				Integer.parseInt(newValue);
 				super.insertString(offset, string, attributes);
 			} catch (NumberFormatException exception) {

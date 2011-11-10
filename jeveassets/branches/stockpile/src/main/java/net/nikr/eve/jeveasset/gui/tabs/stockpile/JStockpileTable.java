@@ -67,6 +67,7 @@ public class JStockpileTable extends JSeparatorTable{
 				component.setBackground(Color.WHITE);
 			}
 			//Foreground
+			//FIXME what color should total with both +/- be?
 			if (columnName.equals(StockpileTableFormat.COUNT_NEEDED.getColumnName()) && stockpileItem.getCountNeeded() < 0){
 				component.setForeground(Color.RED.darker());
 			}

@@ -351,7 +351,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		show();
 	}
 
-	//FIXME Add locationID here...
+	//FIXME Add Stockpile: Could set location from JMenuTool with locationID (when available)
 	public Stockpile showAdd() {
 		updateData();
 		this.getDialog().setTitle(TabsStockpile.get().addStockpileTitle());
