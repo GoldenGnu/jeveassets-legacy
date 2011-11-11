@@ -53,11 +53,14 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Human;
+import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.data.ItemFlag;
 import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.MarketOrder;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
+import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
@@ -78,8 +81,8 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 	private JRadioButton jRegions;
 	private JRadioButton jAllLocations;
 	private JCheckBox jInventory;
-	private JCheckBox jSellOrders;
 	private JCheckBox jBuyOrders;
+	private JCheckBox jSellOrders;
 	private JCheckBox jJobs;
 	private JButton jOK;
 	private JButton jCancel;
@@ -141,10 +144,10 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		JLabel jIncludeLabel = new JLabel(TabsStockpile.get().include());
 		
 		jInventory = new JCheckBox(TabsStockpile.get().inventory());
-	
-		jSellOrders = new JCheckBox(TabsStockpile.get().sellOrders());
 		
 		jBuyOrders = new JCheckBox(TabsStockpile.get().buyOrders());
+	
+		jSellOrders = new JCheckBox(TabsStockpile.get().sellOrders());
 		
 		jJobs = new JCheckBox(TabsStockpile.get().jobs());
 		
@@ -194,15 +197,15 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 						)
 						.addGroup(layout.createSequentialGroup()
 							.addComponent(jInventory)
-							.addComponent(jSellOrders)
 							.addComponent(jBuyOrders)
+							.addComponent(jSellOrders)
 							.addComponent(jJobs)
 						)
-						.addComponent(jName, 300, 300, 300)
-						.addComponent(jLocations, 300, 300, 300)
-						.addComponent(jFlag, 300, 300, 300)
-						.addComponent(jContainer, 300, 300, 300)
-						.addComponent(jCharacters, 300, 300, 300)
+						.addComponent(jName, 320, 320, 320)
+						.addComponent(jLocations, 320, 320, 320)
+						.addComponent(jFlag, 320, 320, 320)
+						.addComponent(jContainer, 320, 320, 320)
+						.addComponent(jCharacters, 320, 320, 320)
 						
 						
 					)
@@ -351,10 +354,33 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		show();
 	}
 
-	//FIXME Add Stockpile: Could set location from JMenuTool with locationID (when available)
 	public Stockpile showAdd() {
 		updateData();
 		this.getDialog().setTitle(TabsStockpile.get().addStockpileTitle());
+		show();
+		return stockpile;
+	}
+
+	public Stockpile showAdd(long locationID) {
+		updateData();
+		this.getDialog().setTitle(TabsStockpile.get().addStockpileTitle());
+		//Location
+		Location location = program.getSettings().getLocations().get(locationID);
+		if (location == null){
+			jStations.setSelected(true); //Default
+		} else if (location.isRegion()){
+			jRegions.setSelected(true);
+		} else if (location.isSystem()){
+			jSystems.setSelected(true);
+		} else if (location.isStation()){
+			jStations.setSelected(true);
+		}
+		refilter();
+		if (location != null){
+			
+			jLocations.setSelectedItem(location);
+		}
+		
 		show();
 		return stockpile;
 	}
@@ -533,6 +559,34 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 			}
 			if (!myLocations.contains(asset.getRegion())){
 				myLocations.add(asset.getRegion());
+			}
+		}
+		for (Account account :program.getSettings().getAccounts()){
+			for (Human human : account.getHumans()){
+				List<IndustryJob> industryJobs = ApiConverter.apiIndustryJobsToIndustryJobs(human.getIndustryJobs(), human.getName(), program.getSettings());
+				for (IndustryJob industryJob : industryJobs){
+					if (!myLocations.contains(industryJob.getLocation())){
+						myLocations.add(industryJob.getLocation());
+					}
+					if (!myLocations.contains(industryJob.getSystem())){
+						myLocations.add(industryJob.getSystem());
+					}
+					if (!myLocations.contains(industryJob.getRegion())){
+						myLocations.add(industryJob.getRegion());
+					}
+				}
+				List<MarketOrder> marketOrders = ApiConverter.apiMarketOrdersToMarketOrders(human.getMarketOrders(), program.getSettings());
+				for (MarketOrder marketOrder : marketOrders){
+					if (!myLocations.contains(marketOrder.getLocation())){
+						myLocations.add(marketOrder.getLocation());
+					}
+					if (!myLocations.contains(marketOrder.getSystem())){
+						myLocations.add(marketOrder.getSystem());
+					}
+					if (!myLocations.contains(marketOrder.getRegion())){
+						myLocations.add(marketOrder.getRegion());
+					}
+				}
 			}
 		}
 		jAll.setSelected(false);

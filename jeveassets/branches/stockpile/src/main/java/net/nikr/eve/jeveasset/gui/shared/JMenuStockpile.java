@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
@@ -71,7 +72,17 @@ public class JMenuStockpile  extends JMenuTool implements ActionListener {
 			if (asset != null){
 				stockpile = program.getStockpileTool().showAddStockpile(asset);
 			} else {
-				stockpile = program.getStockpileTool().showAddStockpile();
+				long locationID = -1;
+				for (Location location : program.getSettings().getLocations().values()){
+					if (location.getName().equals(station)){ //Perfect match
+						locationID = location.getLocationID();
+						break;
+					}
+					if (location.getName().equals(system)){ //Maybe a better match can be found - keep trying
+						locationID = location.getLocationID();
+					}
+				}
+				stockpile = program.getStockpileTool().showAddStockpile(locationID);
 			}
 			if (stockpile != null){
 				program.getStockpileTool().showAddItem(stockpile, typeId);

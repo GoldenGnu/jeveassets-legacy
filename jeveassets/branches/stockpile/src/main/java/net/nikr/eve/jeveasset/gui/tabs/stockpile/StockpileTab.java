@@ -172,8 +172,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		updateData();
 		return stockpile;
 	}
-	public Stockpile showAddStockpile() {
-		Stockpile stockpile = stockpileDialog.showAdd();
+	public Stockpile showAddStockpile(long locationID) {
+		Stockpile stockpile = stockpileDialog.showAdd(locationID);
 		updateData();
 		return stockpile;
 	}
@@ -365,12 +365,18 @@ public class StockpileTab extends JMainTab implements ActionListener {
 				StockpileItem item = (StockpileItem) separator.first();
 				Stockpile stockpile = item.getStockpile();
 				String s = "";
+				double volume = 0;
+				double value = 0;
 				for (StockpileItem stockpileItem : stockpile.getItems()){
-					if (stockpileItem.getTypeID() > 0) s = s + stockpileItem.getCountNeeded()+"x " +stockpileItem.getName()+"\r\n";
+					if (stockpileItem.getTypeID() > 0 && stockpileItem.getCountNeeded() < 0){
+						s = s + Math.abs(stockpileItem.getCountNeeded())+"x " +stockpileItem.getName()+"\r\n";
+						volume = volume + stockpileItem.getVolumeNeeded();
+						value = value + stockpileItem.getValueNeeded();
+					}
 				}
 				s = s + "\r\n";
-				s = s + TabsStockpile.get().totalToHaul()+Formater.doubleFormat(stockpile.getTotal().getVolumeNeeded())+ "\r\n";
-				s = s + TabsStockpile.get().estimatedMarketValue()+Formater.iskFormat(stockpile.getTotal().getValueNeeded())+ "\r\n";
+				s = s + TabsStockpile.get().totalToHaul()+Formater.doubleFormat(Math.abs(volume))+ "\r\n";
+				s = s + TabsStockpile.get().estimatedMarketValue()+Formater.iskFormat(Math.abs(value))+ "\r\n";
 				SecurityManager sm = System.getSecurityManager();
 				if (sm != null) {
 					try {

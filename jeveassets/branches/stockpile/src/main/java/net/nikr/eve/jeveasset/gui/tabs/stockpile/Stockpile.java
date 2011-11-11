@@ -470,21 +470,22 @@ public class Stockpile {
 		}
 		
 		private void updateTotal(StockpileItem item){
+			if (!item.isOK()) ok = false;
 			inventoryCountNow = inventoryCountNow + item.getInventoryCountNow();
 			sellOrdersCountNow = sellOrdersCountNow + item.getSellOrdersCountNow();
 			buyOrdersCountNow = buyOrdersCountNow + item.getBuyOrdersCountNow();
 			jobsCountNow = jobsCountNow + item.getJobsCountNow();
-			countNeeded = countNeeded + item.getCountNeeded();
+			//Only add if negative
+			if (item.getCountNeeded() < 0) countNeeded = countNeeded + item.getCountNeeded();
 			countMinimum = countMinimum + item.getCountMinimum();
-			if (item.getPrice() > 0){ //FIXME Should total average price ignore zero price?
-				totalPrice = totalPrice + item.getPrice();
-				totalPriceCount++;
-			}
+			totalPrice = totalPrice + item.getPrice();
+			totalPriceCount++;
 			valueNow = valueNow + item.getValueNow();
-			valueNeeded = valueNeeded + item.getValueNeeded();
+			//Only add if negative
+			if (item.getValueNeeded() < 0) valueNeeded = valueNeeded + item.getValueNeeded();
 			volumeNow = volumeNow + item.getVolumeNow();
-			volumeNeeded = volumeNeeded + item.getVolumeNeeded();
-			if (!item.isOK()) ok = false;
+			//Only add if negative
+			if (item.getVolumeNeeded() < 0) volumeNeeded = volumeNeeded + item.getVolumeNeeded();
 		}
 		
 		@Override
