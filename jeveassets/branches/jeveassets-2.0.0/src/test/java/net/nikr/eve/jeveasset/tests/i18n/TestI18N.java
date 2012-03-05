@@ -207,7 +207,7 @@ public class TestI18N {
 				Bundle.LoadIgnoreExtra.NO,
 				Bundle.LoadIgnoreParameterMisMatch.NO
 				);
-		assertNotNull(g.activity());
+		assertNotNull(g.all());
 	}
 	
 	@Test public void testTabsLoadoutBundle_en() throws Exception {

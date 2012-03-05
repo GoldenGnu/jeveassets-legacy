@@ -29,7 +29,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 
-enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
+public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 	//XXX Removed extra id columns from IndustryJobTableFormat (Industry Plot Releated?)
 	/*
 	JOB_ID(String.class, GlazedLists.comparableComparator()) {
@@ -200,6 +200,15 @@ enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 	@Override
 	public Comparator getComparator() {
 		return comparator;
+	}
+	//XXX - Strange workaround >_<
+	@Override
+	public Object getColumnValue(IndustryJob from) {
+		return getColumnValue(from);
+	}
+	@Override
+	public String toString() {
+		return getColumnName();
 	}
 	@Override public boolean isColumnEditable(Object baseObject) {
 		return false;

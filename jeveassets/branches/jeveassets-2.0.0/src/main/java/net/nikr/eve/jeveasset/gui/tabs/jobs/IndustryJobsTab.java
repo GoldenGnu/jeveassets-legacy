@@ -21,115 +21,77 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.ListSelection;
-import ca.odell.glazedlists.SortedList;
+import ca.odell.glazedlists.*;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
+import java.util.Map;
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.JMainTab;
-import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
-import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
-import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
-import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
-import net.nikr.eve.jeveasset.gui.shared.JMenuStockpile;
+import net.nikr.eve.jeveasset.gui.shared.*;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.MatcherControl;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 
-public class IndustryJobsTab extends JMainTab implements ActionListener {
+public class IndustryJobsTab extends JMainTab {
 
 	private final static String ACTION_SELECTED = "ACTION_SELECTED";
 
-	private JComboBox jCharacters;
-	private JComboBox jState;
-	private JComboBox jActivity;
 	private JTable jTable;
 
 	private EventList<IndustryJob> jobsEventList;
 	private EventTableModel<IndustryJob> jobsTableModel;
 
 	private IndustryJobData data;
+	private FilterControl<IndustryJob> filterControl;
 
 	public IndustryJobsTab(Program program) {
 		super(program, TabsJobs.get().industry(), Images.TOOL_INDUSTRY_JOBS.getIcon(), true);
-
-		jCharacters = new JComboBox();
-		jCharacters.setActionCommand(ACTION_SELECTED);
-		jCharacters.addActionListener(this);
-
-		jState = new JComboBox();
-		jState.setActionCommand(ACTION_SELECTED);
-		jState.addActionListener(this);
-
-		jActivity = new JComboBox();
-		jActivity.setActionCommand(ACTION_SELECTED);
-		jActivity.addActionListener(this);
-
-		JLabel jCharactersLabel = new JLabel(TabsJobs.get().character());
-		JLabel jStateLabel = new JLabel(TabsJobs.get().state());
-		JLabel jActivityLabel = new JLabel(TabsJobs.get().activity());
 
 		//Table format
 		EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> industryJobsTableFormat = new EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob>(IndustryJobTableFormat.class);
 		//Backend
 		jobsEventList = new BasicEventList<IndustryJob>();
+		
+		FilterList<IndustryJob> filterList = new FilterList<IndustryJob>(jobsEventList);
 		//For soring the table
-		SortedList<IndustryJob> jobsSortedList = new SortedList<IndustryJob>(jobsEventList);
+		SortedList<IndustryJob> sortedList = new SortedList<IndustryJob>(filterList);
 		//Table Model
-		jobsTableModel = new EventTableModel<IndustryJob>(jobsSortedList, industryJobsTableFormat);
+		jobsTableModel = new EventTableModel<IndustryJob>(sortedList, industryJobsTableFormat);
 		//Tables
 		jTable = new JAutoColumnTable(jobsTableModel);
 		//Table Selection
-		EventSelectionModel<IndustryJob> selectionModel = new EventSelectionModel<IndustryJob>(jobsEventList);
+		EventSelectionModel<IndustryJob> selectionModel = new EventSelectionModel<IndustryJob>(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTableMenu(jTable);
 		//Sorters
-		TableComparatorChooser.install(jTable, jobsSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, industryJobsTableFormat);
+		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, industryJobsTableFormat);
 		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
+		//Filter
+		filterControl = FilterControl.install(program.getMainWindow().getFrame(), filterList, new IndustryJobsMatcher(program.getSettings().getIndustryJobsFilters()));
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(jCharactersLabel)
-					.addComponent(jCharacters, 200, 200, 200)
-					.addComponent(jActivityLabel)
-					.addComponent(jActivity, 200, 200, 200)
-					.addComponent(jStateLabel)
-					.addComponent(jState, 200, 200, 200)
-				)
+				.addComponent(filterControl.getPanel())
 				.addComponent(jTableScroll, 700, 700, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jCharactersLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jCharacters, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jStateLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jState, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jActivityLabel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jActivity, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				)
+				.addComponent(filterControl.getPanel())
 				.addComponent(jTableScroll, 100, 400, Short.MAX_VALUE)
 		);
 	}
@@ -156,30 +118,18 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 		data.updateData();
 
 		if (!data.getCharacters().isEmpty()){
-			jCharacters.setEnabled(true);
 			jTable.setEnabled(true);
-			jActivity.setEnabled(true);
-			jState.setEnabled(true);
 			Collections.sort(data.getCharacters());
 			data.getCharacters().add(0, TabsJobs.get().all());
-			jCharacters.setModel( new DefaultComboBoxModel(data.getCharacters()));
-			jActivity.setModel( new DefaultComboBoxModel(IndustryJob.IndustryActivity.values()));
-			jState.setModel( new DefaultComboBoxModel(IndustryJob.IndustryJobState.values()));
-			jCharacters.setSelectedIndex(0);
-			jActivity.setSelectedIndex(0);
-			jState.setSelectedIndex(0);
 		} else {
-			jCharacters.setEnabled(false);
 			jTable.setEnabled(false);
-			jActivity.setEnabled(false);
-			jState.setEnabled(false);
-			jCharacters.setModel( new DefaultComboBoxModel());
-			jCharacters.getModel().setSelectedItem(TabsJobs.get().no());
-			jActivity.setModel( new DefaultComboBoxModel());
-			jActivity.getModel().setSelectedItem(TabsJobs.get().no());
-			jState.setModel( new DefaultComboBoxModel());
-			jState.getModel().setSelectedItem(TabsJobs.get().no());
+		}
+		try {
+			jobsEventList.getReadWriteLock().writeLock().lock();
 			jobsEventList.clear();
+			jobsEventList.addAll( data.getAll() );
+		} finally {
+			jobsEventList.getReadWriteLock().writeLock().unlock();
 		}
 	}
 
@@ -201,49 +151,24 @@ public class IndustryJobsTab extends JMainTab implements ActionListener {
 		jComponent.add(new JMenuStockpile(program, industryJob));
 		jComponent.add(new JMenuLookup(program, industryJob));
 	}
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (ACTION_SELECTED.equals(e.getActionCommand())) {
-			String selected = (String) jCharacters.getSelectedItem();
-			if (data.getCharacters().size() > 1){
-				List<IndustryJob> industryJobsInput;
-				List<IndustryJob> industryJobsOutput = new ArrayList<IndustryJob>();
-				//Characters
-				if (selected.equals(TabsJobs.get().all())){
-					industryJobsInput = data.getAll();
-				} else {
-					industryJobsInput = data.getJobs().get(selected);
-				}
-				//State
-				Object state = jState.getSelectedItem();
-				//Activity
-				Object activity = jActivity.getSelectedItem();
-				for (int a = 0; a < industryJobsInput.size(); a++){
-					IndustryJob industryJob = industryJobsInput.get(a);
-					boolean bState = (industryJob.getState().equals(state)
-							|| state.equals(IndustryJob.IndustryJobState.STATE_ALL) //All
-							|| (state.equals(IndustryJob.IndustryJobState.STATE_NOT_DELIVERED) //Pending/Active/Ready
-								&& (
-									industryJob.getState().equals(IndustryJob.IndustryJobState.STATE_PENDING)
-									|| industryJob.getState().equals(IndustryJob.IndustryJobState.STATE_ACTIVE)
-									|| industryJob.getState().equals(IndustryJob.IndustryJobState.STATE_READY)
-								)
-							)
-						);
-					boolean bActivity = (industryJob.getActivity().equals(activity) || activity.equals(IndustryJob.IndustryActivity.ACTIVITY_ALL));
-					if (bState && bActivity){
-						industryJobsOutput.add(industryJob);
-					}
-				}
-				try {
-					jobsEventList.getReadWriteLock().writeLock().lock();
-					jobsEventList.clear();
-					jobsEventList.addAll( industryJobsOutput );
-				} finally {
-					jobsEventList.getReadWriteLock().writeLock().unlock();
-				}
-				
-			}
+	
+	public static class IndustryJobsMatcher extends MatcherControl<IndustryJob>{
+
+		public IndustryJobsMatcher(Map<String, List<Filter>> filters) {
+			super(filters);
 		}
+		
+		@Override
+		public boolean matches(IndustryJob item, Object column) {
+			IndustryJobTableFormat format = (IndustryJobTableFormat) column;
+			Object columnValue = format.getColumnValue(item);
+			return compare(columnValue.toString());
+		}
+
+		@Override
+		public Object[] getValues() {
+			return IndustryJobTableFormat.values();
+		}
+		
 	}
 }

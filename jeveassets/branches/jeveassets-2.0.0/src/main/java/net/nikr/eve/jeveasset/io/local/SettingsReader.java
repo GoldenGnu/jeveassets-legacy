@@ -28,26 +28,21 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import net.nikr.eve.jeveasset.data.AssetFilter;
-import net.nikr.eve.jeveasset.data.TableSettings;
-import net.nikr.eve.jeveasset.data.TableSettings.ResizeMode;
-import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.CsvSettings.DecimalSeperator;
 import net.nikr.eve.jeveasset.data.CsvSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.CsvSettings.LineDelimiter;
-import net.nikr.eve.jeveasset.data.Location;
-import net.nikr.eve.jeveasset.data.OverviewGroup;
-import net.nikr.eve.jeveasset.data.OverviewLocation;
-import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.FactionPrice;
-import net.nikr.eve.jeveasset.data.ReprocessSettings;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.UserItem;
+import net.nikr.eve.jeveasset.data.TableSettings.ResizeMode;
+import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileDialog;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab.FilterType;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.online.FactionGetter;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
@@ -175,13 +170,19 @@ public class SettingsReader extends AbstractXmlReader {
 		Element updatesElement = (Element) updateNodes.item(0);
 		parseUpdates(updatesElement, settings);
 
-		//Filters
+		//Asset Filters
 		NodeList filterNodes = element.getElementsByTagName("filters");
 		if (filterNodes.getLength() != 1){
 			throw new XmlException("Wrong filters element count.");
 		}
 		Element filtersElement = (Element) filterNodes.item(0);
-		parseFilters(filtersElement, settings.getAssetFilters());
+		parseAssetFilters(filtersElement, settings.getAssetFilters());
+		
+		//Table Filters
+		parseFilters(element, settings.getStockpileFilters(), "stockpile");
+		parseFilters(element, settings.getIndustryJobsFilters(), "industryjobs");
+		parseFilters(element, settings.getMarketOrdersFilters(), "marketorders");
+		
 		
 		// Proxy can have 0 or 1 proxy elements; at 0, the proxy stays as null.
 		NodeList proxyNodes = element.getElementsByTagName("proxy");
@@ -212,7 +213,7 @@ public class SettingsReader extends AbstractXmlReader {
 			Element stockpileNode = (Element) stockpileNodes.item(a);
 			String name = AttributeGetters.getString(stockpileNode, "name");
 
-			long characterID = AttributeGetters.getLong(stockpileNode, "characterid");
+			long ownerID = AttributeGetters.getLong(stockpileNode, "characterid");
 			String container = AttributeGetters.getString(stockpileNode, "container");
 			int flagID = AttributeGetters.getInt(stockpileNode, "flagid");
 			long locationID = AttributeGetters.getLong(stockpileNode, "locationid");
@@ -236,7 +237,7 @@ public class SettingsReader extends AbstractXmlReader {
 			boolean buyOrders = AttributeGetters.getBoolean(stockpileNode, "buyorders");
 			boolean jobs = AttributeGetters.getBoolean(stockpileNode, "jobs");
 			
-			Stockpile stockpile = new Stockpile(name, characterID, locationID, station, system, region, flagID, container, inventory, sellOrders, buyOrders, jobs);
+			Stockpile stockpile = new Stockpile(name, ownerID, "", locationID, station, system, region, flagID, container, inventory, sellOrders, buyOrders, jobs);
 			settings.getStockpiles().add(stockpile);
 			NodeList itemNodes = stockpileNode.getElementsByTagName("item");
 			for (int b = 0; b < itemNodes.getLength(); b++){
@@ -426,13 +427,60 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 
-	private static void parseFilters(Element element, Map<String, List<AssetFilter>> assetFilters){
+	private static void parseAssetFilters(Element element, Map<String, List<AssetFilter>> assetFilters){
 		NodeList filterNodes = element.getElementsByTagName("filter");
 		for (int a = 0; a < filterNodes.getLength(); a++){
 			Element currentNode = (Element) filterNodes.item(a);
 			String name = parseFilter(currentNode);
 			assetFilters.put(name, parseFilterRows(currentNode));
 		}
+	}
+	
+	private static void parseFilters(Element element, Map<String, List<Filter>> filters, String name){
+		NodeList filtersNodes = element.getElementsByTagName("filters"+name);
+		if (filtersNodes.getLength() == 1){
+			Element filterElement = (Element) filtersNodes.item(0);
+			parseFilters(filterElement, filters);
+		}
+	}
+	
+	private static void parseFilters(Element element, Map<String, List<Filter>> filters){
+		NodeList filterNodes = element.getElementsByTagName("filter");
+		for (int a = 0; a < filterNodes.getLength(); a++){
+			Element filterNode = (Element) filterNodes.item(a);
+			String name = AttributeGetters.getString(filterNode, "name");
+			List<Filter> filterFilters = new ArrayList<Filter>();
+			NodeList rowNodes = filterNode.getElementsByTagName("row");
+			for (int b = 0; b < rowNodes.getLength(); b++){
+				Element rowNode = (Element) rowNodes.item(b);
+				String text = AttributeGetters.getString(rowNode, "text");
+				String columnString = AttributeGetters.getString(rowNode, "column");
+				Object column =  getColumn(columnString);
+				
+				String compare = AttributeGetters.getString(rowNode, "compare");
+				boolean and = AttributeGetters.getBoolean(rowNode, "and");
+				filterFilters.add(new Filter(and, column, compare, text));
+			}
+			filters.put(name, filterFilters);
+		}
+	}
+	private static Object getColumn(String s){
+		try {
+			return FilterType.valueOf(s);
+		} catch (IllegalArgumentException exception) {
+			
+		}
+		try {
+			return IndustryJobTableFormat.valueOf(s);
+		} catch (IllegalArgumentException exception) {
+			
+		}
+		try {
+			return MarketTableFormat.valueOf(s);
+		} catch (IllegalArgumentException exception) {
+			
+		}
+		return "";
 	}
 
 	private static String parseFilter(Element element){

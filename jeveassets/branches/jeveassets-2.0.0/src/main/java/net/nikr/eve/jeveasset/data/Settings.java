@@ -37,6 +37,7 @@ import java.util.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.model.Galaxy;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.io.local.*;
@@ -117,6 +118,10 @@ public class Settings{
 	private Galaxy model;
 	private PriceDataGetter priceDataGetter = new PriceDataGetter(this);
 	private CsvSettings csvSettings;
+	
+	private final Map<String, List<Filter>> MarketOrdersFilters = new HashMap<String, List<Filter>>();
+	private final Map<String, List<Filter>> IndustryJobsFilters = new HashMap<String, List<Filter>>();
+	private final Map<String, List<Filter>> StockpileFilters = new HashMap<String, List<Filter>>();
 	
 	public Settings() {
 		SplashUpdater.setProgress(5);
@@ -741,6 +746,18 @@ public class Settings{
 
 	public Map<String, TableSettings> getTableSettings() {
 		return tableSettings;
+	}
+
+	public Map<String, List<Filter>> getIndustryJobsFilters() {
+		return IndustryJobsFilters;
+	}
+
+	public Map<String, List<Filter>> getMarketOrdersFilters() {
+		return MarketOrdersFilters;
+	}
+
+	public Map<String, List<Filter>> getStockpileFilters() {
+		return StockpileFilters;
 	}
 
 	public TableSettings getAssetTableSettings(){

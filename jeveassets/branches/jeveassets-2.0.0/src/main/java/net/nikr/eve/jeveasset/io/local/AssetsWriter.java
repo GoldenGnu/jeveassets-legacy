@@ -81,7 +81,7 @@ public class AssetsWriter extends AbstractXmlWriter {
 		for (int a = 0; a < humans.size(); a++){
 			Human human = humans.get(a);
 			Element node = xmldoc.createElementNS(null, "human");
-			node.setAttributeNS(null, "id", String.valueOf(human.getCharacterID()));
+			node.setAttributeNS(null, "id", String.valueOf(human.getOwnerID()));
 			node.setAttributeNS(null, "name", human.getName());
 			node.setAttributeNS(null, "show", String.valueOf(human.isShowAssets()));
 			node.setAttributeNS(null, "assetsnextupdate", String.valueOf(human.getAssetNextUpdate().getTime()));

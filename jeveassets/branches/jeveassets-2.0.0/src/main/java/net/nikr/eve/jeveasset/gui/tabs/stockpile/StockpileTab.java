@@ -21,10 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.ListSelection;
-import ca.odell.glazedlists.SeparatorList;
+import ca.odell.glazedlists.*;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
@@ -36,40 +33,21 @@ import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.SwingUtilities;
+import java.util.*;
+import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Human;
-import net.nikr.eve.jeveasset.data.Item;
-import net.nikr.eve.jeveasset.data.ItemFlag;
-import net.nikr.eve.jeveasset.data.Location;
+import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
-import net.nikr.eve.jeveasset.gui.shared.JMainTab;
-import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
-import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
-import net.nikr.eve.jeveasset.gui.shared.JMenuEditItem;
-import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
-import net.nikr.eve.jeveasset.gui.shared.JSeparatorTable;
-import net.nikr.eve.jeveasset.gui.shared.PaddingTableCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.*;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.filter.MatcherControl;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab.FilterType;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -83,6 +61,26 @@ public class StockpileTab extends JMainTab implements ActionListener {
 	private final static String ACTION_EDIT_ITEM = "ACTION_EDIT_ITEM";
 	private final static String ACTION_DELETE_ITEM = "ACTION_DELETE_ITEM";
 	
+	public enum FilterType {
+		//FIXME - i18n
+		NAME("Name"),
+		OWNER("Owner"),
+		LOCATION("Location"),
+		ITEM("Item (Show only item)"),
+		ITEM_STOCKPILE("Item (Show stockpiles)")
+		;
+		
+		String name;
+		private FilterType(String name) {
+			this.name = name;
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
+	}
+	
 	private JButton jAdd;
 	private JSeparatorTable jTable;
 	private JButton jExpand;
@@ -94,10 +92,13 @@ public class StockpileTab extends JMainTab implements ActionListener {
 	
 	private EventTableModel<StockpileItem> stockpileTableModel;
 	private EventList<StockpileItem> stockpileEventList;
+	private FilterList<StockpileItem> filterList;
 	private SeparatorList<StockpileItem> separatorList;
 	
 	private StockpileDialog stockpileDialog;
 	private StockpileItemDialog stockpileItemDialog;
+	
+	private FilterControl<StockpileItem> filterControl;
 	
 	public StockpileTab(Program program) {
 		super(program, TabsStockpile.get().stockpile(), Images.TOOL_STOCKPILE.getIcon(), true);
@@ -105,21 +106,22 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		stockpileDialog = new StockpileDialog(program);
 		stockpileItemDialog = new StockpileItemDialog(program);
 		
-		jAdd = new JButton(TabsStockpile.get().newStockpile());
+		jAdd = new JButton(TabsStockpile.get().newStockpile(), Images.LOC_GROUPS.getIcon());
 		jAdd.setActionCommand(ACTION_ADD);
 		jAdd.addActionListener(this);
 		
-		jCollapse = new JButton(TabsStockpile.get().collapse());
+		jCollapse = new JButton(TabsStockpile.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.setActionCommand(ACTION_COLLAPSE);
 		jCollapse.addActionListener(this);
 
-		jExpand = new JButton(TabsStockpile.get().expand());
+		jExpand = new JButton(TabsStockpile.get().expand(), Images.MISC_EXPANDED.getIcon());
 		jExpand.setActionCommand(ACTION_EXPAND);
 		jExpand.addActionListener(this);
 		
 		EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> stockpileTableFormat = new EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem>(StockpileTableFormat.class);
 		stockpileEventList = new BasicEventList<StockpileItem>();
-		separatorList = new SeparatorList<StockpileItem>(stockpileEventList, new StockpileSeparatorComparator(), 1, Integer.MAX_VALUE);
+		filterList = new FilterList<StockpileItem>(stockpileEventList);
+		separatorList = new SeparatorList<StockpileItem>(filterList, new StockpileSeparatorComparator(), 1, Integer.MAX_VALUE);
 		stockpileTableModel = new EventTableModel<StockpileItem>(separatorList, stockpileTableFormat);
 		//Tables
 		jTable = new JStockpileTable(program, stockpileTableModel);
@@ -135,23 +137,23 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		EventSelectionModel<StockpileItem> selectionModel = new EventSelectionModel<StockpileItem>(separatorList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
+		//Filter GUI
+		filterControl = FilterControl.install(program.getMainWindow().getFrame(), filterList, new StockpileMatcher(program.getSettings().getStockpileFilters()));
+		
+		filterControl.addToolSeparator();
+		filterControl.addToolButton(jAdd, 100);
+		filterControl.addToolSeparator();
+		filterControl.addToolButton(jCollapse);
+		filterControl.addToolButton(jExpand);
 		
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
-				.addGroup(layout.createSequentialGroup()
-					.addComponent(jAdd, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jCollapse, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-					.addComponent(jExpand, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
-				)
+				.addComponent(filterControl.getPanel())
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addGroup(layout.createParallelGroup()
-					.addComponent(jAdd, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jCollapse, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jExpand, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				)
+				.addComponent(filterControl.getPanel())
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		
@@ -218,6 +220,32 @@ public class StockpileTab extends JMainTab implements ActionListener {
 			jTable.scrollRectToVisible(rect);
 		}
 	}
+	
+	private void saveExpandedState(){
+		for (int i = 0; i < separatorList.size(); i++){
+			Object object = separatorList.get(i);
+			if (object instanceof SeparatorList.Separator){
+				SeparatorList.Separator separator = (SeparatorList.Separator) object;
+				StockpileItem item = (StockpileItem) separator.first();
+				item.getStockpile().setExpanded(separator.getLimit() != 0);
+			}
+		}
+	}
+	private void loadExpandedState(){
+		for (int i = 0; i < separatorList.size(); i++){
+			Object object = separatorList.get(i);
+			if (object instanceof SeparatorList.Separator){
+				SeparatorList.Separator separator = (SeparatorList.Separator) object;
+				StockpileItem item = (StockpileItem) separator.first();
+				separatorList.getReadWriteLock().writeLock().lock();
+				try {
+					separator.setLimit(item.getStockpile().isExpanded() ? Integer.MAX_VALUE : 0);
+				} finally {
+					separatorList.getReadWriteLock().writeLock().unlock();
+				}
+			}
+		}
+	}
 
 	@Override
 	protected void showTablePopupMenu(MouseEvent e) {
@@ -281,10 +309,12 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		//Items
 		List<StockpileItem> stockpileItems = new ArrayList<StockpileItem>();
 		//Characters Look-Up
-		Map<String, Long> chars = new HashMap<String, Long>();
+		Map<String, Long> ownersID = new HashMap<String, Long>();
+		Map<Long, String> ownersName = new HashMap<Long, String>();
 		for (Account account : program.getSettings().getAccounts()){
 			for (Human human : account.getHumans()){
-				chars.put(human.getName(), human.getCharacterID());
+				ownersID.put(human.getName(), human.getOwnerID());
+				ownersName.put(human.getOwnerID(), human.getName());
 			}
 		}
 		//ItemFlag Look-Up
@@ -306,6 +336,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		
 		for (Stockpile stockpile : program.getSettings().getStockpiles()){
 			stockpileItems.addAll(stockpile.getItems());
+			stockpile.setOwner(ownersName.get(stockpile.getOwnerID()));
 			stockpile.reset();
 			if (!stockpile.isEmpty()){
 				for (StockpileItem item : stockpile.getItems()){
@@ -319,7 +350,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 					if (stockpile.isInventory()){
 						for (Asset asset : program.getEveAssetEventList()){
 							if (General.get().marketOrderFlag().equals(asset.getFlag())) continue; //Ignore market orders
-							item.updateAsset(asset, flags.get(asset.getFlag()) , chars.get(asset.getOwner()), regions.get(asset.getRegion()));
+							item.updateAsset(asset, flags.get(asset.getFlag()) , ownersID.get(asset.getOwner()), regions.get(asset.getRegion()));
 						}
 					}
 					//Orders & Jobs
@@ -330,14 +361,14 @@ public class StockpileTab extends JMainTab implements ActionListener {
 									//Market Orders
 									for (ApiMarketOrder marketOrder : human.getMarketOrders()){
 										Location location = program.getSettings().getLocations().get(marketOrder.getStationID());
-										item.updateMarketOrder(marketOrder, human.getCharacterID(), location);
+										item.updateMarketOrder(marketOrder, human.getOwnerID(), location);
 									}
 									//Jobs
 									for (ApiIndustryJob industryJob : human.getIndustryJobs()){
 										Location location = program.getSettings().getLocations().get(industryJob.getOutputLocationID());
 										Item itemType = program.getSettings().getItems().get(industryJob.getOutputTypeID());
 										ItemFlag itemFlag = program.getSettings().getItemFlags().get(industryJob.getOutputFlag());
-										item.updateIndustryJob(industryJob, itemFlag, human.getCharacterID(), location, itemType);
+										item.updateIndustryJob(industryJob, itemFlag, human.getOwnerID(), location, itemType);
 									}
 								}
 							}
@@ -361,16 +392,10 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		//Free Memory...
 		regions = null;
 		flags = null;
-		chars = null;
+		ownersID = null;
+		
 		//Save separator expanded/collapsed state
-		for (int i = 0; i < separatorList.size(); i++){
-			Object object = separatorList.get(i);
-			if (object instanceof SeparatorList.Separator){
-				SeparatorList.Separator separator = (SeparatorList.Separator) object;
-				StockpileItem item = (StockpileItem) separator.first();
-				item.getStockpile().setExpanded(separator.getLimit() != 0);
-			}
-		}
+		saveExpandedState();
 		//Update list
 		try {
 			stockpileEventList.getReadWriteLock().writeLock().lock();
@@ -380,20 +405,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 			stockpileEventList.getReadWriteLock().writeLock().unlock();
 		}
 		//Restore separator expanded/collapsed state
-		for (int i = 0; i < separatorList.size(); i++){
-			Object object = separatorList.get(i);
-			if (object instanceof SeparatorList.Separator){
-				SeparatorList.Separator separator = (SeparatorList.Separator) object;
-				StockpileItem item = (StockpileItem) separator.first();
-				separatorList.getReadWriteLock().writeLock().lock();
-				try {
-					separator.setLimit(item.getStockpile().isExpanded() ? Integer.MAX_VALUE : 0);
-				} finally {
-					separatorList.getReadWriteLock().writeLock().unlock();
-				}
-			}
-		}
-	
+		loadExpandedState();
 	}
 
 	@Override
@@ -535,4 +547,53 @@ public class StockpileTab extends JMainTab implements ActionListener {
 			return item;
 		}
 	} 
+	
+	public class StockpileMatcher extends MatcherControl<StockpileItem>{
+
+		public StockpileMatcher(Map<String, List<Filter>> filters) {
+			super(filters);
+		}
+		
+		@Override
+		protected Object[] getValues() {
+			return FilterType.values();
+		}
+		
+		@Override
+		protected boolean matches(StockpileItem item, Object object) {
+			FilterType column = (FilterType) object;
+			if (column.equals(FilterType.NAME)){
+				return compare(item.getStockpile().getName());
+			} else if (column.equals(FilterType.LOCATION)){
+				return compare(item.getStockpile().getLocation());
+			} else if (column.equals(FilterType.OWNER)){
+				return compare(item.getStockpile().getOwner());
+			} else if (column.equals(FilterType.ITEM)) {
+				return compare(item.getName());
+			} else if (column.equals(FilterType.ITEM_STOCKPILE)) {
+				return matchesItemStockpile(item);
+			} else { //Fallback: show all...
+				return true;
+			}
+		}
+
+		@Override
+		protected void postFilter() {
+			loadExpandedState();
+		}
+
+		@Override
+		protected void preFilter() {
+			saveExpandedState();
+		}
+		
+		private boolean matchesItemStockpile(StockpileItem item){
+			for (StockpileItem search : item.getStockpile().getItems()){
+				if (compare(search.getName()) && !(search instanceof StockpileTotal)){
+					return true;
+				}
+			}
+			return false;
+		}
+	}
 }

@@ -40,7 +40,6 @@ public abstract class TabsOrders extends Bundle {
 
 	public abstract String buy();
 	public abstract String buy1();
-	public abstract String character();
 	public abstract String columnName();
 	public abstract String columnQuantity();
 	public abstract String columnPrice();
@@ -57,6 +56,5 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String no();
 	public abstract String sell();
 	public abstract String sell1();
-	public abstract String state();
 	public abstract String whitespace(Object arg0);
 }

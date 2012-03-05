@@ -36,8 +36,12 @@ import net.nikr.eve.jeveasset.data.PriceDataSettings;
 import net.nikr.eve.jeveasset.data.ReprocessSettings;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.UserItem;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
 import org.slf4j.Logger;
@@ -72,7 +76,10 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeUserItemNames(xmldoc, settings.getUserItemNames());
 		writeTableSettings(xmldoc, settings.getTableSettings());
 		writeUpdates(xmldoc, settings);
-		writeFilters(xmldoc, settings.getAssetFilters());
+		writeAssetFilters(xmldoc, settings.getAssetFilters());
+		writeFilters(xmldoc, settings.getStockpileFilters(), "stockpile");
+		writeFilters(xmldoc, settings.getIndustryJobsFilters(), "industryjobs");
+		writeFilters(xmldoc, settings.getMarketOrdersFilters(), "marketorders");
 		writeCsv(xmldoc, settings.getCsvSettings());
 		writePriceFactionData(xmldoc, settings.getPriceFactionData());
 		try {
@@ -82,6 +89,38 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Settings saved");
 	}
+	private static void writeFilters(Document xmldoc, Map<String, List<Filter>> filters, String name){
+		if (name.isEmpty()) throw new RuntimeException("We can not let this happen!");
+		Element parentNode = xmldoc.createElementNS(null, "filters"+name);
+		xmldoc.getDocumentElement().appendChild(parentNode);
+		for (Map.Entry<String, List<Filter>> entry : filters.entrySet()){
+			Element node = xmldoc.createElementNS(null, "filter");
+			node.setAttributeNS(null, "name", entry.getKey());
+			parentNode.appendChild(node);
+
+			List<Filter> filterFilters = entry.getValue();
+			for (Filter filter :  filterFilters){
+				Element childNode = xmldoc.createElementNS(null, "row");
+				childNode.setAttributeNS(null, "text", filter.getText());
+				//Stockpile
+				if (filter.getColumn() instanceof StockpileTab.FilterType){
+					StockpileTab.FilterType column = (StockpileTab.FilterType) filter.getColumn();
+					childNode.setAttributeNS(null, "column", column.name());
+				}
+				if (filter.getColumn() instanceof IndustryJobTableFormat){
+					IndustryJobTableFormat column = (IndustryJobTableFormat) filter.getColumn();
+					childNode.setAttributeNS(null, "column", column.name());
+				}
+				if (filter.getColumn() instanceof MarketTableFormat){
+					MarketTableFormat column = (MarketTableFormat) filter.getColumn();
+					childNode.setAttributeNS(null, "column", column.name());
+				}
+				childNode.setAttributeNS(null, "compare", filter.getCompare());
+				childNode.setAttributeNS(null, "and", String.valueOf(filter.isAnd()));
+				node.appendChild(childNode);
+			}
+		}
+	}
 	
 	private static void writeStockpiles(Document xmldoc, List<Stockpile> stockpiles) {
 		Element parentNode = xmldoc.createElementNS(null, "stockpiles");
@@ -89,7 +128,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		for (Stockpile strockpile : stockpiles){
 			Element strockpileNode = xmldoc.createElementNS(null, "stockpile");
 			strockpileNode.setAttributeNS(null, "name", strockpile.getName());
-			strockpileNode.setAttributeNS(null, "characterid", String.valueOf(strockpile.getCharacterID()));
+			strockpileNode.setAttributeNS(null, "characterid", String.valueOf(strockpile.getOwnerID()));
 			strockpileNode.setAttributeNS(null, "container", strockpile.getContainer());
 			strockpileNode.setAttributeNS(null, "flagid", String.valueOf(strockpile.getFlagID()));
 			strockpileNode.setAttributeNS(null, "locationid", String.valueOf(strockpile.getLocationID()));
@@ -236,7 +275,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		parentNode.appendChild(node);
 	}
 
-	private static void writeFilters(Document xmldoc, Map<String, List<AssetFilter>> assetFilters){
+	private static void writeAssetFilters(Document xmldoc, Map<String, List<AssetFilter>> assetFilters){
 		Element parentNode = xmldoc.createElementNS(null, "filters");
 		xmldoc.getDocumentElement().appendChild(parentNode);
 		for (Map.Entry<String, List<AssetFilter>> entry : assetFilters.entrySet()){
