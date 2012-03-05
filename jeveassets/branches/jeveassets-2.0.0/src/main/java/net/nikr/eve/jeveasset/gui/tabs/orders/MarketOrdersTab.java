@@ -34,6 +34,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Account;
 import net.nikr.eve.jeveasset.data.Human;
 import net.nikr.eve.jeveasset.data.MarketOrder;
+import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.*;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
@@ -255,13 +256,41 @@ public class MarketOrdersTab extends JMainTab{
 		@Override
 		public boolean matches(MarketOrder item, Object column) {
 			MarketTableFormat format = (MarketTableFormat) column;
-			Object columnValue = format.getColumnValue(item);
-			return compare(columnValue.toString());
+			return compare(item, getColumnValue(item, format.name()));
 		}
+		
+		@Override
+		protected String getColumnValue(MarketOrder item, String column) {
+			MarketTableFormat format = MarketTableFormat.valueOf(column);
+			if (format == MarketTableFormat.QUANTITY){
+				Quantity quantity = (Quantity)format.getColumnValue(item);
+				return String.valueOf(quantity.getQuantityRemaining());
+			} else {
+				return format.getColumnValue(item).toString();
+			}
+		}
+		
+		@Override
+		protected boolean isNumeric(Object column) {
+			MarketTableFormat format = (MarketTableFormat) column;
+			if (Number.class.isAssignableFrom(format.getType())) {
+				return true;
+			} else if (Quantity.class.isAssignableFrom(format.getType())) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
 
 		@Override
 		public Object[] getValues() {
 			return MarketTableFormat.values();
+		}
+		
+		@Override
+		protected Object valueOf(String column) {
+			return MarketTableFormat.valueOf(column);
 		}
 		
 	}

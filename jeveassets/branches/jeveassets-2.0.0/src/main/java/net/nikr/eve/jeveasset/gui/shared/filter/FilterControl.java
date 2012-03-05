@@ -35,10 +35,8 @@ public class FilterControl<E> {
 	private FilterGui<E> gui;
 	private List<FilterList<E>> filterLists;
 	private MatcherControl<E> matcherControl;
-	private JFrame jFrame;
 
 	private FilterControl(JFrame jFrame, List<FilterList<E>> filterLists, MatcherControl<E> matcherControl) {
-		this.jFrame = jFrame;
 		this.filterLists = filterLists;
 		this.matcherControl = matcherControl;
 		gui = new FilterGui<E>(jFrame, this, matcherControl);
@@ -66,11 +64,11 @@ public class FilterControl<E> {
 	}
 	
 	void refilter() {
-		matcherControl.preFilter();
+		matcherControl.beforeFilter();
 		for (FilterList<E> filterList : filterLists){
 			filterList.setMatcher(new LogicalMatcher<E>(gui.getMatchers()));
 		}
-		matcherControl.postFilter();
+		matcherControl.afterFilter();
 	}
 	
 	private static class LogicalMatcher<E> implements Matcher<E> {

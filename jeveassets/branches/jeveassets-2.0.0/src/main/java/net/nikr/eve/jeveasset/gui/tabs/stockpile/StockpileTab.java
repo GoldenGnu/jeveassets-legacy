@@ -41,7 +41,6 @@ import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.*;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.gui.shared.filter.MatcherControl;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -67,7 +66,6 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		OWNER("Owner"),
 		LOCATION("Location"),
 		ITEM("Item (Show only item)"),
-		ITEM_STOCKPILE("Item (Show stockpiles)")
 		;
 		
 		String name;
@@ -555,45 +553,50 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		}
 		
 		@Override
+		protected boolean matches(StockpileItem item, Object column) {
+			FilterType format = (FilterType) column;
+			return compare(item, getColumnValue(item, format.name()));
+		}
+		
+		@Override
+		protected String getColumnValue(StockpileItem item, String column) {
+			FilterType format = FilterType.valueOf(column);
+			if (format.equals(FilterType.NAME)){
+				return item.getStockpile().getName();
+			} else if (format.equals(FilterType.LOCATION)){
+				return item.getStockpile().getLocation();
+			} else if (format.equals(FilterType.OWNER)){
+				return item.getStockpile().getOwner();
+			} else if (format.equals(FilterType.ITEM)) {
+				return item.getName();
+			} else { //Fallback: show all...
+				return null;
+			}
+		}
+		
+		@Override
+		protected boolean isNumeric(Object column) {
+			return false;
+		}
+		
+		@Override
 		protected Object[] getValues() {
 			return FilterType.values();
 		}
 		
 		@Override
-		protected boolean matches(StockpileItem item, Object object) {
-			FilterType column = (FilterType) object;
-			if (column.equals(FilterType.NAME)){
-				return compare(item.getStockpile().getName());
-			} else if (column.equals(FilterType.LOCATION)){
-				return compare(item.getStockpile().getLocation());
-			} else if (column.equals(FilterType.OWNER)){
-				return compare(item.getStockpile().getOwner());
-			} else if (column.equals(FilterType.ITEM)) {
-				return compare(item.getName());
-			} else if (column.equals(FilterType.ITEM_STOCKPILE)) {
-				return matchesItemStockpile(item);
-			} else { //Fallback: show all...
-				return true;
-			}
+		protected Object valueOf(String column) {
+			return FilterType.valueOf(column);
 		}
 
 		@Override
-		protected void postFilter() {
+		protected void afterFilter() {
 			loadExpandedState();
 		}
 
 		@Override
-		protected void preFilter() {
+		protected void beforeFilter() {
 			saveExpandedState();
-		}
-		
-		private boolean matchesItemStockpile(StockpileItem item){
-			for (StockpileItem search : item.getStockpile().getItems()){
-				if (compare(search.getName()) && !(search instanceof StockpileTotal)){
-					return true;
-				}
-			}
-			return false;
 		}
 	}
 }

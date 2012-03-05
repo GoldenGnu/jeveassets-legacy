@@ -28,34 +28,71 @@ public class Filter {
 	
 	public enum CompareType{
 		CONTAINS() {
-			@Override
-			String getI18N(){
-				return GuiShared.get().filterContains();
-			}
+			@Override String getI18N(){ return GuiShared.get().filterContains(); }
 		},
 		CONTAINS_NOT() {
-			@Override
-			public String getI18N(){
-				return GuiShared.get().filterContainsNot();
-			}
+			@Override String getI18N(){ return GuiShared.get().filterContainsNot(); }
 		},
 		EQUALS() {
-			@Override
-			public String getI18N(){
-				return GuiShared.get().filterEquals();
-			}
+			@Override String getI18N(){ return GuiShared.get().filterEquals(); }
 		},
 		EQUALS_NOT() {
-			@Override
-			public String getI18N(){
-				return GuiShared.get().filterEqualsNot();
-			}
+			@Override String getI18N(){ return GuiShared.get().filterEqualsNot(); }
+		},
+		GREATER_THEN() {
+			@Override String getI18N(){ return GuiShared.get().filterGreaterThen(); }
+		},
+		LESS_THEN() {
+			@Override String getI18N(){ return GuiShared.get().filterLessThen(); }
+		},
+		CONTAINS_COLUMN() {
+			@Override String getI18N(){ return GuiShared.get().filterContainsColumn(); }
+		},
+		CONTAINS_NOT_COLUMN() {
+			@Override String getI18N(){ return GuiShared.get().filterContainsNotColumn(); }
+		},
+		EQUALS_COLUMN() {
+			@Override String getI18N(){ return GuiShared.get().filterEqualsColumn(); }
+		},
+		EQUALS_NOT_COLUMN() {
+			@Override String getI18N(){ return GuiShared.get().filterEqualsNotColumn(); }
+		},
+		GREATER_THEN_COLUMN() {
+			@Override String getI18N(){ return GuiShared.get().filterGreaterThenColumn(); }
+		},
+		LESS_THEN_COLUMN() {
+			@Override String getI18N(){ return GuiShared.get().filterLessThenColumn(); }
 		},
 		;
+		
+		private final static CompareType[] VALUES_STRING = new CompareType[]
+			{CONTAINS,
+			CONTAINS_NOT,
+			EQUALS,
+			EQUALS_NOT,
+			CONTAINS_COLUMN,
+			CONTAINS_NOT_COLUMN,
+			EQUALS_COLUMN,
+			EQUALS_NOT_COLUMN
+		};
+		
 		abstract String getI18N();
 		@Override
 		public String toString() {
 			return getI18N();
+		}
+		public static CompareType[] valuesString(){
+			return VALUES_STRING;
+		}
+		
+		public static boolean isColumnCompare(CompareType compareType){
+			return compareType == CompareType.GREATER_THEN_COLUMN 
+				|| compareType == CompareType.LESS_THEN_COLUMN
+				|| compareType == CompareType.EQUALS_COLUMN
+				|| compareType == CompareType.EQUALS_NOT_COLUMN
+				|| compareType == CompareType.CONTAINS_COLUMN
+				|| compareType == CompareType.CONTAINS_NOT_COLUMN
+				;
 		}
 	}
 	enum LogicType{

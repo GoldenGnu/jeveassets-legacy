@@ -46,8 +46,6 @@ import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 public class IndustryJobsTab extends JMainTab {
 
-	private final static String ACTION_SELECTED = "ACTION_SELECTED";
-
 	private JTable jTable;
 
 	private EventList<IndustryJob> jobsEventList;
@@ -161,13 +159,33 @@ public class IndustryJobsTab extends JMainTab {
 		@Override
 		public boolean matches(IndustryJob item, Object column) {
 			IndustryJobTableFormat format = (IndustryJobTableFormat) column;
-			Object columnValue = format.getColumnValue(item);
-			return compare(columnValue.toString());
+			return compare(item, getColumnValue(item, format.name()));
+		}
+		
+		@Override
+		protected String getColumnValue(IndustryJob item, String column) {
+			IndustryJobTableFormat format = IndustryJobTableFormat.valueOf(column);
+			return format.getColumnValue(item).toString();
+		}
+		
+		@Override
+		protected boolean isNumeric(Object column) {
+			IndustryJobTableFormat format = (IndustryJobTableFormat) column;
+			if (Number.class.isAssignableFrom(format.getType())) {
+				return true;
+			} else {
+				return false;
+			}
 		}
 
 		@Override
 		public Object[] getValues() {
 			return IndustryJobTableFormat.values();
+		}
+		
+		@Override
+		protected Object valueOf(String column) {
+			return IndustryJobTableFormat.valueOf(column);
 		}
 		
 	}

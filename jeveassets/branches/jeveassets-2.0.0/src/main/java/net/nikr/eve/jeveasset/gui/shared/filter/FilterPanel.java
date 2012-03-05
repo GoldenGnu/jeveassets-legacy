@@ -26,6 +26,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -45,6 +47,7 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener{
 	private JCheckBox jEnabled;
 	private JComboBox jLogic;
 	private JComboBox jColumn;
+	private JComboBox jCompareColumn;
 	private JComboBox jCompare;
 	private JTextField jText;
 	private JButton jRemove;
@@ -55,6 +58,7 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener{
 	private FilterGui<E> gui;
 	private FilterControl<E> filterControl;
 	private MatcherControl<E> matcherControl;
+	private final List<Object> numericColumns;
 
 	FilterPanel(FilterGui<E> gui, FilterControl<E> filterControl, MatcherControl<E> matcherControl) {
 		this.gui = gui;
@@ -74,7 +78,18 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener{
 		jColumn.addActionListener(this);
 		jColumn.setActionCommand(ACTION_FILTER);
 		
-		jCompare = new JComboBox(CompareType.values());
+		numericColumns = new ArrayList<Object>();
+		for (Object object : matcherControl.getValues()){
+			if (matcherControl.isNumeric(object)){
+				numericColumns.add(object);
+			}
+		}
+		
+		jCompareColumn = new JComboBox();
+		jCompareColumn.addActionListener(this);
+		jCompareColumn.setActionCommand(ACTION_FILTER);
+		
+		jCompare = new JComboBox();
 		jCompare.addActionListener(this);
 		jCompare.setActionCommand(ACTION_FILTER);
 		
@@ -103,6 +118,7 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener{
 				.addComponent(jLogic, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jCompare, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jCompareColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jText, 100, 100, Integer.MAX_VALUE)
 				.addComponent(jRemove, 30, 30, 30)
 		);
@@ -112,9 +128,13 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener{
 				.addComponent(jLogic, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jColumn, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jCompare, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jCompareColumn, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jText, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
+		
+		updateCompare();
+		updateNumeric(false);
 	}
 	
 	void setEnabled(boolean b){
@@ -130,16 +150,27 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener{
 		LogicType logic = (LogicType) jLogic.getSelectedItem();
 		Object column = jColumn.getSelectedItem();
 		CompareType compare = (CompareType)jCompare.getSelectedItem();
-		String text = jText.getText();
+		String text;
+		if (isColumnCompare()){
+			Enum compareColumn = (Enum)jCompareColumn.getSelectedItem();
+			text = compareColumn.name();
+		}else {
+			text = jText.getText();
+		}
 		return new MyMatcher<E>(matcherControl, enabled, logic, column, compare, text);
 	}
 	
 	Filter getFilter(){
-		boolean enabled = jEnabled.isSelected();
 		LogicType logic = (LogicType) jLogic.getSelectedItem();
 		Object column = jColumn.getSelectedItem();
 		CompareType compare = (CompareType)jCompare.getSelectedItem();
-		String text = jText.getText();
+		String text;
+		if (isColumnCompare()){
+			Enum compareColumn = (Enum)jCompareColumn.getSelectedItem();
+			text = compareColumn.name();
+		} else {
+			text = jText.getText();
+		}
 		return new Filter(logic == LogicType.AND, column, compare, text);
 	}
 	
@@ -148,11 +179,50 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener{
 		jLogic.setSelectedItem(filter.isAnd() ? LogicType.AND : LogicType.OR);
 		jColumn.setSelectedItem(filter.getColumn());
 		jCompare.setSelectedItem(CompareType.valueOf(filter.getCompare()));
-		jText.setText(filter.getText());
+		if (isColumnCompare()){
+			jCompareColumn.setSelectedItem(matcherControl.valueOf(filter.getText()));
+		} else {
+			jText.setText(filter.getText());
+		}
 	}
 	
 	private void refilter() {
 		filterControl.refilter();
+	}
+	
+	
+	private void updateNumeric(boolean saveIndex){
+		Object object = jCompare.getSelectedItem();
+		CompareType[] compareTypes;
+		Object[] compareColumns;
+		if (matcherControl.isNumeric(jColumn.getSelectedItem())){
+			compareTypes = CompareType.values();
+			compareColumns = numericColumns.toArray();
+		} else {
+			compareTypes = CompareType.valuesString();
+			compareColumns = matcherControl.getValues();
+		}
+		jCompare.setModel( new DefaultComboBoxModel(compareTypes));
+		jCompareColumn.setModel( new DefaultComboBoxModel(compareColumns));
+		for (CompareType compareType : compareTypes){
+			if (compareType.equals(object) && saveIndex) jCompare.setSelectedItem(compareType);
+		}
+		updateCompare();
+	}
+	
+	private boolean isColumnCompare(){
+		CompareType compareType = (CompareType) jCompare.getSelectedItem();
+		return CompareType.isColumnCompare(compareType);
+	}
+	
+	private void updateCompare(){
+		if (isColumnCompare()){
+			jCompareColumn.setVisible(true);
+			jText.setVisible(false);
+		} else {
+			jCompareColumn.setVisible(false);
+			jText.setVisible(true);
+		}
 	}
 	
 	@Override
@@ -196,6 +266,8 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener{
 			gui.remove(this);
 		}
 		if (ACTION_FILTER.equals(e.getActionCommand())){
+			if (jColumn.equals(e.getSource())) updateNumeric(true);
+			if (jCompare.equals(e.getSource())) updateCompare();
 			if (jEnabled.isSelected()){
 				jText.setBackground(Color.WHITE);
 			} else {

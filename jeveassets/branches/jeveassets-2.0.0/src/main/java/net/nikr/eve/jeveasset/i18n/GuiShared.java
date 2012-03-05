@@ -101,4 +101,12 @@ public abstract class GuiShared extends Bundle {
 	public abstract String filterEqualsNot();
 	public abstract String filterAnd();
 	public abstract String filterOr();
+	public abstract String filterGreaterThen();
+	public abstract String filterLessThen();
+	public abstract String filterGreaterThenColumn();
+	public abstract String filterLessThenColumn();
+	public abstract String filterEqualsColumn();
+	public abstract String filterEqualsNotColumn();
+	public abstract String filterContainsColumn();
+	public abstract String filterContainsNotColumn();
 }
