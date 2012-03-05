@@ -21,41 +21,62 @@
 
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
+import net.nikr.eve.jeveasset.i18n.GuiShared;
+
 
 public class Filter {
 	
 	public enum CompareType{
-		//FIXME - i18n
-		CONTAINS("Contains"),
-		CONTAINS_NOT("Does not contain"),
-		EQUALS("Equals"),
-		EQUALS_NOT("Does not equal")
+		CONTAINS() {
+			@Override
+			String getI18N(){
+				return GuiShared.get().filterContains();
+			}
+		},
+		CONTAINS_NOT() {
+			@Override
+			public String getI18N(){
+				return GuiShared.get().filterContainsNot();
+			}
+		},
+		EQUALS() {
+			@Override
+			public String getI18N(){
+				return GuiShared.get().filterEquals();
+			}
+		},
+		EQUALS_NOT() {
+			@Override
+			public String getI18N(){
+				return GuiShared.get().filterEqualsNot();
+			}
+		},
 		;
-		
-		String name;
-		private CompareType(String name) {
-			this.name = name;
-		}
-
+		abstract String getI18N();
 		@Override
 		public String toString() {
-			return name;
+			return getI18N();
 		}
 	}
 	enum LogicType{
-		//FIXME - i18n
-		AND("And"),
-		OR("Or")
+		AND() {
+			@Override
+			public String getI18N(){
+				return GuiShared.get().filterAnd();
+			}
+		},
+		OR() {
+			@Override
+			public String getI18N(){
+				return GuiShared.get().filterOr();
+			}
+		},
 		;
 		
-		String name;
-		private LogicType(String name) {
-			this.name = name;
-		}
-
+		abstract String getI18N();
 		@Override
 		public String toString() {
-			return name;
+			return getI18N();
 		}
 	}
 	

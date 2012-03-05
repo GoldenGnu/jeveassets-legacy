@@ -31,8 +31,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterPanel.MyMatcher;
-import net.nikr.eve.jeveasset.i18n.TabsAssets;
-//FIXME - i18n
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 class FilterGui<E> implements ActionListener{
 
@@ -53,15 +52,14 @@ class FilterGui<E> implements ActionListener{
 	private FilterControl<E> filterControl;
 	
 	private List<FilterPanel<E>> filterPanels = new ArrayList<FilterPanel<E>>();
-	private SaveFilter saveFilter;
+	private FilterSave filterSave;
+	private FilterManager<E> filterManager;
 	
 	
 	FilterGui(JFrame jFrame, FilterControl<E> filterControl, MatcherControl<E> matcherControl) {
 		this.jFrame = jFrame;
 		this.filterControl = filterControl;
 		this.matcherControl = matcherControl;
-		
-		saveFilter = new SaveFilter(jFrame);
 		
 		jPanel = new JPanel();
 
@@ -75,14 +73,14 @@ class FilterGui<E> implements ActionListener{
 		jToolBar.setRollover(true);
 
 		//Add
-		JButton jAddField = new JButton(TabsAssets.get().addField());
+		JButton jAddField = new JButton(GuiShared.get().addField());
 		jAddField.setIcon(Images.EDIT_ADD.getIcon());
 		jAddField.setActionCommand(ACTION_ADD);
 		jAddField.addActionListener(this);
 		addToolButton(jAddField);
 
 		//Reset
-		JButton jClearFields = new JButton(TabsAssets.get().clear());
+		JButton jClearFields = new JButton(GuiShared.get().clearField());
 		jClearFields.setIcon(Images.ASSETS_CLEAR_FIELDS.getIcon());
 		jClearFields.setActionCommand(ACTION_CLEAR);
 		jClearFields.addActionListener(this);
@@ -91,20 +89,20 @@ class FilterGui<E> implements ActionListener{
 		addToolSeparator();
 
 		//Save Filter
-		JButton jSaveFilter = new JButton(TabsAssets.get().save());
+		JButton jSaveFilter = new JButton(GuiShared.get().saveFilter());
 		jSaveFilter.setIcon(Images.ASSETS_SAVE_FILTERS.getIcon());
 		jSaveFilter.setActionCommand(ACTION_SAVE);
 		jSaveFilter.addActionListener(this);
 		addToolButton(jSaveFilter);
 
 		//Load Filter
-		jLoadFilter = new JDropDownButton(TabsAssets.get().load1());
+		jLoadFilter = new JDropDownButton(GuiShared.get().loadFilter());
 		jLoadFilter.setIcon( Images.ASSETS_LOAD_FILTER.getIcon());
 		addToolButton(jLoadFilter);
 		
 		addToolSeparator();
 		
-		jShowFilters = new JCheckBox("Show"); //FIXME - i18n
+		jShowFilters = new JCheckBox(GuiShared.get().showFilters());
 		jShowFilters.setActionCommand(ACTION_SHOW_FILTERS);
 		jShowFilters.addActionListener(this);
 		jShowFilters.setSelected(true);
@@ -113,6 +111,9 @@ class FilterGui<E> implements ActionListener{
 		
 		updateFilters();
 		add();
+		
+		filterSave = new FilterSave(jFrame);
+		filterManager = new FilterManager<E>(jFrame, this, matcherControl.filters);
 	}
 	
 	JPanel getPanel(){
@@ -216,7 +217,7 @@ class FilterGui<E> implements ActionListener{
 		}
 	}
 	
-	private void setFilters(List<Filter> filters){
+	void setFilters(List<Filter> filters){
 		while(filterPanels.size() > 0){
 			remove( filterPanels.get(0) );
 		}
@@ -238,11 +239,11 @@ class FilterGui<E> implements ActionListener{
 	}
 	
 	
-	private void updateFilters(){
+	final void updateFilters(){
 		jLoadFilter.removeAll();
 		JMenuItem jMenuItem;
 
-		jMenuItem = new JMenuItem(TabsAssets.get().manage(), Images.DIALOG_SETTINGS.getIcon());
+		jMenuItem = new JMenuItem(GuiShared.get().manageFilters(), Images.DIALOG_SETTINGS.getIcon());
 		jMenuItem.setActionCommand(ACTION_MANAGER);
 		jMenuItem.addActionListener(this);
 		jMenuItem.setRolloverEnabled(true);
@@ -273,7 +274,7 @@ class FilterGui<E> implements ActionListener{
 			return;
 		}
 		if (ACTION_MANAGER.equals(e.getActionCommand())){
-			//FIXME Create/Re-use Filter Manager
+			filterManager.setVisible(true);
 			return;
 		}
 		if (ACTION_SHOW_FILTERS.equals(e.getActionCommand())){
@@ -282,9 +283,9 @@ class FilterGui<E> implements ActionListener{
 		}
 		if (ACTION_SAVE.equals(e.getActionCommand())){
 			if (getMatchers(false).isEmpty()){
-				JOptionPane.showMessageDialog(jFrame, TabsAssets.get().nothing(), TabsAssets.get().save(), JOptionPane.PLAIN_MESSAGE);
+				JOptionPane.showMessageDialog(jFrame, GuiShared.get().nothingToSave(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
 			} else {
-				String name = saveFilter.show(new ArrayList<String>( matcherControl.filters.keySet() ));
+				String name = filterSave.show(new ArrayList<String>( matcherControl.filters.keySet() ));
 				if (name != null){
 					matcherControl.filters.put(name, getFilters());
 					updateFilters();

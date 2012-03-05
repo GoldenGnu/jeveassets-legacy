@@ -34,10 +34,9 @@ import javax.swing.text.JTextComponent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
-import net.nikr.eve.jeveasset.i18n.TabsAssets;
-//FIXME - i18n
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
-public class SaveFilter extends JDialogCentered implements ActionListener {
+public class FilterSave extends JDialogCentered implements ActionListener {
 
 	public final static String ACTION_SAVE = "ACTION_SAVE";
 	public final static String ACTION_CANCEL = "ACTION_CANCEL";
@@ -47,10 +46,10 @@ public class SaveFilter extends JDialogCentered implements ActionListener {
 	private JComboBox jName;
 	private JButton jSave;
 
-	public SaveFilter(JFrame jFrame) {
-		super(null, TabsAssets.get().save(), jFrame);
+	public FilterSave(JFrame jFrame) {
+		super(null, GuiShared.get().saveFilter(), jFrame);
 		
-		JLabel jText = new JLabel(TabsAssets.get().enter());
+		JLabel jText = new JLabel(GuiShared.get().enterFilterName());
 
 		jName = new JComboBox();
 		jName.setActionCommand(ACTION_SELECTED);
@@ -59,11 +58,11 @@ public class SaveFilter extends JDialogCentered implements ActionListener {
 		filters = new BasicEventList<String>();
 		AutoCompleteSupport.install(jName, filters, new Filterator());
 		
-		jSave = new JButton(TabsAssets.get().save1());
+		jSave = new JButton(GuiShared.get().save());
 		jSave.setActionCommand(ACTION_SAVE);
 		jSave.addActionListener(this);
 
-		JButton jCancel = new JButton(TabsAssets.get().cancel());
+		JButton jCancel = new JButton(GuiShared.get().cancel());
 		jCancel.setActionCommand(ACTION_CANCEL);
 		jCancel.addActionListener(this);
 
@@ -100,15 +99,15 @@ public class SaveFilter extends JDialogCentered implements ActionListener {
 	private boolean validate(){
 		String name = (String) jName.getSelectedItem();
 		if (name == null){
-			JOptionPane.showMessageDialog(this.getDialog(), TabsAssets.get().you(), TabsAssets.get().save(), JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(this.getDialog(), GuiShared.get().noFilterName(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
 			return false;
 		}
 		if (name.length() == 0) {
-			JOptionPane.showMessageDialog(this.getDialog(), TabsAssets.get().you(), TabsAssets.get().save(), JOptionPane.PLAIN_MESSAGE);
+			JOptionPane.showMessageDialog(this.getDialog(), GuiShared.get().noFilterName(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
 			return false;
 		}
 		if (filters.contains(name)){
-			int nReturn = JOptionPane.showConfirmDialog(this.getDialog(), TabsAssets.get().overwrite(), TabsAssets.get().overwrite2(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+			int nReturn = JOptionPane.showConfirmDialog(this.getDialog(), GuiShared.get().overwrite(), GuiShared.get().overwriteFilter(), JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 			if (nReturn == JOptionPane.NO_OPTION){
 				return false;
 			}
