@@ -88,7 +88,6 @@ public class AssetsTab extends JMainTab implements ActionListener, JColumnTable.
 	public AssetsTab(Program program) {
 		super(program, TabsAssets.get().assets(), Images.TOOL_ASSETS.getIcon(), false);
 		layout.setAutoCreateGaps(true);
-		layout.setAutoCreateContainerGaps(false);
 
 		eveAssetEventList = program.getEveAssetEventList();
 		//For soring the table
@@ -137,18 +136,15 @@ public class AssetsTab extends JMainTab implements ActionListener, JColumnTable.
 			layout.createSequentialGroup()
 			.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 				.addGroup(layout.createSequentialGroup()
-					.addGap(15)
 					.addGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
 						.addComponent(toolPanel.getPanel())
 						.addComponent(jTable.getScroll(), 0, 0, Short.MAX_VALUE)
 					)
-					.addGap(15)
 				)
 			)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
-				.addGap(5)
 				.addComponent(toolPanel.getPanel())
 				.addComponent(jTable.getScroll(), 0, 0, Short.MAX_VALUE)
 		);
