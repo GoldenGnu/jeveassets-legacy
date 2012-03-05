@@ -32,7 +32,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterPanel.MyMatcher;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
-
+//FIXME - i18n
 
 class FilterGui<E> implements ActionListener{
 
@@ -40,11 +40,13 @@ class FilterGui<E> implements ActionListener{
 	private final static String ACTION_CLEAR = "ACTION_CLEAR";
 	private final static String ACTION_SAVE = "ACTION_SAVE";
 	private final static String ACTION_MANAGER = "ACTION_MANAGER";
+	private final static String ACTION_SHOW_FILTERS = "ACTION_SHOW_FILTERS";
 	
 	private JPanel jPanel;
 	private GroupLayout layout;
 	private JToolBar jToolBar;
 	private JDropDownButton jLoadFilter;
+	private JCheckBox jShowFilters;
 	
 	private JFrame jFrame;
 	private MatcherControl<E> matcherControl;
@@ -99,6 +101,16 @@ class FilterGui<E> implements ActionListener{
 		jLoadFilter = new JDropDownButton(TabsAssets.get().load1());
 		jLoadFilter.setIcon( Images.ASSETS_LOAD_FILTER.getIcon());
 		addToolButton(jLoadFilter);
+		
+		addToolSeparator();
+		
+		jShowFilters = new JCheckBox("Show"); //FIXME - i18n
+		jShowFilters.setActionCommand(ACTION_SHOW_FILTERS);
+		jShowFilters.addActionListener(this);
+		jShowFilters.setSelected(true);
+		addToolButton(jShowFilters, 70);
+		
+		
 		updateFilters();
 		add();
 	}
@@ -107,10 +119,10 @@ class FilterGui<E> implements ActionListener{
 		return jPanel;
 	}
 	
-	public final void addToolButton(JButton jButton){
+	public final void addToolButton(AbstractButton jButton){
 		addToolButton(jButton, 90);
 	}
-	public final void addToolButton(JButton jButton, int width){
+	public final void addToolButton(AbstractButton jButton, int width){
 		jButton.setMinimumSize( new Dimension(width, Program.BUTTONS_HEIGHT));
 		jButton.setMaximumSize( new Dimension(width, Program.BUTTONS_HEIGHT));
 		jButton.setHorizontalAlignment(SwingConstants.LEFT);
@@ -149,9 +161,11 @@ class FilterGui<E> implements ActionListener{
 		horizontalGroup.addComponent(jToolBar);
 		int toolbatHeight = jToolBar.getInsets().top + jToolBar.getInsets().bottom + Program.BUTTONS_HEIGHT;
 		verticalGroup.addComponent(jToolBar, toolbatHeight, toolbatHeight, toolbatHeight);
-		for (FilterPanel filterPanel : filterPanels){
-			verticalGroup.addComponent(filterPanel.getPanel());
-			horizontalGroup.addComponent(filterPanel.getPanel());
+		if (jShowFilters.isSelected()){
+			for (FilterPanel filterPanel : filterPanels){
+				verticalGroup.addComponent(filterPanel.getPanel());
+				horizontalGroup.addComponent(filterPanel.getPanel());
+			}
 		}
 
 		layout.setHorizontalGroup(horizontalGroup);
@@ -259,6 +273,11 @@ class FilterGui<E> implements ActionListener{
 			return;
 		}
 		if (ACTION_MANAGER.equals(e.getActionCommand())){
+			//FIXME Create/Re-use Filter Manager
+			return;
+		}
+		if (ACTION_SHOW_FILTERS.equals(e.getActionCommand())){
+			update();
 			return;
 		}
 		if (ACTION_SAVE.equals(e.getActionCommand())){

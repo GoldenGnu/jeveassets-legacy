@@ -35,7 +35,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.JDialogCentered;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
-
+//FIXME - i18n
 
 public class SaveFilter extends JDialogCentered implements ActionListener {
 

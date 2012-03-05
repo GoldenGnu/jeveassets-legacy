@@ -24,7 +24,7 @@ import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.matchers.Matcher;
 import java.util.Collections;
 import java.util.List;
-import javax.swing.JButton;
+import javax.swing.AbstractButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterPanel.MyMatcher;
@@ -55,10 +55,10 @@ public class FilterControl<E> {
 		return gui.getPanel();
 	}
 	
-	public void addToolButton(JButton jButton){
+	public void addToolButton(AbstractButton jButton){
 		gui.addToolButton(jButton);
 	}
-	public void addToolButton(JButton jButton, int width){
+	public void addToolButton(AbstractButton jButton, int width){
 		gui.addToolButton(jButton, width);
 	}
 	public void addToolSeparator(){
