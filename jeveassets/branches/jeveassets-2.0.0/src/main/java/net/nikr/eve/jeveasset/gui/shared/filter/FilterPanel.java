@@ -47,9 +47,10 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener{
 	private JCheckBox jEnabled;
 	private JComboBox jLogic;
 	private JComboBox jColumn;
-	private JComboBox jCompareColumn;
 	private JComboBox jCompare;
 	private JTextField jText;
+	private JComboBox jCompareColumn;
+	private JLabel jSpacing;
 	private JButton jRemove;
 	
 	
@@ -85,10 +86,6 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener{
 			}
 		}
 		
-		jCompareColumn = new JComboBox();
-		jCompareColumn.addActionListener(this);
-		jCompareColumn.setActionCommand(ACTION_FILTER);
-		
 		jCompare = new JComboBox();
 		jCompare.addActionListener(this);
 		jCompare.setActionCommand(ACTION_FILTER);
@@ -96,6 +93,12 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener{
 		jText = new JTextField();
 		jText.getDocument().addDocumentListener(this);
 		jText.addKeyListener(this);
+		
+		jCompareColumn = new JComboBox();
+		jCompareColumn.addActionListener(this);
+		jCompareColumn.setActionCommand(ACTION_FILTER);
+		
+		jSpacing = new JLabel();
 		
 		jRemove = new JButton();
 		jRemove.setIcon(Images.EDIT_DELETE.getIcon());
@@ -118,8 +121,9 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener{
 				.addComponent(jLogic, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jCompare, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-				.addComponent(jCompareColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 				.addComponent(jText, 100, 100, Integer.MAX_VALUE)
+				.addComponent(jCompareColumn, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+				.addComponent(jSpacing, 0, 0, Integer.MAX_VALUE)
 				.addComponent(jRemove, 30, 30, 30)
 		);
 		layout.setVerticalGroup(
@@ -128,12 +132,11 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener{
 				.addComponent(jLogic, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jColumn, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jCompare, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-				.addComponent(jCompareColumn, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jText, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jCompareColumn, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jSpacing, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
-		
-		updateCompare();
 		updateNumeric(false);
 	}
 	
@@ -190,38 +193,54 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener{
 		filterControl.refilter();
 	}
 	
-	
-	private void updateNumeric(boolean saveIndex){
-		Object object = jCompare.getSelectedItem();
-		CompareType[] compareTypes;
-		Object[] compareColumns;
-		if (matcherControl.isNumeric(jColumn.getSelectedItem())){
-			compareTypes = CompareType.values();
-			compareColumns = numericColumns.toArray();
-		} else {
-			compareTypes = CompareType.valuesString();
-			compareColumns = matcherControl.getValues();
-		}
-		jCompare.setModel( new DefaultComboBoxModel(compareTypes));
-		jCompareColumn.setModel( new DefaultComboBoxModel(compareColumns));
-		for (CompareType compareType : compareTypes){
-			if (compareType.equals(object) && saveIndex) jCompare.setSelectedItem(compareType);
-		}
-		updateCompare();
-	}
-	
 	private boolean isColumnCompare(){
 		CompareType compareType = (CompareType) jCompare.getSelectedItem();
 		return CompareType.isColumnCompare(compareType);
 	}
 	
-	private void updateCompare(){
+	private boolean isNumericCompare(){
+		CompareType compareType = (CompareType) jCompare.getSelectedItem();
+		return CompareType.isNumericCompare(compareType);
+	}
+	
+	
+	private void updateNumeric(boolean saveIndex){
+		Object object = jCompare.getSelectedItem();
+		CompareType[] compareTypes;
+		if (matcherControl.isNumeric(jColumn.getSelectedItem())){
+			compareTypes = CompareType.values();
+		} else {
+			compareTypes = CompareType.valuesString();
+		}
+		jCompare.setModel( new DefaultComboBoxModel(compareTypes));
+		for (CompareType compareType : compareTypes){
+			if (compareType.equals(object) && saveIndex) jCompare.setSelectedItem(compareType);
+		}
+		updateCompare(saveIndex);
+	}
+	
+	
+	
+	private void updateCompare(boolean saveIndex){
 		if (isColumnCompare()){
 			jCompareColumn.setVisible(true);
+			jSpacing.setVisible(true);
 			jText.setVisible(false);
 		} else {
 			jCompareColumn.setVisible(false);
+			jSpacing.setVisible(false);
 			jText.setVisible(true);
+		}
+		Object object = jCompareColumn.getSelectedItem();
+		Object[] compareColumns;
+		if (isNumericCompare()){
+			compareColumns = numericColumns.toArray();
+		} else {
+			compareColumns = matcherControl.getValues();
+		}
+		jCompareColumn.setModel( new DefaultComboBoxModel(compareColumns));
+		for (Object column : compareColumns){
+			if (column.equals(object) && saveIndex) jCompareColumn.setSelectedItem(column);
 		}
 	}
 	
@@ -267,7 +286,7 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener{
 		}
 		if (ACTION_FILTER.equals(e.getActionCommand())){
 			if (jColumn.equals(e.getSource())) updateNumeric(true);
-			if (jCompare.equals(e.getSource())) updateCompare();
+			if (jCompare.equals(e.getSource())) updateCompare(true);
 			if (jEnabled.isSelected()){
 				jText.setBackground(Color.WHITE);
 			} else {

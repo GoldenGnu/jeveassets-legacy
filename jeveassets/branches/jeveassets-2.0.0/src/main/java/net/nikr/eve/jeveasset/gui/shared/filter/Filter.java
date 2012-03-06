@@ -94,6 +94,13 @@ public class Filter {
 				|| compareType == CompareType.CONTAINS_NOT_COLUMN
 				;
 		}
+		public static boolean isNumericCompare(CompareType compareType){
+			return compareType == CompareType.GREATER_THEN_COLUMN 
+				|| compareType == CompareType.LESS_THEN_COLUMN
+				|| compareType == CompareType.GREATER_THEN
+				|| compareType == CompareType.LESS_THEN
+				;
+		}
 	}
 	enum LogicType{
 		AND() {
