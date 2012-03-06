@@ -30,17 +30,13 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import javax.swing.JComponent;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
+import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.IndustryJob;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.*;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
-import net.nikr.eve.jeveasset.gui.shared.filter.MatcherControl;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
@@ -53,7 +49,6 @@ public class IndustryJobsTab extends JMainTab {
 	private EventTableModel<IndustryJob> jobsTableModel;
 
 	private IndustryJobData data;
-	private FilterControl<IndustryJob> filterControl;
 
 	public IndustryJobsTab(Program program) {
 		super(program, TabsJobs.get().industry(), Images.TOOL_INDUSTRY_JOBS.getIcon(), true);
@@ -80,8 +75,9 @@ public class IndustryJobsTab extends JMainTab {
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, industryJobsTableFormat);
 		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
+		
 		//Filter
-		filterControl = FilterControl.install(program.getMainWindow().getFrame(), filterList, new IndustryJobsMatcher(program.getSettings().getIndustryJobsFilters()));
+		IndustryJobsFilterControl filterControl = new IndustryJobsFilterControl(program.getMainWindow().getFrame(), program.getSettings().getIndustryJobsFilters(), Collections.singletonList(filterList));
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -151,10 +147,10 @@ public class IndustryJobsTab extends JMainTab {
 		jComponent.add(new JMenuLookup(program, industryJob));
 	}
 	
-	public static class IndustryJobsMatcher extends MatcherControl<IndustryJob>{
+	public static class IndustryJobsFilterControl extends FilterControl<IndustryJob>{
 
-		public IndustryJobsMatcher(Map<String, List<Filter>> filters) {
-			super(filters);
+		public IndustryJobsFilterControl(JFrame jFrame, Map<String, List<Filter>> filters, List<FilterList<IndustryJob>> filterLists) {
+			super(jFrame, filters, filterLists);
 		}
 		
 		@Override

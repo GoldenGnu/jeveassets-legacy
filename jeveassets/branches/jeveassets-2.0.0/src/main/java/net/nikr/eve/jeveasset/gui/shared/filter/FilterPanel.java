@@ -65,14 +65,12 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 	private Timer timer;
 	
 	private FilterGui<E> gui;
-	private FilterControl<E> filterControl;
-	private MatcherControl<E> matcherControl;
+	private FilterControl<E> matcherControl;
 	private final List<Object> numericColumns;
 	private final List<Object> dateColumns;
 
-	FilterPanel(FilterGui<E> gui, FilterControl<E> filterControl, MatcherControl<E> matcherControl) {
+	FilterPanel(FilterGui<E> gui, FilterControl<E> matcherControl) {
 		this.gui = gui;
-		this.filterControl = filterControl;
 		this.matcherControl = matcherControl;
 
 		jEnabled = new JCheckBox();
@@ -114,7 +112,7 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		jCompareColumn.setActionCommand(ACTION_FILTER);
 
 		jDate = new JDateChooser(Settings.getGmtNow());
-		jDate.setDateFormatString(MatcherControl.DATE_STRING);
+		jDate.setDateFormatString(FilterControl.DATE_STRING);
 		JCalendar jCalendar = jDate.getJCalendar();
 		jCalendar.setTodayButtonText("Today");
 		jCalendar.setTodayButtonVisible(true);
@@ -217,18 +215,18 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		if (isColumnCompare()){
 			jCompareColumn.setSelectedItem(matcherControl.valueOf(filter.getText()));
 		} else if (isDateCompare()) {
-			jDate.setDate(MatcherControl.stringToDate(filter.getText()));
+			jDate.setDate(FilterControl.stringToDate(filter.getText()));
 		} else {
 			jText.setText(filter.getText());
 		}
 	}
 	
 	private String getDataString(){
-		return MatcherControl.dateToString(jDate.getDate());
+		return FilterControl.dateToString(jDate.getDate());
 	}
 	
 	private void refilter() {
-		filterControl.refilter();
+		gui.refilter();
 	}
 	
 	private boolean isColumnCompare(){
@@ -358,14 +356,14 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 	
 	public static class MyMatcher<E> implements Matcher<E>{
 
-		private MatcherControl<E> matcherControl;
+		private FilterControl<E> matcherControl;
 		private boolean enabled;
 		private LogicType logic;
 		private Enum column;
 		private CompareType compare;
 		private String text;
 
-		public MyMatcher(MatcherControl<E> matcherControl, boolean enabled, LogicType logic, Enum column, CompareType compare, String text) {
+		public MyMatcher(FilterControl<E> matcherControl, boolean enabled, LogicType logic, Enum column, CompareType compare, String text) {
 			this.matcherControl = matcherControl;
 			this.logic = logic;
 			this.enabled = enabled;

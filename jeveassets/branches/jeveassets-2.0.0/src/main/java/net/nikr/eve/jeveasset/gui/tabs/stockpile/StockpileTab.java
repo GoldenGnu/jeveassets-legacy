@@ -42,7 +42,6 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.*;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
-import net.nikr.eve.jeveasset.gui.shared.filter.MatcherControl;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
@@ -96,8 +95,6 @@ public class StockpileTab extends JMainTab implements ActionListener {
 	private StockpileDialog stockpileDialog;
 	private StockpileItemDialog stockpileItemDialog;
 	
-	private FilterControl<StockpileItem> filterControl;
-	
 	public StockpileTab(Program program) {
 		super(program, TabsStockpile.get().stockpile(), Images.TOOL_STOCKPILE.getIcon(), true);
 		
@@ -136,7 +133,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Filter GUI
-		filterControl = FilterControl.install(program.getMainWindow().getFrame(), filterList, new StockpileMatcher(program.getSettings().getStockpileFilters()));
+		
+		StockpileFilterControl filterControl = new StockpileFilterControl(program.getMainWindow().getFrame(), program.getSettings().getStockpileFilters(), Collections.singletonList(filterList));
 		
 		filterControl.addToolSeparator();
 		filterControl.addToolButton(jAdd, 100);
@@ -546,10 +544,10 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		}
 	} 
 	
-	public class StockpileMatcher extends MatcherControl<StockpileItem>{
+	public class StockpileFilterControl extends FilterControl<StockpileItem>{
 
-		public StockpileMatcher(Map<String, List<Filter>> filters) {
-			super(filters);
+		public StockpileFilterControl(JFrame jFrame, Map<String, List<Filter>> filters, List<FilterList<StockpileItem>> filterLists) {
+			super(jFrame, filters, filterLists);
 		}
 		
 		@Override

@@ -20,6 +20,8 @@
  */
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
+import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.matchers.Matcher;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,17 +50,15 @@ class FilterGui<E> implements ActionListener{
 	private JCheckBox jShowFilters;
 	
 	private JFrame jFrame;
-	private MatcherControl<E> matcherControl;
-	private FilterControl<E> filterControl;
+	private FilterControl<E> matcherControl;
 	
 	private List<FilterPanel<E>> filterPanels = new ArrayList<FilterPanel<E>>();
 	private FilterSave filterSave;
 	private FilterManager<E> filterManager;
 	
 	
-	FilterGui(JFrame jFrame, FilterControl<E> filterControl, MatcherControl<E> matcherControl) {
+	FilterGui(JFrame jFrame, FilterControl<E> matcherControl) {
 		this.jFrame = jFrame;
-		this.filterControl = filterControl;
 		this.matcherControl = matcherControl;
 		
 		jPanel = new JPanel();
@@ -113,7 +113,7 @@ class FilterGui<E> implements ActionListener{
 		add();
 		
 		filterSave = new FilterSave(jFrame);
-		filterManager = new FilterManager<E>(jFrame, this, matcherControl.filters);
+		filterManager = new FilterManager<E>(jFrame, this, matcherControl.getFilters());
 	}
 	
 	JPanel getPanel(){
@@ -179,11 +179,11 @@ class FilterGui<E> implements ActionListener{
 			filterPanels.get(0).setEnabled(false);
 		}
 		update();
-		filterControl.refilter();
+		refilter();
 	}
 	
 	private void add(){
-		add(new FilterPanel<E>(this, filterControl, matcherControl));
+		add(new FilterPanel<E>(this, matcherControl));
 	}
 	
 	private void add(FilterPanel<E> filterPanel){
@@ -202,13 +202,13 @@ class FilterGui<E> implements ActionListener{
 			remove( filterPanels.get(0) );
 		}
 		add();
-		filterControl.refilter();
+		refilter();
 	}
 	
 	private void loadFilter(String filterName, boolean add){
 		if (filterName == null) return;
-		if (matcherControl.filters.containsKey(filterName)){
-			List<Filter> filters = matcherControl.filters.get( filterName );
+		if (matcherControl.getFilters().containsKey(filterName)){
+			List<Filter> filters = matcherControl.getFilters().get( filterName );
 			if (add){
 				addFilters(filters);
 			} else{
@@ -230,12 +230,12 @@ class FilterGui<E> implements ActionListener{
 			remove( filterPanels.get(0) );
 		}
 		for (Filter filter : filters){
-			FilterPanel<E> filterPanel = new FilterPanel<E>(this, filterControl, matcherControl);
+			FilterPanel<E> filterPanel = new FilterPanel<E>(this, matcherControl);
 			filterPanel.setFilter( filter );
 			add(filterPanel);
 		}
 		update();
-		filterControl.refilter();
+		refilter();
 	}
 	
 	
@@ -249,7 +249,7 @@ class FilterGui<E> implements ActionListener{
 		jMenuItem.setRolloverEnabled(true);
 		jLoadFilter.add(jMenuItem);
 		
-		List<String> list = new ArrayList<String>( matcherControl.filters.keySet() );
+		List<String> list = new ArrayList<String>( matcherControl.getFilters().keySet() );
 		Collections.sort(list);
 		
 		if (list.size() > 0) jLoadFilter.addSeparator();
@@ -261,6 +261,14 @@ class FilterGui<E> implements ActionListener{
 			jMenuItem.addActionListener(this);
 			jLoadFilter.add(jMenuItem);
 		}
+	}
+	
+	void refilter() {
+		matcherControl.beforeFilter();
+		for (FilterList<E> filterList : matcherControl.getFilterLists()){
+			filterList.setMatcher(new LogicalMatcher<E>(getMatchers()));
+		}
+		matcherControl.afterFilter();
 	}
 
 	@Override
@@ -285,15 +293,46 @@ class FilterGui<E> implements ActionListener{
 			if (getMatchers(false).isEmpty()){
 				JOptionPane.showMessageDialog(jFrame, GuiShared.get().nothingToSave(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
 			} else {
-				String name = filterSave.show(new ArrayList<String>( matcherControl.filters.keySet() ));
+				String name = filterSave.show(new ArrayList<String>( matcherControl.getFilters().keySet() ));
 				if (name != null){
-					matcherControl.filters.put(name, getFilters());
+					matcherControl.getFilters().put(name, getFilters());
 					updateFilters();
 				}
 			}
 			return;
 		}
 		loadFilter(e.getActionCommand(), (e.getModifiers() & ActionEvent.CTRL_MASK) != 0);
+	}
+	
+	private static class LogicalMatcher<E> implements Matcher<E> {
+
+		private List<MyMatcher<E>> matchers;
+
+		public LogicalMatcher(List<MyMatcher<E>> matchers) {
+			this.matchers = matchers;
+		}
+
+		@Override
+		public boolean matches(E item) {
+			boolean bOR = false;
+			boolean bAnyORs = false;
+			for (MyMatcher<E> matcher : matchers){
+				if (!matcher.isEmpty()){
+					if (matcher.isAnd()){ //And
+						if (!matcher.matches(item)){ //if just one don't match, none match
+							return false;
+						}
+					} else { //Or
+						bAnyORs = true;
+						if (matcher.matches(item)){ //if just one is true all is true
+							bOR = true;
+						}
+					}
+				}
+			}
+			//if any "Or" is true | if no "Or" is included | if just one "Or" it's considered as "And"
+			return (bOR || !bAnyORs);
+		}
 	}
 	
 }

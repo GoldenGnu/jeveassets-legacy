@@ -40,7 +40,6 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.*;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
-import net.nikr.eve.jeveasset.gui.shared.filter.MatcherControl;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
@@ -56,8 +55,6 @@ public class MarketOrdersTab extends JMainTab{
 
 	private JTable jSellTable;
 	private JTable jBuyTable;
-	
-	private FilterControl<MarketOrder> filterControl;
 
 	public MarketOrdersTab(Program program) {
 		super(program, TabsOrders.get().market(), Images.TOOL_MARKET_ORDERS.getIcon(), true);
@@ -105,7 +102,8 @@ public class MarketOrdersTab extends JMainTab{
 		List<FilterList<MarketOrder>> filterLists = new ArrayList<FilterList<MarketOrder>>();
 		filterLists.add(buyOrdersFilterList);
 		filterLists.add(sellOrdersFilterList);
-		filterControl = FilterControl.install(program.getMainWindow().getFrame(), filterLists, new MarketOrdersMatcher(program.getSettings().getMarketOrdersFilters()));
+		
+		MarketOrdersFilterControl filterControl = new MarketOrdersFilterControl(program.getMainWindow().getFrame(), program.getSettings().getMarketOrdersFilters(), filterLists);
 		
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -248,10 +246,10 @@ public class MarketOrdersTab extends JMainTab{
 		}
 	}
 	
-	public static class MarketOrdersMatcher extends MatcherControl<MarketOrder>{
+	public static class MarketOrdersFilterControl extends FilterControl<MarketOrder>{
 
-		public MarketOrdersMatcher(Map<String, List<Filter>> filters) {
-			super(filters);
+		public MarketOrdersFilterControl(JFrame jFrame, Map<String, List<Filter>> filters, List<FilterList<MarketOrder>> filterLists) {
+			super(jFrame, filters, filterLists);
 		}
 		
 		@Override
