@@ -75,12 +75,12 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener{
 		jLogic.addActionListener(this);
 		jLogic.setActionCommand(ACTION_FILTER);
 		
-		jColumn = new JComboBox(matcherControl.getValues());
+		jColumn = new JComboBox(matcherControl.getColumns());
 		jColumn.addActionListener(this);
 		jColumn.setActionCommand(ACTION_FILTER);
 		
 		numericColumns = new ArrayList<Object>();
-		for (Object object : matcherControl.getValues()){
+		for (Object object : matcherControl.getColumns()){
 			if (matcherControl.isNumeric(object)){
 				numericColumns.add(object);
 			}
@@ -151,7 +151,7 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener{
 	MyMatcher<E> getMatcher(){
 		boolean enabled = jEnabled.isSelected();
 		LogicType logic = (LogicType) jLogic.getSelectedItem();
-		Object column = jColumn.getSelectedItem();
+		Enum column = (Enum)jColumn.getSelectedItem();
 		CompareType compare = (CompareType)jCompare.getSelectedItem();
 		String text;
 		if (isColumnCompare()){
@@ -165,7 +165,7 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener{
 	
 	Filter getFilter(){
 		LogicType logic = (LogicType) jLogic.getSelectedItem();
-		Object column = jColumn.getSelectedItem();
+		Enum column = (Enum)jColumn.getSelectedItem();
 		CompareType compare = (CompareType)jCompare.getSelectedItem();
 		String text;
 		if (isColumnCompare()){
@@ -236,7 +236,7 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener{
 		if (isNumericCompare()){
 			compareColumns = numericColumns.toArray();
 		} else {
-			compareColumns = matcherControl.getValues();
+			compareColumns = matcherControl.getColumns();
 		}
 		jCompareColumn.setModel( new DefaultComboBoxModel(compareColumns));
 		for (Object column : compareColumns){
@@ -302,11 +302,11 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener{
 		private MatcherControl<E> matcherControl;
 		private boolean enabled;
 		private LogicType logic;
-		private Object column;
+		private Enum column;
 		private CompareType compare;
 		private String text;
 
-		public MyMatcher(MatcherControl<E> matcherControl, boolean enabled, LogicType logic, Object column, CompareType compare, String text) {
+		public MyMatcher(MatcherControl<E> matcherControl, boolean enabled, LogicType logic, Enum column, CompareType compare, String text) {
 			this.matcherControl = matcherControl;
 			this.logic = logic;
 			this.enabled = enabled;

@@ -254,12 +254,6 @@ public class MarketOrdersTab extends JMainTab{
 		}
 		
 		@Override
-		public boolean matches(MarketOrder item, Object column) {
-			MarketTableFormat format = (MarketTableFormat) column;
-			return compare(item, getColumnValue(item, format.name()));
-		}
-		
-		@Override
 		protected String getColumnValue(MarketOrder item, String column) {
 			MarketTableFormat format = MarketTableFormat.valueOf(column);
 			if (format == MarketTableFormat.QUANTITY){
@@ -284,12 +278,12 @@ public class MarketOrdersTab extends JMainTab{
 
 
 		@Override
-		public Object[] getValues() {
+		public Enum[] getColumns() {
 			return MarketTableFormat.values();
 		}
 		
 		@Override
-		protected Object valueOf(String column) {
+		protected Enum valueOf(String column) {
 			return MarketTableFormat.valueOf(column);
 		}
 		

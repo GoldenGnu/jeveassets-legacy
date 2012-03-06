@@ -157,15 +157,9 @@ public class IndustryJobsTab extends JMainTab {
 		}
 		
 		@Override
-		public boolean matches(IndustryJob item, Object column) {
-			IndustryJobTableFormat format = (IndustryJobTableFormat) column;
-			return compare(item, getColumnValue(item, format.name()));
-		}
-		
-		@Override
-		protected String getColumnValue(IndustryJob item, String column) {
+		protected Object getColumnValue(IndustryJob item, String column) {
 			IndustryJobTableFormat format = IndustryJobTableFormat.valueOf(column);
-			return format.getColumnValue(item).toString();
+			return format.getColumnValue(item);
 		}
 		
 		@Override
@@ -179,12 +173,12 @@ public class IndustryJobsTab extends JMainTab {
 		}
 
 		@Override
-		public Object[] getValues() {
+		public Enum[] getColumns() {
 			return IndustryJobTableFormat.values();
 		}
 		
 		@Override
-		protected Object valueOf(String column) {
+		protected Enum valueOf(String column) {
 			return IndustryJobTableFormat.valueOf(column);
 		}
 		

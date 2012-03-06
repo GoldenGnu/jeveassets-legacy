@@ -553,12 +553,6 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		}
 		
 		@Override
-		protected boolean matches(StockpileItem item, Object column) {
-			FilterType format = (FilterType) column;
-			return compare(item, getColumnValue(item, format.name()));
-		}
-		
-		@Override
 		protected String getColumnValue(StockpileItem item, String column) {
 			FilterType format = FilterType.valueOf(column);
 			if (format.equals(FilterType.NAME)){
@@ -580,12 +574,12 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		}
 		
 		@Override
-		protected Object[] getValues() {
+		protected Enum[] getColumns() {
 			return FilterType.values();
 		}
 		
 		@Override
-		protected Object valueOf(String column) {
+		protected Enum valueOf(String column) {
 			return FilterType.valueOf(column);
 		}
 

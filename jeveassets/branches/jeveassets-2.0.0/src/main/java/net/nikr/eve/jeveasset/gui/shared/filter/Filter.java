@@ -125,22 +125,22 @@ public class Filter {
 	}
 	
 	private LogicType logic;
-	private Object column;
+	private Enum column;
 	private CompareType compare;
 	private String text;
 	
-	public Filter(boolean and, Object column, String compare, String text) {
+	public Filter(boolean and, Enum column, String compare, String text) {
 		this(and, column, CompareType.valueOf(compare), text);
 	}
 
-	public Filter(boolean and, Object column, CompareType compare, String text) {
+	public Filter(boolean and, Enum column, CompareType compare, String text) {
 		this.logic = and ? LogicType.AND : LogicType.OR;
 		this.column = column;
 		this.compare = compare;
 		this.text = text;
 	}
 
-	public Object getColumn() {
+	public Enum getColumn() {
 		return column;
 	}
 

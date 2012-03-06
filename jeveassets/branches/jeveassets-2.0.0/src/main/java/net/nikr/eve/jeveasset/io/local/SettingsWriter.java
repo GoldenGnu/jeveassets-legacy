@@ -102,19 +102,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 			for (Filter filter :  filterFilters){
 				Element childNode = xmldoc.createElementNS(null, "row");
 				childNode.setAttributeNS(null, "text", filter.getText());
-				//Stockpile
-				if (filter.getColumn() instanceof StockpileTab.FilterType){
-					StockpileTab.FilterType column = (StockpileTab.FilterType) filter.getColumn();
-					childNode.setAttributeNS(null, "column", column.name());
-				}
-				if (filter.getColumn() instanceof IndustryJobTableFormat){
-					IndustryJobTableFormat column = (IndustryJobTableFormat) filter.getColumn();
-					childNode.setAttributeNS(null, "column", column.name());
-				}
-				if (filter.getColumn() instanceof MarketTableFormat){
-					MarketTableFormat column = (MarketTableFormat) filter.getColumn();
-					childNode.setAttributeNS(null, "column", column.name());
-				}
+				childNode.setAttributeNS(null, "column",  filter.getColumn().name());
 				childNode.setAttributeNS(null, "compare", filter.getCompare());
 				childNode.setAttributeNS(null, "and", String.valueOf(filter.isAnd()));
 				node.appendChild(childNode);

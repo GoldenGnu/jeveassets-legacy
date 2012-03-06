@@ -455,7 +455,7 @@ public class SettingsReader extends AbstractXmlReader {
 				Element rowNode = (Element) rowNodes.item(b);
 				String text = AttributeGetters.getString(rowNode, "text");
 				String columnString = AttributeGetters.getString(rowNode, "column");
-				Object column =  getColumn(columnString);
+				Enum column =  getColumn(columnString);
 				
 				String compare = AttributeGetters.getString(rowNode, "compare");
 				boolean and = AttributeGetters.getBoolean(rowNode, "and");
@@ -464,7 +464,7 @@ public class SettingsReader extends AbstractXmlReader {
 			filters.put(name, filterFilters);
 		}
 	}
-	private static Object getColumn(String s){
+	private static Enum getColumn(String s){
 		try {
 			return FilterType.valueOf(s);
 		} catch (IllegalArgumentException exception) {
@@ -480,7 +480,7 @@ public class SettingsReader extends AbstractXmlReader {
 		} catch (IllegalArgumentException exception) {
 			
 		}
-		return "";
+		throw new RuntimeException("Fail to load filter column: "+s);
 	}
 
 	private static String parseFilter(Element element){

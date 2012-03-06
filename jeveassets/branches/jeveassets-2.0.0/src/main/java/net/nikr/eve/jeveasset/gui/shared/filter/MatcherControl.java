@@ -20,117 +20,28 @@
  */
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
-import java.text.NumberFormat;
-import java.text.ParsePosition;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 
 
 public abstract class MatcherControl<E> {
 	
 	public static final Locale LOCALE = Locale.ENGLISH; //Use english AKA US_EN
-	
-	private CompareType compare;
-	private String text;
+
 	protected final Map<String, List<Filter>> filters;
 
 	public MatcherControl(Map<String, List<Filter>> filters) {
 		this.filters = filters;
 	}
 
-	boolean matches(E item, Object column, CompareType compare, String text){
-		this.compare = compare;
-		if (CompareType.isColumnCompare(compare)){ //Column filter - no low case
-			this.text = text;
-		} else {
-			this.text = text.toLowerCase();
-		}
-		
-		return matches(item, column);
-	}
-	protected abstract boolean matches(E item, Object column);
-	protected abstract Object[] getValues();
-	protected abstract Object valueOf(String column);
+	protected abstract Enum[] getColumns();
+	protected abstract Enum valueOf(String column);
 	protected abstract boolean isNumeric(Object column);
-	protected abstract String getColumnValue(E item, String column);
+	protected abstract Object getColumnValue(E item, String column);
 	
-	protected boolean compare(E item, String column){
-		if (column == null) return false;
-		column = column.toLowerCase();
-		if (compare == CompareType.CONTAINS){
-			return column.contains(text);
-		} else if (compare == CompareType.CONTAINS_NOT){
-			return !column.contains(text);
-		} else if (compare == CompareType.EQUALS){
-			return equals(column, text);
-		} else if (compare == CompareType.EQUALS_NOT){
-			return !equals(column, text);
-		} else if (compare == CompareType.GREATER_THEN){
-			Double nColumn = getNumber(column);
-			Double nText = getNumber(text);
-			if (nColumn == null || nText == null) return false;
-			return nColumn > nText;
-		} else if (compare == CompareType.LESS_THEN){
-			Double nColumn = getNumber(column);
-			Double nText = getNumber(text);
-			if (nColumn == null || nText == null) return false;
-			return nColumn < nText;
-		} else if (compare == CompareType.GREATER_THEN_COLUMN){
-			Double nColumn = getNumber(column);
-			Double nText = getNumber(getColumnValue(item, text));
-			if (nColumn == null || nText == null) return false;
-			return nColumn > nText;
-		} else if (compare == CompareType.LESS_THEN_COLUMN){
-			Double nColumn = getNumber(column);
-			Double nText = getNumber(getColumnValue(item, text));
-			if (nColumn == null || nText == null) return false;
-			return nColumn < nText;
-		} else if (compare == CompareType.EQUALS_COLUMN){
-			String compateColumn = getColumnValue(item, text);
-			if (compateColumn == null) return false;
-			return equals(column, compateColumn.toLowerCase());
-		} else if (compare == CompareType.EQUALS_NOT_COLUMN){
-			String compateColumn = getColumnValue(item, text);
-			if (compateColumn == null) return true;
-			return !equals(column, compateColumn.toLowerCase());
-		} else if (compare == CompareType.CONTAINS_COLUMN){
-			String compateColumn = getColumnValue(item, text);
-			if (compateColumn == null) return false;
-			return column.contains(compateColumn.toLowerCase());
-		} else if (compare == CompareType.CONTAINS_NOT_COLUMN){
-			String compateColumn = getColumnValue(item, text);
-			if (compateColumn == null) return true;
-			return !column.contains(compateColumn.toLowerCase());
-		} else { //Fallback: show all...
-			return true;
-		}
-	}
-	
-	private boolean equals(String s1, String s2){
-		Double n1 = getNumber(s1);
-		Double n2 = getNumber(s2);
-		if (n1 == null || n2 == null){
-			return s1.equals(s2);
-		} else {
-			return n1.equals(n2);
-		}
-		
-	}
-	
-	private Double getNumber(String filterValue){
-		//Used to check if parsing was successful
-		ParsePosition position = new ParsePosition(0);
-		//Parse number using the Locale
-		Number n = NumberFormat.getInstance(LOCALE).parse(filterValue, position);
-		if (n != null && position.getIndex() == filterValue.length()){ //Numeric
-			return n.doubleValue();
-		} else { //String
-			return null;
-		}
-	}
-
 	/**
 	 * Overwrite to do stuff before filtering
 	 */
@@ -140,5 +51,106 @@ public abstract class MatcherControl<E> {
 	 * Overwrite to do stuff after filtering
 	 */
 	protected void afterFilter() {}
-
+	
+	boolean matches(final E item, final Enum enumColumn, final CompareType compare, final String text){
+		Object column = getColumnValue(item, enumColumn.name());
+		if (column == null) return false;
+		if (compare == CompareType.CONTAINS){
+			return contains(column, text);
+		} else if (compare == CompareType.CONTAINS_NOT){
+			return !contains(column, text);
+		} else if (compare == CompareType.EQUALS){
+			return equals(column, text);
+		} else if (compare == CompareType.EQUALS_NOT){
+			return !equals(column, text);
+		} else if (compare == CompareType.GREATER_THEN){
+			return great(column, text);
+		} else if (compare == CompareType.LESS_THEN){
+			return less(column, text);
+		} else if (compare == CompareType.GREATER_THEN_COLUMN){
+			return great(column, getColumnValue(item, text));
+		} else if (compare == CompareType.LESS_THEN_COLUMN){
+			return less(column, getColumnValue(item, text));
+		} else if (compare == CompareType.EQUALS_COLUMN){
+			return equals(column, getColumnValue(item, text));
+		} else if (compare == CompareType.EQUALS_NOT_COLUMN){
+			return !equals(column, getColumnValue(item, text));
+		} else if (compare == CompareType.CONTAINS_COLUMN){
+			return contains(column, getColumnValue(item, text));
+		} else if (compare == CompareType.CONTAINS_NOT_COLUMN){
+			return !contains(column, getColumnValue(item, text));
+		} else { //Fallback: show all...
+			return true;
+		}
+	}
+	
+	private boolean equals(Object object1, Object object2){
+		if (object1 == null || object2 == null) return false;
+		Number number1 = getNumber(object1);
+		Number number2 = getNumber(object2);
+		if (number1 == null || number2 == null){
+			return object1.toString().toLowerCase().equals(object2.toString().toLowerCase());
+		} else {
+			return Formater.compareFormat(number1).equals(Formater.compareFormat(number2));
+		}
+	}
+	private boolean contains(Object object1, Object object2){
+		if (object1 == null || object2 == null) return false;
+		Number number1 = getNumber(object1);
+		Number number2 = getNumber(object2);
+		if (number1 == null || number2 == null){
+			return object1.toString().contains(object2.toString());
+		} else {
+			return Formater.compareFormat(number1).contains(Formater.compareFormat(number2));
+		}
+	}
+	private boolean less(Object object1, Object object2){
+		return greatThen(object2, object1, false);
+	}
+	private boolean great(Object object1, Object object2){
+		return greatThen(object1, object2, true);
+	}
+	private boolean greatThen(Object object1, Object object2, boolean fallback){
+		if (object1 == null || object2 == null) return fallback;
+		Double double1 = getDouble(object1);
+		Double double2 = getDouble(object2);
+		if (double1 == null || double2 == null){
+			Long long1 = getLong(object1);
+			Long long2 = getLong(object2);
+			if (long1 == null || long2 == null){
+				return fallback;
+			} else {
+				return long1 > long2;
+			}
+		} else {
+			return double1 > double2;
+		}
+	}
+	
+	private Number getNumber(Object obj){
+		if ( (obj instanceof Long) || (obj instanceof Integer)
+				|| (obj instanceof Double) || (obj instanceof Float) ){
+			return (Number)obj;
+		} else {
+			return null;
+		}
+	}
+	private Double getDouble(Object obj){
+		if (obj instanceof Double){
+			return (Double)obj;
+		} else if (obj instanceof Float){
+			return Double.valueOf((Float) obj);
+		} else {
+			return null;
+		}
+	}
+	private Long getLong(Object obj){
+		if (obj instanceof Long){
+			return (Long)obj;
+		} else if (obj instanceof Integer){
+			return Long.valueOf((Integer) obj);
+		} else {
+			return null;
+		}
+	}
 }
