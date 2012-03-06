@@ -27,6 +27,7 @@ import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.swing.*;
@@ -265,11 +266,21 @@ public class MarketOrdersTab extends JMainTab{
 		}
 		
 		@Override
-		protected boolean isNumeric(Object column) {
+		protected boolean isNumeric(Enum column) {
 			MarketTableFormat format = (MarketTableFormat) column;
 			if (Number.class.isAssignableFrom(format.getType())) {
 				return true;
 			} else if (Quantity.class.isAssignableFrom(format.getType())) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		
+		@Override
+		protected boolean isDate(Enum column) {
+			MarketTableFormat format = (MarketTableFormat) column;
+			if (format.getType().getName().equals(Date.class.getName())) {
 				return true;
 			} else {
 				return false;

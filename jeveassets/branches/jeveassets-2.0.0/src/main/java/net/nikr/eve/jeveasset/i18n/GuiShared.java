@@ -95,18 +95,22 @@ public abstract class GuiShared extends Bundle {
 	public abstract String deleteFilterName(Object arg0);
 	public abstract String mergeFilters();
 	public abstract String managerMerge();
+	public abstract String filterAnd();
+	public abstract String filterOr();
 	public abstract String filterContains();
 	public abstract String filterContainsNot();
 	public abstract String filterEquals();
 	public abstract String filterEqualsNot();
-	public abstract String filterAnd();
-	public abstract String filterOr();
 	public abstract String filterGreaterThen();
 	public abstract String filterLessThen();
-	public abstract String filterGreaterThenColumn();
-	public abstract String filterLessThenColumn();
-	public abstract String filterEqualsColumn();
-	public abstract String filterEqualsNotColumn();
+	public abstract String filterBefore();
+	public abstract String filterAfter();
 	public abstract String filterContainsColumn();
 	public abstract String filterContainsNotColumn();
+	public abstract String filterEqualsColumn();
+	public abstract String filterEqualsNotColumn();
+	public abstract String filterGreaterThenColumn();
+	public abstract String filterLessThenColumn();
+	public abstract String filterBeforeColumn();
+	public abstract String filterAfterColumn();
 }

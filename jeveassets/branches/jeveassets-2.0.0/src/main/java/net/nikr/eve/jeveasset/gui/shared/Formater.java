@@ -24,6 +24,7 @@ package net.nikr.eve.jeveasset.gui.shared;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -105,10 +106,21 @@ public class Formater {
 	public static String dateOnly(Object date){
 		return dateOnly.format(date);
 	}
+	public static Date dateParse(String s){
+		try {
+			return dateOnly.parse(s);  
+		} catch (ParseException e) {
+			return null;
+		}
+	}
 
 	private static boolean today(Date date){
 		String sDate = todaysDate.format(date);
 		String sNow = todaysDate.format(Settings.getGmtNow());
 		return sDate.equals(sNow);
+	}
+
+	public static DateFormat getDefaultDate() {
+		return defaultDate;
 	}
 }

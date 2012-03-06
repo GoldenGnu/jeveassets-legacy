@@ -27,6 +27,7 @@ import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.event.MouseEvent;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JComponent;
@@ -163,9 +164,19 @@ public class IndustryJobsTab extends JMainTab {
 		}
 		
 		@Override
-		protected boolean isNumeric(Object column) {
+		protected boolean isNumeric(Enum column) {
 			IndustryJobTableFormat format = (IndustryJobTableFormat) column;
 			if (Number.class.isAssignableFrom(format.getType())) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		
+		@Override
+		protected boolean isDate(Enum column) {
+			IndustryJobTableFormat format = (IndustryJobTableFormat) column;
+			if (format.getType().getName().equals(Date.class.getName())) {
 				return true;
 			} else {
 				return false;
@@ -181,6 +192,5 @@ public class IndustryJobsTab extends JMainTab {
 		protected Enum valueOf(String column) {
 			return IndustryJobTableFormat.valueOf(column);
 		}
-		
 	}
 }

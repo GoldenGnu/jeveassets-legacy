@@ -45,6 +45,12 @@ public class Filter {
 		LESS_THEN() {
 			@Override String getI18N(){ return GuiShared.get().filterLessThen(); }
 		},
+		BEFORE() {
+			@Override String getI18N(){ return GuiShared.get().filterBefore(); }
+		},
+		AFTER() {
+			@Override String getI18N(){ return GuiShared.get().filterAfter(); }
+		},
 		CONTAINS_COLUMN() {
 			@Override String getI18N(){ return GuiShared.get().filterContainsColumn(); }
 		},
@@ -63,6 +69,12 @@ public class Filter {
 		LESS_THEN_COLUMN() {
 			@Override String getI18N(){ return GuiShared.get().filterLessThenColumn(); }
 		},
+		BEFORE_COLUMN() {
+			@Override String getI18N(){ return GuiShared.get().filterBeforeColumn(); }
+		},
+		AFTER_COLUMN() {
+			@Override String getI18N(){ return GuiShared.get().filterAfterColumn(); }
+		},
 		;
 		
 		private final static CompareType[] VALUES_STRING = new CompareType[]
@@ -75,6 +87,34 @@ public class Filter {
 			EQUALS_COLUMN,
 			EQUALS_NOT_COLUMN
 		};
+		private final static CompareType[] VALUES_NUMERIC = new CompareType[]
+			{CONTAINS,
+			CONTAINS_NOT,
+			EQUALS,
+			EQUALS_NOT,
+			GREATER_THEN,
+			LESS_THEN,
+			CONTAINS_COLUMN,
+			CONTAINS_NOT_COLUMN,
+			EQUALS_COLUMN,
+			EQUALS_NOT_COLUMN,
+			GREATER_THEN_COLUMN,
+			LESS_THEN_COLUMN,
+		};
+		private final static CompareType[] VALUES_DATE = new CompareType[]
+			{//CONTAINS,
+			//CONTAINS_NOT,
+			EQUALS,
+			EQUALS_NOT,
+			BEFORE,
+			AFTER,
+			//CONTAINS_COLUMN,
+			//CONTAINS_NOT_COLUMN,
+			EQUALS_COLUMN,
+			EQUALS_NOT_COLUMN,
+			BEFORE_COLUMN,
+			AFTER_COLUMN,
+		};
 		
 		abstract String getI18N();
 		@Override
@@ -84,6 +124,12 @@ public class Filter {
 		public static CompareType[] valuesString(){
 			return VALUES_STRING;
 		}
+		public static CompareType[] valuesNumeric(){
+			return VALUES_NUMERIC;
+		}
+		public static CompareType[] valuesDate(){
+			return VALUES_DATE;
+		}
 		
 		public static boolean isColumnCompare(CompareType compareType){
 			return compareType == CompareType.GREATER_THEN_COLUMN 
@@ -92,6 +138,8 @@ public class Filter {
 				|| compareType == CompareType.EQUALS_NOT_COLUMN
 				|| compareType == CompareType.CONTAINS_COLUMN
 				|| compareType == CompareType.CONTAINS_NOT_COLUMN
+				|| compareType == CompareType.BEFORE_COLUMN
+				|| compareType == CompareType.AFTER_COLUMN
 				;
 		}
 		public static boolean isNumericCompare(CompareType compareType){
@@ -99,6 +147,13 @@ public class Filter {
 				|| compareType == CompareType.LESS_THEN_COLUMN
 				|| compareType == CompareType.GREATER_THEN
 				|| compareType == CompareType.LESS_THEN
+				;
+		}
+		public static boolean isDateCompare(CompareType compareType){
+			return compareType == CompareType.BEFORE
+				|| compareType == CompareType.AFTER
+				|| compareType == CompareType.BEFORE_COLUMN
+				|| compareType == CompareType.AFTER_COLUMN
 				;
 		}
 	}

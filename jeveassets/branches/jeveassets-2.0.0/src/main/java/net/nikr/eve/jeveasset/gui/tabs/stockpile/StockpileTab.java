@@ -569,7 +569,12 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		}
 		
 		@Override
-		protected boolean isNumeric(Object column) {
+		protected boolean isNumeric(Enum column) {
+			return false;
+		}
+		
+		@Override
+		protected boolean isDate(Enum column) {
 			return false;
 		}
 		

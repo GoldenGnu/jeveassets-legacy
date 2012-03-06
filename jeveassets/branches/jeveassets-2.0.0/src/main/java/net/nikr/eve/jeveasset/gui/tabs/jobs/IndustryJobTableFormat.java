@@ -30,51 +30,6 @@ import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 
 public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
-	//XXX Removed extra id columns from IndustryJobTableFormat (Industry Plot Releated?)
-	/*
-	JOB_ID(String.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return "Job ID";
-		}
-		@Override
-		public Object getColumnValue(IndustryJob from) {
-			return from.getJobID();
-		}
-	},
-	CONTAINER_ID(String.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return "Container ID";
-		}
-		@Override
-		public Object getColumnValue(IndustryJob from) {
-			return from.getContainerID();
-		}
-	},
-	CONTAINER_LOCATION_ID(String.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return "Container Location";
-		}
-		@Override
-		public Object getColumnValue(IndustryJob from) {
-			return from.getContainerLocationID();
-		}
-	},
-	LINE_ID(String.class, GlazedLists.comparableComparator()) {
-		@Override
-		public String getColumnName() {
-			return "Line ID";
-		}
-		@Override
-		public Object getColumnValue(IndustryJob from) {
-			return from.getAssemblyLineID();
-		}
-	},
-	 */
-	
-	
 	STATE(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
