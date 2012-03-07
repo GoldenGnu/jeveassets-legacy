@@ -26,6 +26,7 @@ import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
 import com.beimin.eveapi.shared.marketorders.ApiMarketOrder;
+import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
@@ -78,10 +79,11 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		}
 	}
 	
+	private JToolBar jToolBar;
 	private JButton jAdd;
-	private JSeparatorTable jTable;
 	private JButton jExpand;
 	private JButton jCollapse;
+	private JSeparatorTable jTable;
 	private JLabel jVolumeNow;
 	private JLabel jVolumeNeeded;
 	private JLabel jValueNow;
@@ -100,17 +102,29 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		stockpileDialog = new StockpileDialog(program);
 		stockpileItemDialog = new StockpileItemDialog(program);
 		
-		jAdd = new JButton(TabsStockpile.get().newStockpile(), Images.LOC_GROUPS.getIcon());
-		jAdd.setActionCommand(ACTION_ADD);
-		jAdd.addActionListener(this);
+		jToolBar = new JToolBar();
+		jToolBar.setFloatable(false);
+		jToolBar.setRollover(true);
 		
 		jCollapse = new JButton(TabsStockpile.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.setActionCommand(ACTION_COLLAPSE);
 		jCollapse.addActionListener(this);
+		jCollapse.setMinimumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
+		jCollapse.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
+		jCollapse.setHorizontalAlignment(SwingConstants.LEFT);
+		jToolBar.add(jCollapse);
 
 		jExpand = new JButton(TabsStockpile.get().expand(), Images.MISC_EXPANDED.getIcon());
 		jExpand.setActionCommand(ACTION_EXPAND);
 		jExpand.addActionListener(this);
+		jExpand.setMinimumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
+		jExpand.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
+		jExpand.setHorizontalAlignment(SwingConstants.LEFT);
+		jToolBar.add(jExpand);
+		
+		jAdd = new JButton(TabsStockpile.get().newStockpile(), Images.LOC_GROUPS.getIcon());
+		jAdd.setActionCommand(ACTION_ADD);
+		jAdd.addActionListener(this);
 		
 		EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> stockpileTableFormat = new EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem>(StockpileTableFormat.class);
 		stockpileEventList = new BasicEventList<StockpileItem>();
@@ -141,18 +155,18 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		
 		filterControl.addToolSeparator();
 		filterControl.addToolButton(jAdd, 100);
-		filterControl.addToolSeparator();
-		filterControl.addToolButton(jCollapse);
-		filterControl.addToolButton(jExpand);
 		
 		layout.setHorizontalGroup(
-			layout.createParallelGroup()
+			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addComponent(filterControl.getPanel())
+				.addComponent(jToolBar)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
+		int toolbatHeight = jToolBar.getInsets().top + jToolBar.getInsets().bottom + Program.BUTTONS_HEIGHT;
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(filterControl.getPanel())
+				.addComponent(jToolBar, toolbatHeight, toolbatHeight, toolbatHeight)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		

@@ -50,8 +50,8 @@ class FilterGui<E> implements ActionListener{
 	private JDropDownButton jLoadFilter;
 	private JCheckBox jShowFilters;
 	private JLabel jShowing;
-	
 	private JFrame jFrame;
+	
 	private FilterControl<E> matcherControl;
 	
 	private List<FilterPanel<E>> filterPanels = new ArrayList<FilterPanel<E>>();
@@ -69,7 +69,7 @@ class FilterGui<E> implements ActionListener{
 		jPanel.setLayout(layout);
 		layout.setAutoCreateGaps(true);
 		layout.setAutoCreateContainerGaps(false);
-		
+
 		jToolBar = new JToolBar();
 		jToolBar.setFloatable(false);
 		jToolBar.setRollover(true);
@@ -127,8 +127,10 @@ class FilterGui<E> implements ActionListener{
 		addToolButton(jButton, 90);
 	}
 	final void addToolButton(AbstractButton jButton, int width){
-		jButton.setMinimumSize( new Dimension(width, Program.BUTTONS_HEIGHT));
-		jButton.setMaximumSize( new Dimension(width, Program.BUTTONS_HEIGHT));
+		if (width > 0){
+			jButton.setMinimumSize( new Dimension(width, Program.BUTTONS_HEIGHT));
+			jButton.setMaximumSize( new Dimension(width, Program.BUTTONS_HEIGHT));
+		}
 		jButton.setHorizontalAlignment(SwingConstants.LEFT);
 		jToolBar.add(jButton);
 	}
@@ -141,12 +143,10 @@ class FilterGui<E> implements ActionListener{
 	}
 	
 	void updateShowing(){
-		matcherControl.beforeFilter();
 		int showing = 0;
 		for (FilterList<E> filterList : matcherControl.getFilterLists()){
 			showing = showing + filterList.size();
 		}
-		matcherControl.afterFilter();
 		String filterName = GuiShared.get().filterUntitled();
 		if (getFilters().isEmpty()){
 			filterName = GuiShared.get().filterEmpty();
