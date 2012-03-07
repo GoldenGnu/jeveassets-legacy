@@ -95,6 +95,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String deleteFilterName(Object arg0);
 	public abstract String mergeFilters();
 	public abstract String managerMerge();
+	public abstract String filterAll();
 	public abstract String filterAnd();
 	public abstract String filterOr();
 	public abstract String filterContains();

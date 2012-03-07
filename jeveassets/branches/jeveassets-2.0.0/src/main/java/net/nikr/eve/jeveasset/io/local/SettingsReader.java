@@ -480,6 +480,11 @@ public class SettingsReader extends AbstractXmlReader {
 		} catch (IllegalArgumentException exception) {
 			
 		}
+		try {
+			return Filter.ExtraColumns.valueOf(s);
+		} catch (IllegalArgumentException exception) {
+			
+		}
 		throw new RuntimeException("Fail to load filter column: "+s);
 	}
 

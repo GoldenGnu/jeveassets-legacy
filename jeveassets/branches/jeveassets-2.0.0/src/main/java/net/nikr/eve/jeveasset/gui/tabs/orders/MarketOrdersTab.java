@@ -264,7 +264,7 @@ public class MarketOrdersTab extends JMainTab{
 		}
 		
 		@Override
-		protected boolean isNumeric(Enum column) {
+		protected boolean isNumericColumn(Enum column) {
 			MarketTableFormat format = (MarketTableFormat) column;
 			if (Number.class.isAssignableFrom(format.getType())) {
 				return true;
@@ -276,7 +276,7 @@ public class MarketOrdersTab extends JMainTab{
 		}
 		
 		@Override
-		protected boolean isDate(Enum column) {
+		protected boolean isDateColumn(Enum column) {
 			MarketTableFormat format = (MarketTableFormat) column;
 			if (format.getType().getName().equals(Date.class.getName())) {
 				return true;

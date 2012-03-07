@@ -26,6 +26,22 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 public class Filter {
 	
+	public enum ExtraColumns{
+		ALL() {
+			@Override
+			public String getI18N(){
+				return GuiShared.get().filterAll();
+			}
+		},
+		;
+		
+		abstract String getI18N();
+		@Override
+		public String toString() {
+			return getI18N();
+		}
+	}
+	
 	public enum CompareType{
 		CONTAINS() {
 			@Override String getI18N(){ return GuiShared.get().filterContains(); }
@@ -83,6 +99,12 @@ public class Filter {
 		},
 		;
 		
+		private final static CompareType[] VALUES_ALL = new CompareType[]
+			{CONTAINS,
+			CONTAINS_NOT,
+			EQUALS,
+			EQUALS_NOT,
+		};
 		private final static CompareType[] VALUES_STRING = new CompareType[]
 			{CONTAINS,
 			CONTAINS_NOT,
@@ -129,6 +151,9 @@ public class Filter {
 		public String toString() {
 			return getI18N();
 		}
+		public static CompareType[] valuesAll(){
+			return VALUES_ALL;
+		}
 		public static CompareType[] valuesString(){
 			return VALUES_STRING;
 		}
@@ -139,6 +164,14 @@ public class Filter {
 			return VALUES_DATE;
 		}
 		
+		public static boolean isNot(CompareType compareType){
+			return compareType == CompareType.CONTAINS_NOT 
+				|| compareType == CompareType.CONTAINS_NOT_COLUMN
+				|| compareType == CompareType.EQUALS_NOT
+				|| compareType == CompareType.EQUALS_NOT_COLUMN
+				|| compareType == CompareType.EQUALS_NOT_DATE
+				;
+		}
 		public static boolean isColumnCompare(CompareType compareType){
 			return compareType == CompareType.GREATER_THEN_COLUMN 
 				|| compareType == CompareType.LESS_THEN_COLUMN

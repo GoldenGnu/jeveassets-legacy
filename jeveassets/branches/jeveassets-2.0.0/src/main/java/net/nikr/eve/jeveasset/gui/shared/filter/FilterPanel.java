@@ -32,6 +32,7 @@ import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -41,6 +42,7 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.ExtraColumns;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 
 
@@ -67,12 +69,31 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 	
 	private FilterGui<E> gui;
 	private FilterControl<E> matcherControl;
-	private final List<Object> numericColumns;
-	private final List<Object> dateColumns;
+	private final List<Enum> allColumns;
+	private final List<Enum> numericColumns;
+	private final List<Enum> dateColumns;
 
 	FilterPanel(FilterGui<E> gui, FilterControl<E> matcherControl) {
 		this.gui = gui;
 		this.matcherControl = matcherControl;
+		
+		allColumns = new ArrayList<Enum>();
+		allColumns.add(ExtraColumns.ALL);
+		allColumns.addAll(Arrays.asList(matcherControl.getColumns()));
+		
+		numericColumns = new ArrayList<Enum>();
+		for (Enum object : matcherControl.getColumns()){
+			if (matcherControl.isNumeric(object)){
+				numericColumns.add(object);
+			}
+		}
+		
+		dateColumns = new ArrayList<Enum>();
+		for (Enum object : matcherControl.getColumns()){
+			if (matcherControl.isDate(object)){
+				dateColumns.add(object);
+			}
+		}
 
 		jEnabled = new JCheckBox();
 		jEnabled.setSelected(true);
@@ -83,22 +104,9 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		jLogic.addActionListener(this);
 		jLogic.setActionCommand(ACTION_FILTER);
 		
-		jColumn = new JComboBox(matcherControl.getColumns());
+		jColumn = new JComboBox(allColumns.toArray());
 		jColumn.addActionListener(this);
 		jColumn.setActionCommand(ACTION_FILTER);
-		
-		numericColumns = new ArrayList<Object>();
-		for (Enum object : matcherControl.getColumns()){
-			if (matcherControl.isNumeric(object)){
-				numericColumns.add(object);
-			}
-		}
-		dateColumns = new ArrayList<Object>();
-		for (Enum object : matcherControl.getColumns()){
-			if (matcherControl.isDate(object)){
-				dateColumns.add(object);
-			}
-		}
 		
 		jCompare = new JComboBox();
 		jCompare.addActionListener(this);
@@ -253,6 +261,8 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 			compareTypes = CompareType.valuesNumeric();
 		} else if (matcherControl.isDate((Enum)jColumn.getSelectedItem())){
 			compareTypes = CompareType.valuesDate();
+		} else if (matcherControl.isAll((Enum)jColumn.getSelectedItem())){
+			compareTypes = CompareType.valuesAll();
 		} else {
 			compareTypes = CompareType.valuesString();
 		}

@@ -160,7 +160,7 @@ public class IndustryJobsTab extends JMainTab {
 		}
 		
 		@Override
-		protected boolean isNumeric(Enum column) {
+		protected boolean isNumericColumn(Enum column) {
 			IndustryJobTableFormat format = (IndustryJobTableFormat) column;
 			if (Number.class.isAssignableFrom(format.getType())) {
 				return true;
@@ -170,7 +170,7 @@ public class IndustryJobsTab extends JMainTab {
 		}
 		
 		@Override
-		protected boolean isDate(Enum column) {
+		protected boolean isDateColumn(Enum column) {
 			IndustryJobTableFormat format = (IndustryJobTableFormat) column;
 			if (format.getType().getName().equals(Date.class.getName())) {
 				return true;

@@ -29,6 +29,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.ExtraColumns;
 
 
 public abstract class FilterControl<E> {
@@ -67,8 +68,14 @@ public abstract class FilterControl<E> {
 
 	protected abstract Enum[] getColumns();
 	protected abstract Enum valueOf(String column);
-	protected abstract boolean isNumeric(Enum column);
-	protected abstract boolean isDate(Enum column);
+	/**
+	 * Use isNumeric(Enum column) instead
+	 */
+	protected abstract boolean isNumericColumn(Enum column);
+	/**
+	 * Use isDate(Enum column) instead
+	 */
+	protected abstract boolean isDateColumn(Enum column);
 	protected abstract Object getColumnValue(E item, String column);
 
 	/**
@@ -81,7 +88,49 @@ public abstract class FilterControl<E> {
 	 */
 	protected void afterFilter() {}
 	
+	boolean isNumeric(Enum column) {
+		if(column instanceof ExtraColumns){
+			return false;
+		} else {
+			return isNumericColumn(column);
+		}
+	}
+		
+	boolean isDate(Enum column) {
+		if(column instanceof ExtraColumns){
+			return false;
+		} else {
+			return isDateColumn(column);
+		}
+	}
+	boolean isAll(Enum column) {
+		if (column instanceof ExtraColumns){
+			System.out.println("True column: "+column.name());
+			return true;
+		} else {
+			System.out.println("False column: "+column.name());
+			return false;
+		}
+	}
+	
 	boolean matches(final E item, final Enum enumColumn, final CompareType compare, final String text){
+		if (enumColumn instanceof ExtraColumns){
+			if (CompareType.isNot(compare)){
+				boolean found = false;
+				for (Enum testColumn : getColumns()){
+					if (!matches(item, testColumn, compare, text)){ //Found
+						found = true;
+					}
+				}
+				return !found;
+			} else {
+				for (Enum testColumn : getColumns()){
+					boolean found = matches(item, testColumn, compare, text);
+					if (found) return true;
+				}
+				return false;
+			}
+		}
 		Object column = getColumnValue(item, enumColumn.name());
 		if (column == null) return false;
 		if (compare == CompareType.CONTAINS){
