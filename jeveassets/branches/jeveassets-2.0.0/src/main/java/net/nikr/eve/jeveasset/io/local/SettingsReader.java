@@ -179,10 +179,11 @@ public class SettingsReader extends AbstractXmlReader {
 		parseAssetFilters(filtersElement, settings.getAssetFilters());
 		
 		//Table Filters
-		parseFilters(element, settings.getStockpileFilters(), "stockpile");
-		parseFilters(element, settings.getIndustryJobsFilters(), "industryjobs");
-		parseFilters(element, settings.getMarketOrdersFilters(), "marketorders");
-		
+		NodeList tablefiltersNodes = element.getElementsByTagName("tablefilters");
+		if (tablefiltersNodes.getLength() == 1){
+			Element tablefiltersElement = (Element) tablefiltersNodes.item(0);
+			parseTableFilters(tablefiltersElement, settings);
+		}
 		
 		// Proxy can have 0 or 1 proxy elements; at 0, the proxy stays as null.
 		NodeList proxyNodes = element.getElementsByTagName("proxy");
@@ -436,15 +437,20 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 	}
 	
+	private static void parseTableFilters(Element element, Settings settings){
+		parseFilters(element, settings.getStockpileFilters(), "stockpile");
+		parseFilters(element, settings.getIndustryJobsFilters(), "industryjobs");
+		parseFilters(element, settings.getMarketOrdersFilters(), "marketorders");
+	}
 	private static void parseFilters(Element element, Map<String, List<Filter>> filters, String name){
-		NodeList filtersNodes = element.getElementsByTagName("filters"+name);
+		NodeList filtersNodes = element.getElementsByTagName(name);
 		if (filtersNodes.getLength() == 1){
 			Element filterElement = (Element) filtersNodes.item(0);
-			parseFilters(filterElement, filters);
+			parseFilter(filterElement, filters);
 		}
 	}
 	
-	private static void parseFilters(Element element, Map<String, List<Filter>> filters){
+	private static void parseFilter(Element element, Map<String, List<Filter>> filters){
 		NodeList filterNodes = element.getElementsByTagName("filter");
 		for (int a = 0; a < filterNodes.getLength(); a++){
 			Element filterNode = (Element) filterNodes.item(a);
@@ -456,7 +462,6 @@ public class SettingsReader extends AbstractXmlReader {
 				String text = AttributeGetters.getString(rowNode, "text");
 				String columnString = AttributeGetters.getString(rowNode, "column");
 				Enum column =  getColumn(columnString);
-				
 				String compare = AttributeGetters.getString(rowNode, "compare");
 				boolean and = AttributeGetters.getBoolean(rowNode, "and");
 				filterFilters.add(new Filter(and, column, compare, text));

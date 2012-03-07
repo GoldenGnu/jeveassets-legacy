@@ -26,22 +26,10 @@ import java.net.Proxy;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import net.nikr.eve.jeveasset.data.AssetFilter;
-import net.nikr.eve.jeveasset.data.CsvSettings;
-import net.nikr.eve.jeveasset.data.TableSettings;
-import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.OverviewGroup;
-import net.nikr.eve.jeveasset.data.PriceData;
-import net.nikr.eve.jeveasset.data.PriceDataSettings;
-import net.nikr.eve.jeveasset.data.ReprocessSettings;
-import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.data.UserItem;
+import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
 import net.nikr.eve.jeveasset.io.shared.XmlException;
 import org.slf4j.Logger;
@@ -77,9 +65,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTableSettings(xmldoc, settings.getTableSettings());
 		writeUpdates(xmldoc, settings);
 		writeAssetFilters(xmldoc, settings.getAssetFilters());
-		writeFilters(xmldoc, settings.getStockpileFilters(), "stockpile");
-		writeFilters(xmldoc, settings.getIndustryJobsFilters(), "industryjobs");
-		writeFilters(xmldoc, settings.getMarketOrdersFilters(), "marketorders");
+		writeTableFilters(xmldoc, settings);
 		writeCsv(xmldoc, settings.getCsvSettings());
 		writePriceFactionData(xmldoc, settings.getPriceFactionData());
 		try {
@@ -89,10 +75,16 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Settings saved");
 	}
-	private static void writeFilters(Document xmldoc, Map<String, List<Filter>> filters, String name){
-		if (name.isEmpty()) throw new RuntimeException("We can not let this happen!");
-		Element parentNode = xmldoc.createElementNS(null, "filters"+name);
+	private static void writeTableFilters(Document xmldoc, Settings settings){
+		Element parentNode = xmldoc.createElementNS(null, "tablefilters");
 		xmldoc.getDocumentElement().appendChild(parentNode);
+		writeFilters(xmldoc, parentNode, settings.getStockpileFilters(), "stockpile");
+		writeFilters(xmldoc, parentNode, settings.getIndustryJobsFilters(), "industryjobs");
+		writeFilters(xmldoc, parentNode, settings.getMarketOrdersFilters(), "marketorders");
+	}
+	private static void writeFilters(Document xmldoc, Element tablefiltersNode, Map <String, List<Filter>> filters, String name){
+		Element parentNode = xmldoc.createElementNS(null, name);
+		tablefiltersNode.appendChild(parentNode);
 		for (Map.Entry<String, List<Filter>> entry : filters.entrySet()){
 			Element node = xmldoc.createElementNS(null, "filter");
 			node.setAttributeNS(null, "name", entry.getKey());
