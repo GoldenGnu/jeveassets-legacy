@@ -39,6 +39,7 @@ import javax.swing.event.DocumentListener;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 
@@ -112,7 +113,7 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		jCompareColumn.setActionCommand(ACTION_FILTER);
 
 		jDate = new JDateChooser(Settings.getGmtNow());
-		jDate.setDateFormatString(FilterControl.DATE_STRING);
+		jDate.setDateFormatString(Formater.COLUMN_FORMAT);
 		JCalendar jCalendar = jDate.getJCalendar();
 		jCalendar.setTodayButtonText("Today");
 		jCalendar.setTodayButtonVisible(true);
@@ -215,14 +216,14 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		if (isColumnCompare()){
 			jCompareColumn.setSelectedItem(matcherControl.valueOf(filter.getText()));
 		} else if (isDateCompare()) {
-			jDate.setDate(FilterControl.stringToDate(filter.getText()));
+			jDate.setDate(Formater.columnStringToDate(filter.getText()));
 		} else {
 			jText.setText(filter.getText());
 		}
 	}
 	
 	private String getDataString(){
-		return FilterControl.dateToString(jDate.getDate());
+		return  Formater.columnDate(jDate.getDate());
 	}
 	
 	private void refilter() {

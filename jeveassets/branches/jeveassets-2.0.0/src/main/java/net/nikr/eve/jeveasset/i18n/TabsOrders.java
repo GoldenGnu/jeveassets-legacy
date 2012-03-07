@@ -44,7 +44,7 @@ public abstract class TabsOrders extends Bundle {
 	public abstract String columnQuantity();
 	public abstract String columnPrice();
 	public abstract String columnIssued();
-	public abstract String columnExpiresIn();
+	public abstract String columnExpires();
 	public abstract String columnRange();
 	public abstract String columnRemainingValue();
 	public abstract String columnStatus();

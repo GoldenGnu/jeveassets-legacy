@@ -21,12 +21,8 @@
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import ca.odell.glazedlists.FilterList;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import javax.swing.AbstractButton;
 import javax.swing.JFrame;
@@ -37,8 +33,6 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 
 public abstract class FilterControl<E> {
 	
-	public static final Locale LOCALE = Locale.ENGLISH; //Use english AKA US_EN
-
 	private final Map<String, List<Filter>> filters;
 	private final List<FilterList<E>> filterLists;
 	private FilterGui<E> gui;
@@ -70,9 +64,6 @@ public abstract class FilterControl<E> {
 	Map<String, List<Filter>> getFilters() {
 		return filters;
 	}
-	
-	static final String DATE_STRING = "dd/MM-yyyy"; //FIXME - this can not be changed after release!
-	private static DateFormat format = new SimpleDateFormat(DATE_STRING, new Locale("en"));
 
 	protected abstract Enum[] getColumns();
 	protected abstract Enum valueOf(String column);
@@ -80,18 +71,6 @@ public abstract class FilterControl<E> {
 	protected abstract boolean isDate(Enum column);
 	protected abstract Object getColumnValue(E item, String column);
 
-	static String dateToString(Date date){
-		return format.format(date);
-	}
-	
-	static Date stringToDate(String date){
-		try {
-			return format.parse(date);
-		} catch (ParseException ex) {
-			return null;
-		}
-	}
-	
 	/**
 	 * Overwrite to do stuff before filtering
 	 */
@@ -109,9 +88,9 @@ public abstract class FilterControl<E> {
 			return contains(column, text);
 		} else if (compare == CompareType.CONTAINS_NOT){
 			return !contains(column, text);
-		} else if (compare == CompareType.EQUALS){
+		} else if (compare == CompareType.EQUALS || compare == CompareType.EQUALS_DATE){
 			return equals(column, text);
-		} else if (compare == CompareType.EQUALS_NOT){
+		} else if (compare == CompareType.EQUALS_NOT || compare == CompareType.EQUALS_NOT_DATE){
 			return !equals(column, text);
 		} else if (compare == CompareType.GREATER_THEN){
 			return great(column, text);
@@ -146,36 +125,47 @@ public abstract class FilterControl<E> {
 		//Null
 		if (object1 == null || object2 == null) return false;
 		
+		//String
+		String compare1 = object1.toString();
+		String compare2 = object2.toString();
+		
 		//Number
 		Number number1 = getNumber(object1);
 		Number number2 = getNumber(object2);
-		if (number1 != null && number2 != null){
-			return Formater.compareFormat(number1).equals(Formater.compareFormat(number2));
-		}
+		if (number1 != null) compare1 = Formater.compareFormat(number1);
+		if (number2 != null) compare2 = Formater.compareFormat(number2);
 		
 		//Date
 		Date date1 = getDate(object1);
 		Date date2 = getDate(object2);
-		if (date1 != null && date2 != null){
-			return date1.equals(date2);
-		}
+		if (date1 != null) compare1 = Formater.columnDate(date1);
+		if (date2 != null) compare2 = Formater.columnDate(date2);
 		
-		//String
-		return object1.toString().toLowerCase().equals(object2.toString().toLowerCase());
+		//Equals (case insentive)
+		return compare1.toLowerCase().equals(compare2.toLowerCase());
 	}
 	private boolean contains(Object object1, Object object2){
 		//Null
 		if (object1 == null || object2 == null) return false;
 		
+		//String
+		String compare1 = object1.toString();
+		String compare2 = object2.toString();
+		
 		//Number
 		Number number1 = getNumber(object1);
 		Number number2 = getNumber(object2);
-		if (number1 != null && number2 != null){
-			return Formater.compareFormat(number1).contains(Formater.compareFormat(number2));
-		}
+		if (number1 != null) compare1 = Formater.compareFormat(number1);
+		if (number2 != null) compare2 = Formater.compareFormat(number2);
 		
-		//String
-		return object1.toString().contains(object2.toString());
+		//Date
+		Date date1 = getDate(object1);
+		Date date2 = getDate(object2);
+		if (date1 != null) compare1 = Formater.columnDate(date1);
+		if (date2 != null) compare2 = Formater.columnDate(date2);
+		
+		//Contains (case insentive)
+		return compare1.toLowerCase().contains(compare2.toLowerCase());
 	}
 	private boolean less(Object object1, Object object2){
 		return greatThen(object2, object1, false);
@@ -190,16 +180,17 @@ public abstract class FilterControl<E> {
 		//Double / Float
 		Double double1 = getDouble(object1);
 		Double double2 = getDouble(object2);
-		if (double1 != null && double2 != null){
-			return double1 > double2;
-		}
 		
 		//Long / Integer
 		Long long1 = getLong(object1);
 		Long long2 = getLong(object2);
-		if (long1 != null && long2 != null){
-			return long1 > long2;
-		}
+		
+		
+		if (long1 != null && long2 != null) return long1 > long2;
+		if (long1 != null && double2 != null) return double1 > double2;
+		if (double1 != null && double2 != null) return double1 > double2;
+		if (double1 != null && long2 != null) return long1 > long2;
+		
 		
 		return fallback; //Fallback
 	}
@@ -253,7 +244,7 @@ public abstract class FilterControl<E> {
 		if (obj instanceof Date){
 			return (Date)obj;
 		} else if (obj instanceof String){
-			return stringToDate((String) obj);
+			return Formater.columnStringToDate((String) obj);
 		} else {
 			return null;
 		}

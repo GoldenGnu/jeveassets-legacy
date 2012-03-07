@@ -42,6 +42,12 @@ public class Filter {
 		GREATER_THEN() {
 			@Override String getI18N(){ return GuiShared.get().filterGreaterThen(); }
 		},
+		EQUALS_DATE() {
+			@Override String getI18N(){ return GuiShared.get().filterEqualsDate(); }
+		},
+		EQUALS_NOT_DATE() {
+			@Override String getI18N(){ return GuiShared.get().filterEqualsNotDate(); }
+		},
 		LESS_THEN() {
 			@Override String getI18N(){ return GuiShared.get().filterLessThen(); }
 		},
@@ -102,10 +108,12 @@ public class Filter {
 			LESS_THEN_COLUMN,
 		};
 		private final static CompareType[] VALUES_DATE = new CompareType[]
-			{//CONTAINS,
-			//CONTAINS_NOT,
+			{CONTAINS,
+			CONTAINS_NOT,
 			EQUALS,
 			EQUALS_NOT,
+			EQUALS_DATE,
+			EQUALS_NOT_DATE,
 			BEFORE,
 			AFTER,
 			//CONTAINS_COLUMN,
@@ -152,6 +160,8 @@ public class Filter {
 		public static boolean isDateCompare(CompareType compareType){
 			return compareType == CompareType.BEFORE
 				|| compareType == CompareType.AFTER
+				|| compareType == CompareType.EQUALS_DATE
+				|| compareType == CompareType.EQUALS_NOT_DATE
 				|| compareType == CompareType.BEFORE_COLUMN
 				|| compareType == CompareType.AFTER_COLUMN
 				;

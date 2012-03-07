@@ -21,11 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.shared;
 
-import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.text.*;
 import java.util.Date;
 import java.util.Locale;
 import net.nikr.eve.jeveasset.data.Settings;
@@ -34,6 +30,10 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 public class Formater {
 
+	//FIXME - this can not be changed after release!
+	//Must not be changed! please see: FilterControl
+	public static final String COLUMN_FORMAT = "dd-MM-yyyy";
+	
 	private static DecimalFormat iskFormat  = new DecimalFormat("#,##0.00 isk");
 	private static DecimalFormat itemsFormat  = new DecimalFormat("#,##0 items");
 	private static DecimalFormat longFormat  = new DecimalFormat("#,##0");
@@ -42,9 +42,9 @@ public class Formater {
 	private static DecimalFormat floatFormat  = new DecimalFormat("#,##0.####");
 	private static DecimalFormat compareFormat  = new DecimalFormat("0.####", new DecimalFormatSymbols(EveAssetMatching.LOCALE));
 	
+	private static DateFormat columnDate = new SimpleDateFormat(COLUMN_FORMAT, new Locale("en")); //Must not be changed! please see: FilterControl
 	private static DateFormat todaysDate = new SimpleDateFormat("yyyyMMdd", new Locale("en"));
 	private static DateFormat timeOnly = new SimpleDateFormat("HH:mm", new Locale("en"));
-	private static DateFormat defaultDate = new SimpleDateFormat("yyyy-MM-dd HH:mm", new Locale("en"));
 	private static DateFormat simpleDate = new SimpleDateFormat("yyyyMMddHHmm", new Locale("en"));
 	private static DateFormat dateOnly = new SimpleDateFormat("yyyy-MM-dd", new Locale("en"));
 
@@ -93,6 +93,16 @@ public class Formater {
 		}
 	}
 
+	public static String columnDate(Object date){
+		return columnDate.format(date);
+	}
+	public static Date columnStringToDate(String date){
+		try {
+			return columnDate.parse(date);
+		} catch (ParseException ex) {
+			return null;
+		}
+	}
 	public static String timeOnly(Date date){
 		return timeOnly.format(date);
 	}
@@ -100,18 +110,9 @@ public class Formater {
 	public static String simpleDate(Date date){
 		return simpleDate.format(date);
 	}
-	public static String defaultDate(Object date){
-		return defaultDate.format(date);
-	}
+
 	public static String dateOnly(Object date){
 		return dateOnly.format(date);
-	}
-	public static Date dateParse(String s){
-		try {
-			return dateOnly.parse(s);  
-		} catch (ParseException e) {
-			return null;
-		}
 	}
 
 	private static boolean today(Date date){
@@ -121,6 +122,6 @@ public class Formater {
 	}
 
 	public static DateFormat getDefaultDate() {
-		return defaultDate;
+		return columnDate;
 	}
 }

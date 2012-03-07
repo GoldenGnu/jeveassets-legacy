@@ -105,6 +105,8 @@ public abstract class GuiShared extends Bundle {
 	public abstract String filterLessThen();
 	public abstract String filterBefore();
 	public abstract String filterAfter();
+	public abstract String filterEqualsDate();
+	public abstract String filterEqualsNotDate();
 	public abstract String filterContainsColumn();
 	public abstract String filterContainsNotColumn();
 	public abstract String filterEqualsColumn();

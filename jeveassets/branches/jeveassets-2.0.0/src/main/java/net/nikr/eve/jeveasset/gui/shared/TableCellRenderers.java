@@ -79,7 +79,7 @@ public class TableCellRenderers {
 		}
 		@Override
 		public void setValue(Object value) {
-			setText((value == null) ? "" : Formater.defaultDate(value));
+			setText((value == null) ? "" : Formater.columnDate(value));
 		}
 	}
 	

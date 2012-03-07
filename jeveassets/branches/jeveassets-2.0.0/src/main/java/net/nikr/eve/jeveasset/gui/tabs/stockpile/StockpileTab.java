@@ -551,7 +551,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		}
 		
 		@Override
-		protected String getColumnValue(StockpileItem item, String column) {
+		protected Object getColumnValue(StockpileItem item, String column) {
 			FilterType format = FilterType.valueOf(column);
 			if (format.equals(FilterType.NAME)){
 				return item.getStockpile().getName();

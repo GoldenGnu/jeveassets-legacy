@@ -77,8 +77,8 @@ public class MarketOrdersTab extends JMainTab{
 		sellOrdersTableModel = new EventTableModel<MarketOrder>(sellOrdersSortedList, sellTableFormat);
 		buyOrdersTableModel = new EventTableModel<MarketOrder>(buyOrdersSortedList, buyTableFormat);
 		//Tables
-		jSellTable = new JAutoColumnTable(sellOrdersTableModel);
-		jBuyTable = new JAutoColumnTable(buyOrdersTableModel);
+		jSellTable = new JMarketOrdersTable(sellOrdersTableModel);
+		jBuyTable = new JMarketOrdersTable(buyOrdersTableModel);
 		//Table Selection
 		EventSelectionModel<MarketOrder> sellSelectionModel = new EventSelectionModel<MarketOrder>(sellOrdersSortedList);
 		sellSelectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -253,13 +253,13 @@ public class MarketOrdersTab extends JMainTab{
 		}
 		
 		@Override
-		protected String getColumnValue(MarketOrder item, String column) {
+		protected Object getColumnValue(MarketOrder item, String column) {
 			MarketTableFormat format = MarketTableFormat.valueOf(column);
 			if (format == MarketTableFormat.QUANTITY){
 				Quantity quantity = (Quantity)format.getColumnValue(item);
-				return String.valueOf(quantity.getQuantityRemaining());
+				return quantity.getQuantityRemaining();
 			} else {
-				return format.getColumnValue(item).toString();
+				return format.getColumnValue(item);
 			}
 		}
 		
