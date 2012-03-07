@@ -116,4 +116,7 @@ public abstract class GuiShared extends Bundle {
 	public abstract String filterLessThenColumn();
 	public abstract String filterBeforeColumn();
 	public abstract String filterAfterColumn();
+	public abstract String filterUntitled();
+	public abstract String filterEmpty();
+	public abstract String filterShowing(int rowCount, int size, String filterName);
 }

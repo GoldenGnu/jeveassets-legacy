@@ -28,6 +28,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -48,6 +49,7 @@ class FilterGui<E> implements ActionListener{
 	private JToolBar jToolBar;
 	private JDropDownButton jLoadFilter;
 	private JCheckBox jShowFilters;
+	private JLabel jShowing;
 	
 	private JFrame jFrame;
 	private FilterControl<E> matcherControl;
@@ -108,6 +110,7 @@ class FilterGui<E> implements ActionListener{
 		jShowFilters.setSelected(true);
 		addToolButton(jShowFilters, 70);
 		
+		jShowing = new JLabel();
 		
 		updateFilters();
 		add();
@@ -120,21 +123,44 @@ class FilterGui<E> implements ActionListener{
 		return jPanel;
 	}
 	
-	public final void addToolButton(AbstractButton jButton){
+	final void addToolButton(AbstractButton jButton){
 		addToolButton(jButton, 90);
 	}
-	public final void addToolButton(AbstractButton jButton, int width){
+	final void addToolButton(AbstractButton jButton, int width){
 		jButton.setMinimumSize( new Dimension(width, Program.BUTTONS_HEIGHT));
 		jButton.setMaximumSize( new Dimension(width, Program.BUTTONS_HEIGHT));
 		jButton.setHorizontalAlignment(SwingConstants.LEFT);
 		jToolBar.add(jButton);
 	}
-	public final void addToolSeparator(){
+	final void addToolSeparator(){
 		jToolBar.addSeparator();
 	}
 	
-	List<FilterPanel.MyMatcher<E>> getMatchers(){
+	private List<FilterPanel.MyMatcher<E>> getMatchers(){
 		return getMatchers(true);
+	}
+	
+	void updateShowing(){
+		matcherControl.beforeFilter();
+		int showing = 0;
+		for (FilterList<E> filterList : matcherControl.getFilterLists()){
+			showing = showing + filterList.size();
+		}
+		matcherControl.afterFilter();
+		String filterName = GuiShared.get().filterUntitled();
+		if (getFilters().isEmpty()){
+			filterName = GuiShared.get().filterEmpty();
+		} else {
+			if (matcherControl.getFilters().containsValue(getFilters())){
+				for (Map.Entry<String, List<Filter>> entry : matcherControl.getFilters().entrySet()){
+					if (entry.getValue().equals(getFilters())){
+						filterName = entry.getKey();
+						break;
+					}
+				}
+			}
+		}
+		jShowing.setText(GuiShared.get().filterShowing(showing, showing, filterName));
 	}
 	
 	private List<Filter> getFilters(){
@@ -158,10 +184,20 @@ class FilterGui<E> implements ActionListener{
 	private void update(){
 		jPanel.removeAll();
 		GroupLayout.ParallelGroup horizontalGroup = layout.createParallelGroup();
+		horizontalGroup.addGroup(
+			layout.createSequentialGroup()
+				.addComponent(jToolBar)
+				.addGap(0, 0, Short.MAX_VALUE)
+				.addComponent(jShowing, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+		);
+		
 		GroupLayout.SequentialGroup verticalGroup = layout.createSequentialGroup();
-		horizontalGroup.addComponent(jToolBar);
 		int toolbatHeight = jToolBar.getInsets().top + jToolBar.getInsets().bottom + Program.BUTTONS_HEIGHT;
-		verticalGroup.addComponent(jToolBar, toolbatHeight, toolbatHeight, toolbatHeight);
+		verticalGroup
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jToolBar, toolbatHeight, toolbatHeight, toolbatHeight)
+					.addComponent(jShowing, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+		);		
 		if (jShowFilters.isSelected()){
 			for (FilterPanel filterPanel : filterPanels){
 				verticalGroup.addComponent(filterPanel.getPanel());
@@ -261,14 +297,18 @@ class FilterGui<E> implements ActionListener{
 			jMenuItem.addActionListener(this);
 			jLoadFilter.add(jMenuItem);
 		}
+		updateShowing();
 	}
 	
 	void refilter() {
 		matcherControl.beforeFilter();
+		int showing = 0;
 		for (FilterList<E> filterList : matcherControl.getFilterLists()){
 			filterList.setMatcher(new LogicalMatcher<E>(getMatchers()));
+			showing = showing + filterList.size();
 		}
 		matcherControl.afterFilter();
+		updateShowing();
 	}
 
 	@Override

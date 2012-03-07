@@ -89,7 +89,6 @@ public class StockpileTab extends JMainTab implements ActionListener {
 	
 	private EventTableModel<StockpileItem> stockpileTableModel;
 	private EventList<StockpileItem> stockpileEventList;
-	private FilterList<StockpileItem> filterList;
 	private SeparatorList<StockpileItem> separatorList;
 	
 	private StockpileDialog stockpileDialog;
@@ -115,7 +114,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		
 		EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> stockpileTableFormat = new EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem>(StockpileTableFormat.class);
 		stockpileEventList = new BasicEventList<StockpileItem>();
-		filterList = new FilterList<StockpileItem>(stockpileEventList);
+		FilterList<StockpileItem> filterList = new FilterList<StockpileItem>(stockpileEventList);
 		separatorList = new SeparatorList<StockpileItem>(filterList, new StockpileSeparatorComparator(), 1, Integer.MAX_VALUE);
 		stockpileTableModel = new EventTableModel<StockpileItem>(separatorList, stockpileTableFormat);
 		//Tables
@@ -134,7 +133,11 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		jTable.setSelectionModel(selectionModel);
 		//Filter GUI
 		
-		StockpileFilterControl filterControl = new StockpileFilterControl(program.getMainWindow().getFrame(), program.getSettings().getStockpileFilters(), Collections.singletonList(filterList));
+		StockpileFilterControl filterControl = new StockpileFilterControl(
+				program.getMainWindow().getFrame(),
+				program.getSettings().getStockpileFilters(),
+				filterList,
+				stockpileEventList);
 		
 		filterControl.addToolSeparator();
 		filterControl.addToolButton(jAdd, 100);
@@ -546,8 +549,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 	
 	public class StockpileFilterControl extends FilterControl<StockpileItem>{
 
-		public StockpileFilterControl(JFrame jFrame, Map<String, List<Filter>> filters, List<FilterList<StockpileItem>> filterLists) {
-			super(jFrame, filters, filterLists);
+		public StockpileFilterControl(JFrame jFrame, Map<String, List<Filter>> filters, FilterList<StockpileItem> filterList, EventList<StockpileItem> eventList) {
+			super(jFrame, filters, filterList, eventList);
 		}
 		
 		@Override

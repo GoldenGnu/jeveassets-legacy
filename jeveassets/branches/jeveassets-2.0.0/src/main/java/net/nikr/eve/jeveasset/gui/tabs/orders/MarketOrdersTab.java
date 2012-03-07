@@ -99,11 +99,17 @@ public class MarketOrdersTab extends JMainTab{
 		JScrollPane jSellTableScroll = new JScrollPane(jSellTable);
 		JScrollPane jBuyTableScroll = new JScrollPane(jBuyTable);
 		//Table Filter
+		List<EventList<MarketOrder>> eventLists = new ArrayList<EventList<MarketOrder>>();
+		eventLists.add(sellOrdersEventList);
+		eventLists.add(buyOrdersEventList);
 		List<FilterList<MarketOrder>> filterLists = new ArrayList<FilterList<MarketOrder>>();
 		filterLists.add(buyOrdersFilterList);
 		filterLists.add(sellOrdersFilterList);
-		
-		MarketOrdersFilterControl filterControl = new MarketOrdersFilterControl(program.getMainWindow().getFrame(), program.getSettings().getMarketOrdersFilters(), filterLists);
+		MarketOrdersFilterControl filterControl = new MarketOrdersFilterControl(
+				program.getMainWindow().getFrame(),
+				program.getSettings().getMarketOrdersFilters(),
+				filterLists,
+				eventLists);
 		
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -248,8 +254,8 @@ public class MarketOrdersTab extends JMainTab{
 	
 	public static class MarketOrdersFilterControl extends FilterControl<MarketOrder>{
 
-		public MarketOrdersFilterControl(JFrame jFrame, Map<String, List<Filter>> filters, List<FilterList<MarketOrder>> filterLists) {
-			super(jFrame, filters, filterLists);
+		public MarketOrdersFilterControl(JFrame jFrame, Map<String, List<Filter>> filters, List<FilterList<MarketOrder>> filterLists, List<EventList<MarketOrder>> eventLists) {
+			super(jFrame, filters, filterLists, eventLists);
 		}
 		
 		@Override

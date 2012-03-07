@@ -20,7 +20,11 @@
  */
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
+import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
+import ca.odell.glazedlists.event.ListEvent;
+import ca.odell.glazedlists.event.ListEventListener;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -32,15 +36,23 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.ExtraColumns;
 
 
-public abstract class FilterControl<E> {
+public abstract class FilterControl<E> implements ListEventListener<E>{
 	
 	private final Map<String, List<Filter>> filters;
 	private final List<FilterList<E>> filterLists;
+	private final List<EventList<E>> eventLists;
 	private FilterGui<E> gui;
 
-	protected FilterControl(JFrame jFrame, Map<String, List<Filter>> filters, List<FilterList<E>> filterLists) {
+	protected FilterControl(JFrame jFrame, Map<String, List<Filter>> filters, FilterList<E> filterList, EventList<E> eventList) {
+		this(jFrame, filters, Collections.singletonList(filterList), Collections.singletonList(eventList));
+	}
+	protected FilterControl(JFrame jFrame, Map<String, List<Filter>> filters, List<FilterList<E>> filterLists, List<EventList<E>> eventLists) {
 		this.filters = filters;
 		this.filterLists = filterLists;
+		this.eventLists = eventLists;
+		for (EventList<E> eventList : eventLists){
+			eventList.addListEventListener(this);
+		}
 		gui = new FilterGui<E>(jFrame, this);
 	}
 	
@@ -64,6 +76,15 @@ public abstract class FilterControl<E> {
 
 	Map<String, List<Filter>> getFilters() {
 		return filters;
+	}
+	
+	int getTotalSize(){
+		int totalSize = 0;
+		for (EventList<E> eventList : eventLists){
+			totalSize = totalSize + eventList.size();
+		}
+		return totalSize;
+		
 	}
 
 	protected abstract Enum[] getColumns();
@@ -105,10 +126,8 @@ public abstract class FilterControl<E> {
 	}
 	boolean isAll(Enum column) {
 		if (column instanceof ExtraColumns){
-			System.out.println("True column: "+column.name());
 			return true;
 		} else {
-			System.out.println("False column: "+column.name());
 			return false;
 		}
 	}
@@ -297,5 +316,10 @@ public abstract class FilterControl<E> {
 		} else {
 			return null;
 		}
+	}
+	
+	@Override
+	public void listChanged(ListEvent<E> listChanges){
+		gui.updateShowing();
 	}
 }

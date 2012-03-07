@@ -77,7 +77,11 @@ public class IndustryJobsTab extends JMainTab {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		
 		//Filter
-		IndustryJobsFilterControl filterControl = new IndustryJobsFilterControl(program.getMainWindow().getFrame(), program.getSettings().getIndustryJobsFilters(), Collections.singletonList(filterList));
+		IndustryJobsFilterControl filterControl = new IndustryJobsFilterControl(
+				program.getMainWindow().getFrame(),
+				program.getSettings().getIndustryJobsFilters(),
+				filterList,
+				jobsEventList);
 
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
@@ -149,8 +153,8 @@ public class IndustryJobsTab extends JMainTab {
 	
 	public static class IndustryJobsFilterControl extends FilterControl<IndustryJob>{
 
-		public IndustryJobsFilterControl(JFrame jFrame, Map<String, List<Filter>> filters, List<FilterList<IndustryJob>> filterLists) {
-			super(jFrame, filters, filterLists);
+		public IndustryJobsFilterControl(JFrame jFrame, Map<String, List<Filter>> filters, FilterList<IndustryJob> filterList, EventList<IndustryJob> eventList) {
+			super(jFrame, filters, filterList, eventList);
 		}
 		
 		@Override

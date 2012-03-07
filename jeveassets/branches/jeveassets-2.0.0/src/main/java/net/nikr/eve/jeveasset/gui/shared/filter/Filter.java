@@ -257,6 +257,38 @@ public class Filter {
 	public String getText() {
 		return text;
 	}
-	
-	
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Filter other = (Filter) obj;
+		if (this.logic != other.logic) {
+			return false;
+		}
+		if (this.column != other.column) {
+			return false;
+		}
+		if (this.compare != other.compare) {
+			return false;
+		}
+		if ((this.text == null) ? (other.text != null) : !this.text.equals(other.text)) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		int hash = 5;
+		hash = 43 * hash + (this.logic != null ? this.logic.hashCode() : 0);
+		hash = 43 * hash + (this.column != null ? this.column.hashCode() : 0);
+		hash = 43 * hash + (this.compare != null ? this.compare.hashCode() : 0);
+		hash = 43 * hash + (this.text != null ? this.text.hashCode() : 0);
+		return hash;
+	}
 }
