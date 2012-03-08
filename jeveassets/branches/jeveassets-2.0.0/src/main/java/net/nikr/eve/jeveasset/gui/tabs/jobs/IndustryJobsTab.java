@@ -146,7 +146,7 @@ public class IndustryJobsTab extends JMainTab {
 			jComponent.add(new JMenuCopy(jTable));
 			addSeparator(jComponent);
 		}
-		jComponent.add(filterControl.getMenu(getIcon(), jTable));
+		jComponent.add(filterControl.getMenu(jTable));
 		jComponent.add(new JMenuAssetFilter(program, industryJob));
 		jComponent.add(new JMenuStockpile(program, industryJob));
 		jComponent.add(new JMenuLookup(program, industryJob));

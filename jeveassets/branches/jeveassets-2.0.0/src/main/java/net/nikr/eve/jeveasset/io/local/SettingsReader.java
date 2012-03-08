@@ -43,6 +43,7 @@ import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileDialog;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab.FilterType;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.online.FactionGetter;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
@@ -238,7 +239,7 @@ public class SettingsReader extends AbstractXmlReader {
 			boolean buyOrders = AttributeGetters.getBoolean(stockpileNode, "buyorders");
 			boolean jobs = AttributeGetters.getBoolean(stockpileNode, "jobs");
 			
-			Stockpile stockpile = new Stockpile(name, ownerID, "", locationID, station, system, region, flagID, container, inventory, sellOrders, buyOrders, jobs);
+			Stockpile stockpile = new Stockpile(name, ownerID, "", locationID, station, system, region, flagID, "", container, inventory, sellOrders, buyOrders, jobs);
 			settings.getStockpiles().add(stockpile);
 			NodeList itemNodes = stockpileNode.getElementsByTagName("item");
 			for (int b = 0; b < itemNodes.getLength(); b++){
@@ -472,6 +473,11 @@ public class SettingsReader extends AbstractXmlReader {
 	private static Enum getColumn(String s){
 		try {
 			return FilterType.valueOf(s);
+		} catch (IllegalArgumentException exception) {
+			
+		}
+		try {
+			return StockpileTableFormat.valueOf(s);
 		} catch (IllegalArgumentException exception) {
 			
 		}

@@ -41,6 +41,7 @@ public class Stockpile implements Comparable<Stockpile> {
 	private String system;
 	private String region;
 	private int flagID;
+	private String flag;
 	private String container;
 	private boolean inventory;
 	private boolean sellOrders;
@@ -60,7 +61,7 @@ public class Stockpile implements Comparable<Stockpile> {
 		items.add(totalItem);
 	}
 
-	public Stockpile(String name, long ownerID, String owner, long locationID, String location, String system, String region, int flagID, String container, boolean inventory, boolean sellOrders, boolean buyOrders, boolean jobs) {
+	public Stockpile(String name, long ownerID, String owner, long locationID, String location, String system, String region, int flagID, String flag, String container, boolean inventory, boolean sellOrders, boolean buyOrders, boolean jobs) {
 		this.name = name;
 		this.ownerID = ownerID;
 		this.owner = owner;
@@ -69,6 +70,7 @@ public class Stockpile implements Comparable<Stockpile> {
 		this.system = system;
 		this.region = region;
 		this.flagID = flagID;
+		this.flag = flag;
 		this.container = container;
 		this.inventory = inventory;
 		this.sellOrders = sellOrders;
@@ -86,6 +88,7 @@ public class Stockpile implements Comparable<Stockpile> {
 		this.system = stockpile.getSystem();
 		this.region = stockpile.getRegion();
 		this.flagID = stockpile.getFlagID();
+		this.flag = stockpile.getFlag();
 		this.container = stockpile.getContainer();
 		this.inventory = stockpile.isInventory();
 		this.sellOrders = stockpile.isSellOrders();
@@ -158,6 +161,14 @@ public class Stockpile implements Comparable<Stockpile> {
 
 	public String getContainer() {
 		return container;
+	}
+
+	public String getFlag() {
+		return flag;
+	}
+
+	public void setFlag(String flag) {
+		this.flag = flag;
 	}
 
 	public int getFlagID() {

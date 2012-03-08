@@ -77,7 +77,7 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 		gui.addToolSeparator();
 	}
 	
-	public JMenu getMenu(Icon icon, JTable jTable){
+	public JMenu getMenu(JTable jTable){
 		String text = null;
 		Enum column = null;
 		boolean isNumeric = false;
@@ -105,7 +105,7 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 
 			}
 		}
-		return new FilterMenu<E>(gui, icon, column, text, isNumeric, isDate);
+		return new FilterMenu<E>(gui, column, text, isNumeric, isDate);
 	}
 
 	List<FilterList<E>> getFilterLists() {
@@ -258,9 +258,6 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 		//Long / Integer
 		Long long1 = getLong(object1);
 		Long long2 = getLong(object2);
-		
-		//FIXME - remove debug
-		System.out.println("long1: "+long1+" long2: "+long2+" double1: "+double1+" double2: "+double2);
 		
 		if (long1 != null && long2 != null) return long1 > long2;
 		if (long1 != null && double2 != null) return long1 > double2;

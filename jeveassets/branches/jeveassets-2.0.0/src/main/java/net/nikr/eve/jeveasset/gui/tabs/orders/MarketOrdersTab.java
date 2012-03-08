@@ -166,7 +166,7 @@ public class MarketOrdersTab extends JMainTab{
 			}
 			//FILTER & LOOKUP
 			MarketOrder marketOrder = isSingleRow ? (MarketOrder) tableModel.getElementAt(jTable.getSelectedRow()): null;
-			jTablePopupMenu.add(filterControl.getMenu(Images.TOOL_MARKET_ORDERS.getIcon(), jTable));
+			jTablePopupMenu.add(filterControl.getMenu(jTable));
 			jTablePopupMenu.add(new JMenuAssetFilter(program, marketOrder));
 			jTablePopupMenu.add(new JMenuStockpile(program, marketOrder));
 			jTablePopupMenu.add(new JMenuLookup(program, marketOrder));
@@ -192,7 +192,7 @@ public class MarketOrdersTab extends JMainTab{
 		jMenuItem.setEnabled(false);
 		jComponent.add(jMenuItem);
 
-		jComponent.add(filterControl.getMenu(Images.TOOL_MARKET_ORDERS.getIcon(), jSellTable));
+		jComponent.add(filterControl.getMenu(jSellTable));
 		jComponent.add(new JMenuAssetFilter(program, sellMarketOrder));
 		jComponent.add(new JMenuStockpile(program, sellMarketOrder));
 		jComponent.add(new JMenuLookup(program, sellMarketOrder));
@@ -204,7 +204,7 @@ public class MarketOrdersTab extends JMainTab{
 		jMenuItem.setEnabled(false);
 		jComponent.add(jMenuItem);
 
-		jComponent.add(filterControl.getMenu(Images.TOOL_MARKET_ORDERS.getIcon(), jBuyTable));
+		jComponent.add(filterControl.getMenu(jBuyTable));
 		jComponent.add(new JMenuAssetFilter(program, buyMarketOrder));
 		jComponent.add(new JMenuStockpile(program, buyMarketOrder));
 		jComponent.add(new JMenuLookup(program, buyMarketOrder));

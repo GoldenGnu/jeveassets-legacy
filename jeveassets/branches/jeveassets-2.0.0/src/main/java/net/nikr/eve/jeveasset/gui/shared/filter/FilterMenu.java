@@ -23,10 +23,11 @@ package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.Icon;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
+import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
 public class FilterMenu<E> extends JMenu implements ActionListener {
@@ -35,10 +36,10 @@ public class FilterMenu<E> extends JMenu implements ActionListener {
 	private Enum column;
 	private String text;
 	
-	FilterMenu(FilterGui<E> gui, Icon icon, Enum column, String text, boolean isNumeric, boolean isDate) {
-		super("Add Filter"); //FIXME i18n
+	FilterMenu(FilterGui<E> gui, Enum column, String text, boolean isNumeric, boolean isDate) {
+		super(GuiShared.get().popupMenuAddField());
 		this.gui = gui;
-		this.setIcon(icon);
+		this.setIcon(Images.FILTER_CONTAIN.getIcon()); //FIXME - add icon
 		this.column = column;
 		this.text = text;
 		
@@ -51,15 +52,7 @@ public class FilterMenu<E> extends JMenu implements ActionListener {
 			jMenuItem.setIcon(compareType.getIcon());
 			jMenuItem.setActionCommand(compareType.name());
 			jMenuItem.addActionListener(this);
-			/*
-			if (CompareType.isDateCompare(compareType)){
-				jMenuItem.setEnabled(isValid && isDate);
-			} else if (CompareType.isNumericCompare(compareType)){
-				jMenuItem.setEnabled(isValid && isNumeric);
-			} else if (CompareType.isColumnCompare(compareType)){
-				jMenuItem.setEnabled(isValid && !isAll);
-			}
-			*/
+			jMenuItem.setEnabled(isValid);
 			if (CompareType.isDateCompare(compareType)){
 				if (isDate) add(jMenuItem);
 			} else if (CompareType.isNumericCompare(compareType)){
@@ -67,8 +60,6 @@ public class FilterMenu<E> extends JMenu implements ActionListener {
 			} else {
 				add(jMenuItem);
 			}
-			jMenuItem.setEnabled(isValid);
-			
 		}
 	}
 

@@ -286,7 +286,7 @@ public class StockpileDialog extends JDialogCentered implements ActionListener, 
 		String container = (String)jContainer.getSelectedItem();
 		//Add
 		
-		return new Stockpile(name, human.getOwnerID(), human.getName(), location.getLocationID(), station, system, region, flag.getFlagID(), container, jInventory.isSelected(), jSellOrders.isSelected(), jBuyOrders.isSelected(), jJobs.isSelected());
+		return new Stockpile(name, human.getOwnerID(), human.getName(), location.getLocationID(), station, system, region, flag.getFlagID(), flag.getFlagName(), container, jInventory.isSelected(), jSellOrders.isSelected(), jBuyOrders.isSelected(), jJobs.isSelected());
 	}
 	
 	private void autoValidate(){

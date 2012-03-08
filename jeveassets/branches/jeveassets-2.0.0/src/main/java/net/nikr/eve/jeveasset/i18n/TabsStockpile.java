@@ -99,4 +99,9 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String columnValueNeeded();
 	public abstract String columnVolumeNow();
 	public abstract String columnVolumeNeeded();
+	public abstract String getFilterStockpileName();
+	public abstract String getFilterStockpileOwner();
+	public abstract String getFilterStockpileLocation();
+	public abstract String getFilterStockpileFlag();
+	public abstract String getFilterStockpileContainer();
 }
