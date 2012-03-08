@@ -49,6 +49,7 @@ public class IndustryJobsTab extends JMainTab {
 	private EventTableModel<IndustryJob> jobsTableModel;
 
 	private IndustryJobData data;
+	private IndustryJobsFilterControl filterControl;
 
 	public IndustryJobsTab(Program program) {
 		super(program, TabsJobs.get().industry(), Images.TOOL_INDUSTRY_JOBS.getIcon(), true);
@@ -65,6 +66,7 @@ public class IndustryJobsTab extends JMainTab {
 		jobsTableModel = new EventTableModel<IndustryJob>(sortedList, industryJobsTableFormat);
 		//Tables
 		jTable = new JAutoColumnTable(jobsTableModel);
+		jTable.setCellSelectionEnabled(true);
 		//Table Selection
 		EventSelectionModel<IndustryJob> selectionModel = new EventSelectionModel<IndustryJob>(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -77,7 +79,7 @@ public class IndustryJobsTab extends JMainTab {
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		
 		//Filter
-		IndustryJobsFilterControl filterControl = new IndustryJobsFilterControl(
+		filterControl = new IndustryJobsFilterControl(
 				program.getMainWindow().getFrame(),
 				program.getSettings().getIndustryJobsFilters(),
 				filterList,
@@ -99,9 +101,7 @@ public class IndustryJobsTab extends JMainTab {
 	protected void showTablePopupMenu(MouseEvent e) {
 		JPopupMenu jTablePopupMenu = new JPopupMenu();
 
-		//Select Single Row
-		jTable.setRowSelectionInterval(jTable.rowAtPoint(e.getPoint()), jTable.rowAtPoint(e.getPoint()));
-		jTable.setColumnSelectionInterval(0, jTable.getColumnCount()-1);
+		selectClickedCell(e);
 
 		updateTableMenu(jTablePopupMenu);
 
@@ -139,13 +139,14 @@ public class IndustryJobsTab extends JMainTab {
 
 		boolean isSingleRow = jTable.getSelectedRows().length == 1;
 		boolean isSelected = (jTable.getSelectedRows().length > 0 && jTable.getSelectedColumns().length > 0);
-
+		
 		IndustryJob industryJob = isSingleRow ? jobsTableModel.getElementAt(jTable.getSelectedRow()) : null;
 	//COPY
 		if (isSelected && jComponent instanceof JPopupMenu){
 			jComponent.add(new JMenuCopy(jTable));
 			addSeparator(jComponent);
 		}
+		jComponent.add(filterControl.getMenu(getIcon(), jTable));
 		jComponent.add(new JMenuAssetFilter(program, industryJob));
 		jComponent.add(new JMenuStockpile(program, industryJob));
 		jComponent.add(new JMenuLookup(program, industryJob));

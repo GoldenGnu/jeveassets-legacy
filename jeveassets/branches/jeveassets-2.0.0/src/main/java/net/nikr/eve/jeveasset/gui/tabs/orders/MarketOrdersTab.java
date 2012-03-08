@@ -55,6 +55,8 @@ public class MarketOrdersTab extends JMainTab{
 
 	private JTable jSellTable;
 	private JTable jBuyTable;
+	
+	private MarketOrdersFilterControl filterControl;
 
 	public MarketOrdersTab(Program program) {
 		super(program, TabsOrders.get().market(), Images.TOOL_MARKET_ORDERS.getIcon(), true);
@@ -78,7 +80,9 @@ public class MarketOrdersTab extends JMainTab{
 		buyOrdersTableModel = new EventTableModel<MarketOrder>(buyOrdersSortedList, buyTableFormat);
 		//Tables
 		jSellTable = new JMarketOrdersTable(sellOrdersTableModel);
+		jSellTable.setCellSelectionEnabled(true);
 		jBuyTable = new JMarketOrdersTable(buyOrdersTableModel);
+		jBuyTable.setCellSelectionEnabled(true);
 		//Table Selection
 		EventSelectionModel<MarketOrder> sellSelectionModel = new EventSelectionModel<MarketOrder>(sellOrdersSortedList);
 		sellSelectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
@@ -105,7 +109,8 @@ public class MarketOrdersTab extends JMainTab{
 		List<FilterList<MarketOrder>> filterLists = new ArrayList<FilterList<MarketOrder>>();
 		filterLists.add(buyOrdersFilterList);
 		filterLists.add(sellOrdersFilterList);
-		MarketOrdersFilterControl filterControl = new MarketOrdersFilterControl(
+		
+		filterControl = new MarketOrdersFilterControl(
 				program.getMainWindow().getFrame(),
 				program.getSettings().getMarketOrdersFilters(),
 				filterLists,
@@ -146,13 +151,12 @@ public class MarketOrdersTab extends JMainTab{
 	@Override
 	protected void showTablePopupMenu(MouseEvent e) {
 		JPopupMenu jTablePopupMenu = new JPopupMenu();
+		
+		selectClickedCell(e);
 
 		if (e.getSource() instanceof JTable){
 			JTable jTable = (JTable) e.getSource();
 			EventTableModel<?> tableModel = (EventTableModel<?>) jTable.getModel();
-			//Select clicked row
-			jTable.setRowSelectionInterval(jTable.rowAtPoint(e.getPoint()), jTable.rowAtPoint(e.getPoint()));
-			jTable.setColumnSelectionInterval(0, jTable.getColumnCount()-1);
 			//is single row selected
 			boolean isSingleRow = jTable.getSelectedRows().length == 1;
 			//COPY
@@ -162,6 +166,7 @@ public class MarketOrdersTab extends JMainTab{
 			}
 			//FILTER & LOOKUP
 			MarketOrder marketOrder = isSingleRow ? (MarketOrder) tableModel.getElementAt(jTable.getSelectedRow()): null;
+			jTablePopupMenu.add(filterControl.getMenu(Images.TOOL_MARKET_ORDERS.getIcon(), jTable));
 			jTablePopupMenu.add(new JMenuAssetFilter(program, marketOrder));
 			jTablePopupMenu.add(new JMenuStockpile(program, marketOrder));
 			jTablePopupMenu.add(new JMenuLookup(program, marketOrder));
@@ -182,20 +187,24 @@ public class MarketOrdersTab extends JMainTab{
 		MarketOrder sellMarketOrder = isSellSingleRow ? sellOrdersTableModel.getElementAt(jSellTable.getSelectedRow()): null;
 		MarketOrder buyMarketOrder = isBuySingleRow ? buyOrdersTableModel.getElementAt(jBuyTable.getSelectedRow()) : null;
 
+	//SELL
 		jMenuItem = new JMenuItem(TabsOrders.get().sell1());
 		jMenuItem.setEnabled(false);
 		jComponent.add(jMenuItem);
 
+		jComponent.add(filterControl.getMenu(Images.TOOL_MARKET_ORDERS.getIcon(), jSellTable));
 		jComponent.add(new JMenuAssetFilter(program, sellMarketOrder));
 		jComponent.add(new JMenuStockpile(program, sellMarketOrder));
 		jComponent.add(new JMenuLookup(program, sellMarketOrder));
 
 		addSeparator(jComponent);
-
+	
+	//BUY
 		jMenuItem = new JMenuItem(TabsOrders.get().buy1());
 		jMenuItem.setEnabled(false);
 		jComponent.add(jMenuItem);
 
+		jComponent.add(filterControl.getMenu(Images.TOOL_MARKET_ORDERS.getIcon(), jBuyTable));
 		jComponent.add(new JMenuAssetFilter(program, buyMarketOrder));
 		jComponent.add(new JMenuStockpile(program, buyMarketOrder));
 		jComponent.add(new JMenuLookup(program, buyMarketOrder));

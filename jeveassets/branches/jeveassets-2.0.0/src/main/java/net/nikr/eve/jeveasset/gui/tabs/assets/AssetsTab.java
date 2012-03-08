@@ -326,7 +326,7 @@ public class AssetsTab extends JMainTab implements ActionListener, JColumnTable.
 		jSubMenu.add(jMenuItem);
 
 		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_GREATER_THAN.toString());
-		jMenuItem.setIcon(Images.FILTER_GREATER_THEN.getIcon());
+		jMenuItem.setIcon(Images.FILTER_GREATER_THAN.getIcon());
 		jMenuItem.setEnabled(isSingleCell);
 		jMenuItem.setActionCommand(ACTION_ADD_FILTER_GREATER_THEN);
 		jMenuItem.addActionListener(this);
@@ -337,7 +337,7 @@ public class AssetsTab extends JMainTab implements ActionListener, JColumnTable.
 		jSubMenu.add(jMenuItem);
 
 		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_LESS_THAN.toString());
-		jMenuItem.setIcon(Images.FILTER_LESS_THEN.getIcon());
+		jMenuItem.setIcon(Images.FILTER_LESS_THAN.getIcon());
 		jMenuItem.setEnabled(isSingleCell);
 		jMenuItem.setActionCommand(ACTION_ADD_FILTER_LESS_THEN);
 		jMenuItem.addActionListener(this);
@@ -348,7 +348,7 @@ public class AssetsTab extends JMainTab implements ActionListener, JColumnTable.
 		jSubMenu.add(jMenuItem);
 
 		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_GREATER_THAN_COLUMN.toString());
-		jMenuItem.setIcon(Images.FILTER_GREATER_THEN_COLUMN.getIcon());
+		jMenuItem.setIcon(Images.FILTER_GREATER_THAN_COLUMN.getIcon());
 		jMenuItem.setEnabled(isSingleCell);
 		jMenuItem.setActionCommand(ACTION_ADD_FILTER_GREATER_THEN_COLUMN);
 		jMenuItem.addActionListener(this);
@@ -359,7 +359,7 @@ public class AssetsTab extends JMainTab implements ActionListener, JColumnTable.
 		jSubMenu.add(jMenuItem);
 
 		jMenuItem = new JMenuItem(AssetFilter.Mode.MODE_LESS_THAN_COLUMN.toString());
-		jMenuItem.setIcon(Images.FILTER_LESS_THEN_COLUMN.getIcon());
+		jMenuItem.setIcon(Images.FILTER_LESS_THAN_COLUMN.getIcon());
 		jMenuItem.setEnabled(isSingleCell);
 		jMenuItem.setActionCommand(ACTION_ADD_FILTER_LESS_THEN_COLUMN);
 		jMenuItem.addActionListener(this);

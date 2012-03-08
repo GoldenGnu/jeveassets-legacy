@@ -260,6 +260,10 @@ class FilterGui<E> implements ActionListener{
 		addFilters(filters);
 	}
 	
+	void addFilter(Filter filter){
+		addFilters(Collections.singletonList(filter));
+	}
+	
 	private void addFilters(List<Filter> filters){
 		//Remove single empty filter...
 		if (filterPanels.size() == 1 && filterPanels.get(0).getFilter().isEmpty()){

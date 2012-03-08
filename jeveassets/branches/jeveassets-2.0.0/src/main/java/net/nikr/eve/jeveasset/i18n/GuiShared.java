@@ -102,8 +102,8 @@ public abstract class GuiShared extends Bundle {
 	public abstract String filterContainsNot();
 	public abstract String filterEquals();
 	public abstract String filterEqualsNot();
-	public abstract String filterGreaterThen();
-	public abstract String filterLessThen();
+	public abstract String filterGreaterThan();
+	public abstract String filterLessThan();
 	public abstract String filterBefore();
 	public abstract String filterAfter();
 	public abstract String filterEqualsDate();
@@ -112,8 +112,8 @@ public abstract class GuiShared extends Bundle {
 	public abstract String filterContainsNotColumn();
 	public abstract String filterEqualsColumn();
 	public abstract String filterEqualsNotColumn();
-	public abstract String filterGreaterThenColumn();
-	public abstract String filterLessThenColumn();
+	public abstract String filterGreaterThanColumn();
+	public abstract String filterLessThanColumn();
 	public abstract String filterBeforeColumn();
 	public abstract String filterAfterColumn();
 	public abstract String filterUntitled();

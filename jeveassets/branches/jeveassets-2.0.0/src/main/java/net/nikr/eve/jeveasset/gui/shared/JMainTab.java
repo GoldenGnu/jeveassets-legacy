@@ -118,6 +118,39 @@ public abstract class JMainTab{
 		jTable.getSelectionModel().addListSelectionListener(listener);
 		jTable.getColumnModel().getSelectionModel().addListSelectionListener(listener);
 	}
+	
+	protected void selectClickedCell(MouseEvent e){
+		Object source = e.getSource();
+		if (source instanceof JTable){
+			JTable jTable = (JTable) source;
+			
+			//Rows
+			boolean clickInRowsSelection = false;
+			int[] selectedRows = jTable.getSelectedRows();
+			for (int a = 0; a < selectedRows.length; a++){
+				if (selectedRows[a] == jTable.rowAtPoint(e.getPoint())){
+					clickInRowsSelection = true;
+					break;
+				}
+			}
+
+			//Column
+			boolean clickInColumnsSelection = false;
+			int[] selectedColumns = jTable.getSelectedColumns();
+			for (int a = 0; a < selectedColumns.length; a++){
+				if (selectedColumns[a] == jTable.columnAtPoint(e.getPoint())){
+					clickInColumnsSelection = true;
+					break;
+				}
+			}
+
+			//Clicked outside selection, select clicked cell
+			if (!clickInRowsSelection || !clickInColumnsSelection){
+				jTable.setRowSelectionInterval(jTable.rowAtPoint(e.getPoint()), jTable.rowAtPoint(e.getPoint()));
+				jTable.setColumnSelectionInterval(jTable.columnAtPoint(e.getPoint()), jTable.columnAtPoint(e.getPoint()));
+			}
+		}
+	}
 
 	private class TableMenuListener implements MouseListener, ListSelectionListener{
 

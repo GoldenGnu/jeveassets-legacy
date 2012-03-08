@@ -21,6 +21,8 @@
 
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
+import javax.swing.Icon;
+import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
@@ -43,58 +45,58 @@ public class Filter {
 	}
 	
 	public enum CompareType{
-		CONTAINS() {
+		CONTAINS(Images.FILTER_CONTAIN.getIcon()) {
 			@Override String getI18N(){ return GuiShared.get().filterContains(); }
 		},
-		CONTAINS_NOT() {
+		CONTAINS_NOT(Images.FILTER_NOT_CONTAIN.getIcon()) {
 			@Override String getI18N(){ return GuiShared.get().filterContainsNot(); }
 		},
-		EQUALS() {
+		EQUALS(Images.FILTER_EQUAL.getIcon()) {
 			@Override String getI18N(){ return GuiShared.get().filterEquals(); }
 		},
-		EQUALS_NOT() {
+		EQUALS_NOT(Images.FILTER_NOT_EQUAL.getIcon()) {
 			@Override String getI18N(){ return GuiShared.get().filterEqualsNot(); }
 		},
-		GREATER_THEN() {
-			@Override String getI18N(){ return GuiShared.get().filterGreaterThen(); }
+		GREATER_THAN(Images.FILTER_GREATER_THAN.getIcon()) {
+			@Override String getI18N(){ return GuiShared.get().filterGreaterThan(); }
 		},
-		EQUALS_DATE() {
+		LESS_THAN(Images.FILTER_LESS_THAN.getIcon()) {
+			@Override String getI18N(){ return GuiShared.get().filterLessThan(); }
+		},
+		EQUALS_DATE(null) { //FIXME - add icon
 			@Override String getI18N(){ return GuiShared.get().filterEqualsDate(); }
 		},
-		EQUALS_NOT_DATE() {
+		EQUALS_NOT_DATE(null) { //FIXME - add icon
 			@Override String getI18N(){ return GuiShared.get().filterEqualsNotDate(); }
 		},
-		LESS_THEN() {
-			@Override String getI18N(){ return GuiShared.get().filterLessThen(); }
-		},
-		BEFORE() {
+		BEFORE(null) { //FIXME - add icon
 			@Override String getI18N(){ return GuiShared.get().filterBefore(); }
 		},
-		AFTER() {
+		AFTER(null) { //FIXME - add icon
 			@Override String getI18N(){ return GuiShared.get().filterAfter(); }
 		},
-		CONTAINS_COLUMN() {
+		CONTAINS_COLUMN(null) { //FIXME - add icon
 			@Override String getI18N(){ return GuiShared.get().filterContainsColumn(); }
 		},
-		CONTAINS_NOT_COLUMN() {
+		CONTAINS_NOT_COLUMN(null) { //FIXME - add icon
 			@Override String getI18N(){ return GuiShared.get().filterContainsNotColumn(); }
 		},
-		EQUALS_COLUMN() {
+		EQUALS_COLUMN(null) { //FIXME - add icon
 			@Override String getI18N(){ return GuiShared.get().filterEqualsColumn(); }
 		},
-		EQUALS_NOT_COLUMN() {
+		EQUALS_NOT_COLUMN(null) { //FIXME - add icon
 			@Override String getI18N(){ return GuiShared.get().filterEqualsNotColumn(); }
 		},
-		GREATER_THEN_COLUMN() {
-			@Override String getI18N(){ return GuiShared.get().filterGreaterThenColumn(); }
+		GREATER_THAN_COLUMN(Images.FILTER_GREATER_THAN_COLUMN.getIcon()) {
+			@Override String getI18N(){ return GuiShared.get().filterGreaterThanColumn(); }
 		},
-		LESS_THEN_COLUMN() {
-			@Override String getI18N(){ return GuiShared.get().filterLessThenColumn(); }
+		LESS_THAN_COLUMN(Images.FILTER_LESS_THAN_COLUMN.getIcon()) {
+			@Override String getI18N(){ return GuiShared.get().filterLessThanColumn(); }
 		},
-		BEFORE_COLUMN() {
+		BEFORE_COLUMN(null) { //FIXME - add icon
 			@Override String getI18N(){ return GuiShared.get().filterBeforeColumn(); }
 		},
-		AFTER_COLUMN() {
+		AFTER_COLUMN(null) { //FIXME - add icon
 			@Override String getI18N(){ return GuiShared.get().filterAfterColumn(); }
 		},
 		;
@@ -120,14 +122,14 @@ public class Filter {
 			CONTAINS_NOT,
 			EQUALS,
 			EQUALS_NOT,
-			GREATER_THEN,
-			LESS_THEN,
+			GREATER_THAN,
+			LESS_THAN,
 			CONTAINS_COLUMN,
 			CONTAINS_NOT_COLUMN,
 			EQUALS_COLUMN,
 			EQUALS_NOT_COLUMN,
-			GREATER_THEN_COLUMN,
-			LESS_THEN_COLUMN,
+			GREATER_THAN_COLUMN,
+			LESS_THAN_COLUMN,
 		};
 		private final static CompareType[] VALUES_DATE = new CompareType[]
 			{CONTAINS,
@@ -145,6 +147,15 @@ public class Filter {
 			BEFORE_COLUMN,
 			AFTER_COLUMN,
 		};
+
+		private Icon icon;
+		private CompareType(Icon icon) {
+			this.icon = icon;
+		}
+
+		public Icon getIcon() {
+			return icon;
+		}
 		
 		abstract String getI18N();
 		@Override
@@ -173,8 +184,8 @@ public class Filter {
 				;
 		}
 		public static boolean isColumnCompare(CompareType compareType){
-			return compareType == CompareType.GREATER_THEN_COLUMN 
-				|| compareType == CompareType.LESS_THEN_COLUMN
+			return compareType == CompareType.GREATER_THAN_COLUMN 
+				|| compareType == CompareType.LESS_THAN_COLUMN
 				|| compareType == CompareType.EQUALS_COLUMN
 				|| compareType == CompareType.EQUALS_NOT_COLUMN
 				|| compareType == CompareType.CONTAINS_COLUMN
@@ -184,10 +195,10 @@ public class Filter {
 				;
 		}
 		public static boolean isNumericCompare(CompareType compareType){
-			return compareType == CompareType.GREATER_THEN_COLUMN 
-				|| compareType == CompareType.LESS_THEN_COLUMN
-				|| compareType == CompareType.GREATER_THEN
-				|| compareType == CompareType.LESS_THEN
+			return compareType == CompareType.GREATER_THAN_COLUMN 
+				|| compareType == CompareType.LESS_THAN_COLUMN
+				|| compareType == CompareType.GREATER_THAN
+				|| compareType == CompareType.LESS_THAN
 				;
 		}
 		public static boolean isDateCompare(CompareType compareType){

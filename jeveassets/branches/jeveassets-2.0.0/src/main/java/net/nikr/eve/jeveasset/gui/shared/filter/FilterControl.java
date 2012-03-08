@@ -18,25 +18,32 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
+
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import ca.odell.glazedlists.EventList;
 import ca.odell.glazedlists.FilterList;
 import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import javax.swing.AbstractButton;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import ca.odell.glazedlists.gui.TableFormat;
+import ca.odell.glazedlists.swing.EventTableModel;
+import java.text.NumberFormat;
+import java.text.ParsePosition;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.table.TableModel;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.ExtraColumns;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 
 
 public abstract class FilterControl<E> implements ListEventListener<E>{
+	
+	//TODO i18n Use localized input
+	//public static final Locale LOCALE = Locale.getDefault();
+	
+	public static final Locale LOCALE = Locale.ENGLISH; //Use english AKA US_EN
 	
 	private final Map<String, List<Filter>> filters;
 	private final List<FilterList<E>> filterLists;
@@ -68,6 +75,37 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 	}
 	public void addToolSeparator(){
 		gui.addToolSeparator();
+	}
+	
+	public JMenu getMenu(Icon icon, JTable jTable){
+		String text = null;
+		Enum column = null;
+		boolean isNumeric = false;
+		boolean isDate = false;
+		TableModel model = jTable.getModel();
+		int rowIndex = jTable.getSelectedRow();
+		int columnIndex = jTable.getSelectedColumn();
+		
+		if (rowIndex >= 0 && columnIndex >= 0
+				&& jTable.getSelectedRows().length == 1
+				&& jTable.getSelectedColumns().length == 1){
+			text =  format( model.getValueAt(rowIndex, columnIndex) );
+		}
+		
+		if (model instanceof EventTableModel){
+			EventTableModel<?> tableModel = (EventTableModel<?>) model;
+			TableFormat<?> tableFormat = tableModel.getTableFormat();
+			if (tableFormat instanceof EnumTableFormatAdaptor){
+				EnumTableFormatAdaptor adaptor = (EnumTableFormatAdaptor) tableFormat;
+				if (columnIndex >= 0 && columnIndex < adaptor.getShownColumns().size()){
+					column = (Enum) adaptor.getShownColumns().get(columnIndex);
+					isNumeric = isNumeric(column);
+					isDate = isDate(column);
+				}
+
+			}
+		}
+		return new FilterMenu<E>(gui, icon, column, text, isNumeric, isDate);
 	}
 
 	List<FilterList<E>> getFilterLists() {
@@ -160,17 +198,17 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 			return equals(column, text);
 		} else if (compare == CompareType.EQUALS_NOT || compare == CompareType.EQUALS_NOT_DATE){
 			return !equals(column, text);
-		} else if (compare == CompareType.GREATER_THEN){
+		} else if (compare == CompareType.GREATER_THAN){
 			return great(column, text);
-		} else if (compare == CompareType.LESS_THEN){
+		} else if (compare == CompareType.LESS_THAN){
 			return less(column, text);
 		} else if (compare == CompareType.BEFORE){
 			return before(column, text);
 		} else if (compare == CompareType.AFTER){
 			return after(column, text);
-		} else if (compare == CompareType.GREATER_THEN_COLUMN){
+		} else if (compare == CompareType.GREATER_THAN_COLUMN){
 			return great(column, getColumnValue(item, text));
-		} else if (compare == CompareType.LESS_THEN_COLUMN){
+		} else if (compare == CompareType.LESS_THAN_COLUMN){
 			return less(column, getColumnValue(item, text));
 		} else if (compare == CompareType.EQUALS_COLUMN){
 			return equals(column, getColumnValue(item, text));
@@ -193,47 +231,15 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 		//Null
 		if (object1 == null || object2 == null) return false;
 		
-		//String
-		String compare1 = object1.toString();
-		String compare2 = object2.toString();
-		
-		//Number
-		Number number1 = getNumber(object1);
-		Number number2 = getNumber(object2);
-		if (number1 != null) compare1 = Formater.compareFormat(number1);
-		if (number2 != null) compare2 = Formater.compareFormat(number2);
-		
-		//Date
-		Date date1 = getDate(object1);
-		Date date2 = getDate(object2);
-		if (date1 != null) compare1 = Formater.columnDate(date1);
-		if (date2 != null) compare2 = Formater.columnDate(date2);
-		
 		//Equals (case insentive)
-		return compare1.toLowerCase().equals(compare2.toLowerCase());
+		return format(object1).equals(format(object2));
 	}
 	private boolean contains(Object object1, Object object2){
 		//Null
 		if (object1 == null || object2 == null) return false;
 		
-		//String
-		String compare1 = object1.toString();
-		String compare2 = object2.toString();
-		
-		//Number
-		Number number1 = getNumber(object1);
-		Number number2 = getNumber(object2);
-		if (number1 != null) compare1 = Formater.compareFormat(number1);
-		if (number2 != null) compare2 = Formater.compareFormat(number2);
-		
-		//Date
-		Date date1 = getDate(object1);
-		Date date2 = getDate(object2);
-		if (date1 != null) compare1 = Formater.columnDate(date1);
-		if (date2 != null) compare2 = Formater.columnDate(date2);
-		
 		//Contains (case insentive)
-		return compare1.toLowerCase().contains(compare2.toLowerCase());
+		return format(object1).contains(format(object2));
 	}
 	private boolean less(Object object1, Object object2){
 		return greatThen(object2, object1, false);
@@ -253,11 +259,13 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 		Long long1 = getLong(object1);
 		Long long2 = getLong(object2);
 		
+		//FIXME - remove debug
+		System.out.println("long1: "+long1+" long2: "+long2+" double1: "+double1+" double2: "+double2);
 		
 		if (long1 != null && long2 != null) return long1 > long2;
-		if (long1 != null && double2 != null) return double1 > double2;
+		if (long1 != null && double2 != null) return long1 > double2;
 		if (double1 != null && double2 != null) return double1 > double2;
-		if (double1 != null && long2 != null) return long1 > long2;
+		if (double1 != null && long2 != null) return double1 > long2;
 		
 		
 		return fallback; //Fallback
@@ -287,7 +295,7 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 				|| (obj instanceof Double) || (obj instanceof Float) ){
 			return (Number)obj;
 		} else {
-			return null;
+			return createNumber(obj);
 		}
 	}
 	private Double getDouble(Object obj){
@@ -296,7 +304,7 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 		} else if (obj instanceof Float){
 			return Double.valueOf((Float) obj);
 		} else {
-			return null;
+			return createNumber(obj);
 		}
 	}
 	private Long getLong(Object obj){
@@ -308,6 +316,21 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 			return null;
 		}
 	}
+	private Double createNumber(Object object){
+		if (object instanceof String){
+			String filterValue = (String) object;
+			//Used to check if parsing was successful
+			ParsePosition position = new ParsePosition(0);
+			//Parse number using the Locale
+			Number n = NumberFormat.getInstance(LOCALE).parse(filterValue, position);
+			if (n != null && position.getIndex() == filterValue.length()){ //Numeric
+				return n.doubleValue();
+			}
+		}
+		return null;
+	}
+	
+	
 	private Date getDate(Object obj){
 		if (obj instanceof Date){
 			return (Date)obj;
@@ -316,6 +339,21 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 		} else {
 			return null;
 		}
+	}
+	
+	private String format(Object object1){
+		//String
+		String compare1 = object1.toString();
+		
+		//Number
+		Number number1 = getNumber(object1);
+		if (number1 != null) compare1 = Formater.compareFormat(number1);
+		
+		//Date
+		Date date1 = getDate(object1);
+		if (date1 != null) compare1 = Formater.columnDate(date1);
+		
+		return compare1.toLowerCase();
 	}
 	
 	@Override
