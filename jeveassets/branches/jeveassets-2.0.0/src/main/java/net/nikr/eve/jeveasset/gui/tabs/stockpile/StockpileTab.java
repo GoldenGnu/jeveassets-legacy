@@ -294,7 +294,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 			addSeparator(jComponent);
 		}
 		if (obj instanceof StockpileItem){
-			jComponent.add(filterControl.getMenu(jTable));
+			StockpileItem item = (StockpileItem) obj;
+			jComponent.add(filterControl.getMenu(jTable, item));
 		}
 		
 		jComponent.add(new JMenuAssetFilter(program, obj));
@@ -623,7 +624,6 @@ public class StockpileTab extends JMainTab implements ActionListener {
 			if (columns == null){
 				columns = concat(FilterType.values(), StockpileTableFormat.values());
 			}
-			System.out.println("columns: "+columns);
 			return columns;
 		}
 		

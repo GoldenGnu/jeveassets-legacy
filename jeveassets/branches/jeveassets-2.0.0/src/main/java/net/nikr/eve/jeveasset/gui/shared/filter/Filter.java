@@ -63,28 +63,28 @@ public class Filter {
 		LESS_THAN(Images.FILTER_LESS_THAN.getIcon()) {
 			@Override String getI18N(){ return GuiShared.get().filterLessThan(); }
 		},
-		EQUALS_DATE(null) { //FIXME - add icon
+		EQUALS_DATE(Images.FILTER_EQUAL_DATE.getIcon()) {
 			@Override String getI18N(){ return GuiShared.get().filterEqualsDate(); }
 		},
-		EQUALS_NOT_DATE(null) { //FIXME - add icon
+		EQUALS_NOT_DATE(Images.FILTER_NOT_EQUAL_DATE.getIcon()) {
 			@Override String getI18N(){ return GuiShared.get().filterEqualsNotDate(); }
 		},
-		BEFORE(null) { //FIXME - add icon
+		BEFORE(Images.FILTER_BEFORE.getIcon()) {
 			@Override String getI18N(){ return GuiShared.get().filterBefore(); }
 		},
-		AFTER(null) { //FIXME - add icon
+		AFTER(Images.FILTER_AFTER.getIcon()) {
 			@Override String getI18N(){ return GuiShared.get().filterAfter(); }
 		},
-		CONTAINS_COLUMN(null) { //FIXME - add icon
+		CONTAINS_COLUMN(Images.FILTER_CONTAIN_COLUMN.getIcon()) {
 			@Override String getI18N(){ return GuiShared.get().filterContainsColumn(); }
 		},
-		CONTAINS_NOT_COLUMN(null) { //FIXME - add icon
+		CONTAINS_NOT_COLUMN(Images.FILTER_NOT_CONTAIN_COLUMN.getIcon()) {
 			@Override String getI18N(){ return GuiShared.get().filterContainsNotColumn(); }
 		},
-		EQUALS_COLUMN(null) { //FIXME - add icon
+		EQUALS_COLUMN(Images.FILTER_EQUAL_COLUMN.getIcon()) {
 			@Override String getI18N(){ return GuiShared.get().filterEqualsColumn(); }
 		},
-		EQUALS_NOT_COLUMN(null) { //FIXME - add icon
+		EQUALS_NOT_COLUMN(Images.FILTER_NOT_EQUAL_COLUMN.getIcon()) {
 			@Override String getI18N(){ return GuiShared.get().filterEqualsNotColumn(); }
 		},
 		GREATER_THAN_COLUMN(Images.FILTER_GREATER_THAN_COLUMN.getIcon()) {
@@ -93,10 +93,10 @@ public class Filter {
 		LESS_THAN_COLUMN(Images.FILTER_LESS_THAN_COLUMN.getIcon()) {
 			@Override String getI18N(){ return GuiShared.get().filterLessThanColumn(); }
 		},
-		BEFORE_COLUMN(null) { //FIXME - add icon
+		BEFORE_COLUMN(Images.FILTER_BEFORE_COLUMN.getIcon()) {
 			@Override String getI18N(){ return GuiShared.get().filterBeforeColumn(); }
 		},
-		AFTER_COLUMN(null) { //FIXME - add icon
+		AFTER_COLUMN(Images.FILTER_AFTER_COLUMN.getIcon()) {
 			@Override String getI18N(){ return GuiShared.get().filterAfterColumn(); }
 		},
 		;

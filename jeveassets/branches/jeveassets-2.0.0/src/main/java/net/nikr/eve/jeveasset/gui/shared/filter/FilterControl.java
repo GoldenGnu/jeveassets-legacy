@@ -77,30 +77,26 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 		gui.addToolSeparator();
 	}
 	
-	public JMenu getMenu(JTable jTable){
+	public JMenu getMenu(JTable jTable, E item){
 		String text = null;
 		Enum column = null;
 		boolean isNumeric = false;
 		boolean isDate = false;
 		TableModel model = jTable.getModel();
-		int rowIndex = jTable.getSelectedRow();
 		int columnIndex = jTable.getSelectedColumn();
-		
-		if (rowIndex >= 0 && columnIndex >= 0
-				&& jTable.getSelectedRows().length == 1
-				&& jTable.getSelectedColumns().length == 1){
-			text =  format( model.getValueAt(rowIndex, columnIndex) );
-		}
-		
 		if (model instanceof EventTableModel){
 			EventTableModel<?> tableModel = (EventTableModel<?>) model;
 			TableFormat<?> tableFormat = tableModel.getTableFormat();
 			if (tableFormat instanceof EnumTableFormatAdaptor){
 				EnumTableFormatAdaptor adaptor = (EnumTableFormatAdaptor) tableFormat;
-				if (columnIndex >= 0 && columnIndex < adaptor.getShownColumns().size()){
+				if (columnIndex >= 0 
+						&& columnIndex < adaptor.getShownColumns().size()
+						&& item != null
+						){
 					column = (Enum) adaptor.getShownColumns().get(columnIndex);
 					isNumeric = isNumeric(column);
 					isDate = isDate(column);
+					text = format(getColumnValue(item, column.name()));
 				}
 
 			}
