@@ -18,36 +18,14 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
-package net.nikr.eve.jeveasset.tests.i18n;
+
+package net.nikr.eve.jeveasset.i18n;
 
 
-import net.nikr.eve.jeveasset.i18n.TabsValues;
-import net.nikr.eve.jeveasset.i18n.TabsStockpile;
-import net.nikr.eve.jeveasset.i18n.TabsRouting;
-import net.nikr.eve.jeveasset.i18n.TabsOverview;
-import net.nikr.eve.jeveasset.i18n.TabsOrders;
-import net.nikr.eve.jeveasset.i18n.TabsMaterials;
-import net.nikr.eve.jeveasset.i18n.TabsLoadout;
-import net.nikr.eve.jeveasset.i18n.TabsJobs;
-import net.nikr.eve.jeveasset.i18n.TabsAssets;
 import java.util.Locale;
-import net.nikr.eve.jeveasset.i18n.DataModelAssetFilter;
-import net.nikr.eve.jeveasset.i18n.DataModelEveAsset;
-import net.nikr.eve.jeveasset.i18n.DataModelIndustryJob;
-import net.nikr.eve.jeveasset.i18n.DataModelPriceDataSettings;
-import net.nikr.eve.jeveasset.i18n.DialoguesAbout;
-import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
-import net.nikr.eve.jeveasset.i18n.DialoguesAddSystem;
-import net.nikr.eve.jeveasset.i18n.DialoguesCsvExport;
-import net.nikr.eve.jeveasset.i18n.DialoguesProfiles;
-import net.nikr.eve.jeveasset.i18n.DialoguesSettings;
-import net.nikr.eve.jeveasset.i18n.DialoguesUpdate;
-import net.nikr.eve.jeveasset.i18n.General;
-import net.nikr.eve.jeveasset.i18n.GuiFrame;
-import net.nikr.eve.jeveasset.i18n.GuiShared;
-import uk.me.candle.translations.Bundle;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
-import static org.junit.Assert.*;
+import uk.me.candle.translations.Bundle;
 
 /**
  *

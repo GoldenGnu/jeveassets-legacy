@@ -19,25 +19,35 @@
  *
  */
 
-package net.nikr.eve.jeveasset.tests.io.shared;
+package net.nikr.eve.jeveasset.gui.tabs.routing.mocks;
 
-import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import net.nikr.eve.jeveasset.data.Jump;
 import net.nikr.eve.jeveasset.data.Location;
-import net.nikr.eve.jeveasset.io.local.ConquerableStationsReader;
+import net.nikr.eve.jeveasset.io.local.JumpsReader;
 import net.nikr.eve.jeveasset.io.local.LocationsReader;
-import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 import net.nikr.eve.jeveasset.tests.mocks.FakeSettings;
 
+/**
+ *
+ * @author Candle
+ */
+public class RoutingMockSettings extends FakeSettings {
 
-public class MockSettings extends FakeSettings{
+	List<Jump> jumps = new ArrayList<Jump>();
 	Map<Long, Location> locations = new HashMap<Long, Location>();
-	Map<Long, ApiStation> conquerableStations = new HashMap<Long, ApiStation>();
-	
-	public MockSettings() {
+
+	public RoutingMockSettings() {
 		LocationsReader.load(this);
-		ConquerableStationsReader.load(this);
+		JumpsReader.load(this);
+	}
+
+	@Override
+	public List<Jump> getJumps() {
+		return jumps;
 	}
 
 	@Override
@@ -45,17 +55,6 @@ public class MockSettings extends FakeSettings{
 		return locations;
 	}
 
-	@Override
-	public Map<Long, ApiStation> getConquerableStations() {
-		return conquerableStations;
-	}
 
-	@Override
-	public void setConquerableStations(Map<Long, ApiStation> conquerableStations) {
-		this.conquerableStations = conquerableStations;
-		for (ApiStation station : conquerableStations.values()){
-			ApiIdConverter.addLocation(station, getLocations());
-		}
-	}
 
 }

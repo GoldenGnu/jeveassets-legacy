@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.tests.gui.shared;
+package net.nikr.eve.jeveasset.gui.shared;
 
 import net.nikr.eve.jeveasset.tests.mocks.FakeAsset;
 

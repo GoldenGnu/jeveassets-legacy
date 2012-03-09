@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.tests.io.shared;
+package net.nikr.eve.jeveasset.io.shared;
 
 import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
 import net.nikr.eve.jeveasset.data.Location;

@@ -19,13 +19,12 @@
  *
  */
 
-package net.nikr.eve.jeveasset.tests;
+package net.nikr.eve.jeveasset.gui.tabs.routing;
 
-import net.nikr.eve.jeveasset.gui.tabs.routing.MoveJList;
 import java.util.Comparator;
+import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *

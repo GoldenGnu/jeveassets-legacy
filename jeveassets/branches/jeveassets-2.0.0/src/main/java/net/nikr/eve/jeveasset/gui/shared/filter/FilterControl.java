@@ -50,6 +50,16 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 	private final List<EventList<E>> eventLists;
 	private FilterGui<E> gui;
 
+	/**
+	 * Do not use this constructor - it's here only for test purposes 
+	 */
+	protected FilterControl() {
+		filters = null;
+		filterLists = null;
+		eventLists = null;
+		gui = null;
+	}
+	
 	protected FilterControl(JFrame jFrame, Map<String, List<Filter>> filters, FilterList<E> filterList, EventList<E> eventList) {
 		this(jFrame, filters, Collections.singletonList(filterList), Collections.singletonList(eventList));
 	}
@@ -334,19 +344,19 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 		}
 	}
 	
-	private String format(Object object1){
+	private String format(Object object){
 		//String
-		String compare1 = object1.toString();
+		String compare = object.toString();
 		
 		//Number
-		Number number1 = getNumber(object1);
-		if (number1 != null) compare1 = Formater.compareFormat(number1);
+		Number number = getNumber(object);
+		if (number != null) compare = Formater.compareFormat(number);
 		
 		//Date
-		Date date1 = getDate(object1);
-		if (date1 != null) compare1 = Formater.columnDate(date1);
+		Date date = getDate(object);
+		if (date != null) compare = Formater.columnDate(date);
 		
-		return compare1.toLowerCase();
+		return compare.toLowerCase();
 	}
 	
 	@Override

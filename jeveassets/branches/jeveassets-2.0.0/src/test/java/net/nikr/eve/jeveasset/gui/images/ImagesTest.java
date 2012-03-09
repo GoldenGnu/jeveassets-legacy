@@ -19,14 +19,13 @@
  *
  */
 
-package net.nikr.eve.jeveasset.tests.gui.images;
+package net.nikr.eve.jeveasset.gui.images;
 
 import java.awt.image.BufferedImage;
-import java.net.URISyntaxException;
 import java.io.File;
-import net.nikr.eve.jeveasset.gui.images.Images;
-import org.junit.Test;
+import java.net.URISyntaxException;
 import static org.junit.Assert.*;
+import org.junit.Test;
 
 
 public class ImagesTest {

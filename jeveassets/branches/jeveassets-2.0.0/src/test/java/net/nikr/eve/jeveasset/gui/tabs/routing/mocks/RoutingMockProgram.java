@@ -19,7 +19,7 @@
  *
  */
 
-package net.nikr.eve.jeveasset.tests.routing.mocks;
+package net.nikr.eve.jeveasset.gui.tabs.routing.mocks;
 
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.tests.mocks.FakeProgram;

@@ -19,16 +19,11 @@
  *
  */
 
-package net.nikr.eve.jeveasset.tests.gui.shared;
+package net.nikr.eve.jeveasset.gui.shared;
 
 import net.nikr.eve.jeveasset.data.AssetFilter.Mode;
-import net.nikr.eve.jeveasset.gui.shared.EveAssetMatching;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import org.junit.*;
 
 
 public class EveAssetMatchingTest {

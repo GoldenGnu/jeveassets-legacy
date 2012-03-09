@@ -19,15 +19,15 @@
  *
  */
 
-package net.nikr.eve.jeveasset.tests;
+package net.nikr.eve.jeveasset.gui.tabs.routing;
 
-import net.nikr.eve.jeveasset.gui.tabs.routing.EditableListModel;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.*;
 /**
  *
  * @author Candle
