@@ -1,5 +1,5 @@
 /*
- * Copyright 2009, 2010, 2011 Contributors (see credits.txt)
+ * Copyright 2009, 2010, 2011, 2012 Contributors (see credits.txt)
  *
  * This file is part of jEveAssets.
  *
@@ -18,6 +18,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
  */
+
 package net.nikr.eve.jeveasset.i18n;
 
 import java.util.Locale;
