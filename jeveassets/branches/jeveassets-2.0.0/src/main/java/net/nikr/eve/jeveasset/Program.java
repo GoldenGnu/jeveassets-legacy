@@ -29,6 +29,8 @@ import ca.odell.glazedlists.matchers.MatcherEditor.Listener;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -132,11 +134,13 @@ public class Program implements ActionListener, Listener<Asset>{
 	private ProgramUpdateChecker programUpdateChecker;
 	private Timer timer;
 	private Updatable updatable;
+	
+	private List<JMainTab> jMainTabs = new ArrayList<JMainTab>();
 
 	//Data
 	private Settings settings;
 	private EventList<Asset> eveAssetEventList;
-
+	
 	public Program(){
 		LOG.info("Starting {} {}", PROGRAM_NAME, PROGRAM_VERSION);
 		LOG.info("OS: "+System.getProperty("os.name")+" "+System.getProperty("os.version"));
@@ -282,6 +286,10 @@ public class Program implements ActionListener, Listener<Asset>{
 	 */
 	protected Program(boolean load) { }
 
+	public void addMainTab(JMainTab jMainTab){
+		jMainTabs.add(jMainTab);
+	}
+	
 	private void timerTicked(){
 		if (!timer.isRunning()){
 			timer.start();
@@ -306,6 +314,9 @@ public class Program implements ActionListener, Listener<Asset>{
 	public void saveSettings(){
 		LOG.info("Saving...");
 		mainWindow.updateSettings();
+		for (JMainTab jMainTab : jMainTabs){
+			jMainTab.updateSettings();
+		}
 		settings.saveSettings();
 	}
 	

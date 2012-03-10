@@ -37,6 +37,7 @@ import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
@@ -184,6 +185,12 @@ public class SettingsReader extends AbstractXmlReader {
 		if (tablefiltersNodes.getLength() == 1){
 			Element tablefiltersElement = (Element) tablefiltersNodes.item(0);
 			parseTableFilters(tablefiltersElement, settings);
+		}
+		//Table Columns
+		NodeList tablecolumnsNodes = element.getElementsByTagName("tablecolumns");
+		if (tablecolumnsNodes.getLength() == 1){
+			Element tablecolumnsElement = (Element) tablecolumnsNodes.item(0);
+			parseTableColumns(tablecolumnsElement, settings);
 		}
 		
 		// Proxy can have 0 or 1 proxy elements; at 0, the proxy stays as null.
@@ -435,6 +442,23 @@ public class SettingsReader extends AbstractXmlReader {
 			Element currentNode = (Element) filterNodes.item(a);
 			String name = parseFilter(currentNode);
 			assetFilters.put(name, parseFilterRows(currentNode));
+		}
+	}
+
+	private static void parseTableColumns(Element element, Settings settings) {
+		NodeList tableNodeList = element.getElementsByTagName("table");
+		for (int a = 0; a < tableNodeList.getLength(); a++){
+			List<SimpleColumn> columns = new ArrayList<SimpleColumn>();
+			Element tableNode = (Element) tableNodeList.item(a);
+			String tableName = AttributeGetters.getString(tableNode, "name");
+			NodeList columnNodeList = tableNode.getElementsByTagName("column");
+			for (int b = 0; b < columnNodeList.getLength(); b++){
+				Element columnNode = (Element) columnNodeList.item(b);
+				String name = AttributeGetters.getString(columnNode, "name");
+				boolean shown = AttributeGetters.getBoolean(columnNode, "shown");
+				columns.add( new SimpleColumn(name, shown));
+			}
+			settings.getTableColumns().put(tableName, columns);
 		}
 	}
 	

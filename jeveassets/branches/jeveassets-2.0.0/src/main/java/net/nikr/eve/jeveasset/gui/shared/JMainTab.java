@@ -55,6 +55,8 @@ public abstract class JMainTab{
 		this.title = title;
 		this.icon = icon;
 		this.closeable = closeable;
+		
+		program.addMainTab(this);
 
 		jPanel = new JPanel();
 
@@ -70,7 +72,12 @@ public abstract class JMainTab{
 	 * @param e mouse event
 	 */
 	protected abstract void showTablePopupMenu(MouseEvent e);
-
+	
+	/**
+	 * Overwrite to update settings before saving...
+	 */
+	public void updateSettings(){}
+	
 	public void addStatusbarLabel(JLabel jLabel){
 		statusbarLabels.add(jLabel);
 	}

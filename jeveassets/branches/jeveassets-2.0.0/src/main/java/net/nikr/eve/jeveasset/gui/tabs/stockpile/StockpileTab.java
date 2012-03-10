@@ -89,6 +89,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 	private JLabel jValueNow;
 	private JLabel jValueNeeded;
 	
+	private EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> stockpileTableFormat;
 	private EventTableModel<StockpileItem> stockpileTableModel;
 	private EventList<StockpileItem> stockpileEventList;
 	private SeparatorList<StockpileItem> separatorList;
@@ -97,6 +98,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 	private StockpileItemDialog stockpileItemDialog;
 	
 	private StockpileFilterControl filterControl;
+	
+	private final String NAME = "stockpile"; //Not to be changed!
 	
 	public StockpileTab(Program program) {
 		super(program, TabsStockpile.get().stockpile(), Images.TOOL_STOCKPILE.getIcon(), true);
@@ -128,7 +131,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		jAdd.setActionCommand(ACTION_ADD);
 		jAdd.addActionListener(this);
 		
-		EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem> stockpileTableFormat = new EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem>(StockpileTableFormat.class);
+		stockpileTableFormat = new EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem>(StockpileTableFormat.class);
+		stockpileTableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
 		stockpileEventList = new BasicEventList<StockpileItem>();
 		FilterList<StockpileItem> filterList = new FilterList<StockpileItem>(stockpileEventList);
 		separatorList = new SeparatorList<StockpileItem>(filterList, new StockpileSeparatorComparator(), 1, Integer.MAX_VALUE);
@@ -184,6 +188,11 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		
 		jValueNeeded = StatusPanel.createLabel(TabsStockpile.get().shownValueNeeded(), Images.TOOL_VALUES.getIcon());
 		this.addStatusbarLabel(jValueNeeded);
+	}
+	
+	@Override
+	public void updateSettings(){
+		program.getSettings().getTableColumns().put(NAME, stockpileTableFormat.getColumns());
 	}
 	
 	public boolean showAddItem(Stockpile stockpile, int typeID) {
@@ -322,6 +331,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		
 		jComponent.add(new JMenuLookup(program, obj));
 		jComponent.add(new JMenuEditItem(program, obj));
+		//Columns
+		jComponent.add(stockpileTableFormat.getMenu(stockpileTableModel, jTable));		
 	}
 
 	@Override

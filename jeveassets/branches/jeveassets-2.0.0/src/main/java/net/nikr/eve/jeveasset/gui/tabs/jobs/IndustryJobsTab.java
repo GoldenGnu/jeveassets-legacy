@@ -43,19 +43,23 @@ import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 public class IndustryJobsTab extends JMainTab {
 
-	private JTable jTable;
+	private JAutoColumnTable jTable;
 
 	private EventList<IndustryJob> jobsEventList;
 	private EventTableModel<IndustryJob> jobsTableModel;
 
 	private IndustryJobData data;
 	private IndustryJobsFilterControl filterControl;
+	private EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> industryJobsTableFormat;
+	
+	private final String NAME = "industryjobs"; //Not to be changed!
 
 	public IndustryJobsTab(Program program) {
 		super(program, TabsJobs.get().industry(), Images.TOOL_INDUSTRY_JOBS.getIcon(), true);
 
 		//Table format
-		EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> industryJobsTableFormat = new EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob>(IndustryJobTableFormat.class);
+		industryJobsTableFormat = new EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob>(IndustryJobTableFormat.class);
+		industryJobsTableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
 		//Backend
 		jobsEventList = new BasicEventList<IndustryJob>();
 		
@@ -95,6 +99,11 @@ public class IndustryJobsTab extends JMainTab {
 				.addComponent(filterControl.getPanel())
 				.addComponent(jTableScroll, 100, 400, Short.MAX_VALUE)
 		);
+	}
+	
+	@Override
+	public void updateSettings(){
+		program.getSettings().getTableColumns().put(NAME, industryJobsTableFormat.getColumns());
 	}
 
 	@Override
@@ -150,6 +159,9 @@ public class IndustryJobsTab extends JMainTab {
 		jComponent.add(new JMenuAssetFilter(program, industryJob));
 		jComponent.add(new JMenuStockpile(program, industryJob));
 		jComponent.add(new JMenuLookup(program, industryJob));
+		
+		//Columns
+		jComponent.add(industryJobsTableFormat.getMenu(jobsTableModel, jTable));
 	}
 	
 	public static class IndustryJobsFilterControl extends FilterControl<IndustryJob>{

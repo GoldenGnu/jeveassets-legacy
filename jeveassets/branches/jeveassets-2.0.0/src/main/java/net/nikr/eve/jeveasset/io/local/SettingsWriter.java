@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlWriter;
@@ -66,6 +67,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeUpdates(xmldoc, settings);
 		writeAssetFilters(xmldoc, settings.getAssetFilters());
 		writeTableFilters(xmldoc, settings);
+		writeTablesColumns(xmldoc, settings.getTableColumns());
 		writeCsv(xmldoc, settings.getCsvSettings());
 		writePriceFactionData(xmldoc, settings.getPriceFactionData());
 		try {
@@ -98,6 +100,21 @@ public class SettingsWriter extends AbstractXmlWriter {
 				childNode.setAttributeNS(null, "compare", filter.getCompare());
 				childNode.setAttributeNS(null, "and", String.valueOf(filter.isAnd()));
 				node.appendChild(childNode);
+			}
+		}
+	}
+	private static void writeTablesColumns(Document xmldoc, Map<String, List<SimpleColumn>> tableColumns) {
+		Element tablecolumnsNode = xmldoc.createElementNS(null, "tablecolumns");
+		xmldoc.getDocumentElement().appendChild(tablecolumnsNode);
+		for (Map.Entry<String, List<SimpleColumn>> entry : tableColumns.entrySet()){
+			Element nameNode = xmldoc.createElementNS(null, "table");
+			nameNode.setAttributeNS(null, "name", entry.getKey());
+			tablecolumnsNode.appendChild(nameNode);
+			for (SimpleColumn column : entry.getValue()){
+				Element node = xmldoc.createElementNS(null, "column");
+				node.setAttributeNS(null, "name", column.getName());
+				node.setAttributeNS(null, "shown", String.valueOf(column.isShown()));
+				nameNode.appendChild(node);
 			}
 		}
 	}

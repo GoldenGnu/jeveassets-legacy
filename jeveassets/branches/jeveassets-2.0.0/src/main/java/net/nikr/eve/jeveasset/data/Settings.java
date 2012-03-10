@@ -38,6 +38,7 @@ import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.SplashUpdater;
 import net.nikr.eve.jeveasset.data.model.Galaxy;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.io.local.*;
@@ -119,9 +120,11 @@ public class Settings{
 	private PriceDataGetter priceDataGetter = new PriceDataGetter(this);
 	private CsvSettings csvSettings;
 	
+	//FIXME make like table columns
 	private final Map<String, List<Filter>> MarketOrdersFilters = new HashMap<String, List<Filter>>();
 	private final Map<String, List<Filter>> IndustryJobsFilters = new HashMap<String, List<Filter>>();
 	private final Map<String, List<Filter>> StockpileFilters = new HashMap<String, List<Filter>>();
+	private Map<String, List<SimpleColumn>> tableColumns = new HashMap<String, List<SimpleColumn>>();
 	
 	public Settings() {
 		SplashUpdater.setProgress(5);
@@ -758,6 +761,10 @@ public class Settings{
 
 	public Map<String, List<Filter>> getStockpileFilters() {
 		return StockpileFilters;
+	}
+
+	public Map<String, List<SimpleColumn>> getTableColumns() {
+		return tableColumns;
 	}
 
 	public TableSettings getAssetTableSettings(){

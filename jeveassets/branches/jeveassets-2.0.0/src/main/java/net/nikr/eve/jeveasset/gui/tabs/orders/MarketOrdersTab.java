@@ -47,25 +47,29 @@ import net.nikr.eve.jeveasset.io.shared.ApiConverter;
 
 public class MarketOrdersTab extends JMainTab{
 
-	
+	private EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> sellTableFormat;
+	private EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> buyTableFormat;
 	private EventTableModel<MarketOrder> sellOrdersTableModel;
 	private EventTableModel<MarketOrder> buyOrdersTableModel;
 	private EventList<MarketOrder> sellOrdersEventList;
 	private EventList<MarketOrder> buyOrdersEventList;
 
-	private JTable jSellTable;
-	private JTable jBuyTable;
+	private JAutoColumnTable jSellTable;
+	private JAutoColumnTable jBuyTable;
 	
 	private MarketOrdersFilterControl filterControl;
+	
+	private final String NAME_SELL = "marketorderssell"; //Not to be changed!
+	private final String NAME_BUY = "marketordersbuy"; //Not to be changed!
 
 	public MarketOrdersTab(Program program) {
 		super(program, TabsOrders.get().market(), Images.TOOL_MARKET_ORDERS.getIcon(), true);
 
 		//Table format
-		EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> buyTableFormat =
-				new EnumTableFormatAdaptor<MarketTableFormat, MarketOrder>(MarketTableFormat.class);
-		EnumTableFormatAdaptor<MarketTableFormat, MarketOrder> sellTableFormat =
-				new EnumTableFormatAdaptor<MarketTableFormat, MarketOrder>(MarketTableFormat.class);
+		sellTableFormat = new EnumTableFormatAdaptor<MarketTableFormat, MarketOrder>(MarketTableFormat.class);
+		sellTableFormat.setColumns(program.getSettings().getTableColumns().get(NAME_SELL));
+		buyTableFormat = new EnumTableFormatAdaptor<MarketTableFormat, MarketOrder>(MarketTableFormat.class);
+		buyTableFormat.setColumns(program.getSettings().getTableColumns().get(NAME_BUY));
 		//Backend
 		sellOrdersEventList = new BasicEventList<MarketOrder>();
 		buyOrdersEventList = new BasicEventList<MarketOrder>();
@@ -149,6 +153,12 @@ public class MarketOrdersTab extends JMainTab{
 	}
 
 	@Override
+	public void updateSettings() {
+		program.getSettings().getTableColumns().put(NAME_SELL, sellTableFormat.getColumns());
+		program.getSettings().getTableColumns().put(NAME_BUY, buyTableFormat.getColumns());
+	}
+
+	@Override
 	protected void showTablePopupMenu(MouseEvent e) {
 		JPopupMenu jTablePopupMenu = new JPopupMenu();
 		
@@ -170,6 +180,13 @@ public class MarketOrdersTab extends JMainTab{
 			jTablePopupMenu.add(new JMenuAssetFilter(program, marketOrder));
 			jTablePopupMenu.add(new JMenuStockpile(program, marketOrder));
 			jTablePopupMenu.add(new JMenuLookup(program, marketOrder));
+			
+			//Columns
+			if (jTable.equals(jSellTable)){
+				jTablePopupMenu.add(sellTableFormat.getMenu(sellOrdersTableModel, jSellTable));
+			} else {
+				jTablePopupMenu.add(buyTableFormat.getMenu(buyOrdersTableModel, jBuyTable));
+			}
 		}
 		jTablePopupMenu.show(e.getComponent(), e.getX(), e.getY());
 	}
@@ -196,6 +213,8 @@ public class MarketOrdersTab extends JMainTab{
 		jComponent.add(new JMenuAssetFilter(program, sellMarketOrder));
 		jComponent.add(new JMenuStockpile(program, sellMarketOrder));
 		jComponent.add(new JMenuLookup(program, sellMarketOrder));
+		//Columns
+		jComponent.add(sellTableFormat.getMenu(sellOrdersTableModel, jSellTable));
 
 		addSeparator(jComponent);
 	
@@ -208,6 +227,8 @@ public class MarketOrdersTab extends JMainTab{
 		jComponent.add(new JMenuAssetFilter(program, buyMarketOrder));
 		jComponent.add(new JMenuStockpile(program, buyMarketOrder));
 		jComponent.add(new JMenuLookup(program, buyMarketOrder));
+		//Columns
+		jComponent.add(buyTableFormat.getMenu(buyOrdersTableModel, jBuyTable));
 	}
 
 	@Override

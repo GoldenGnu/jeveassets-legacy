@@ -39,7 +39,7 @@ public class FilterMenu<E> extends JMenu implements ActionListener {
 	FilterMenu(FilterGui<E> gui, Enum column, String text, boolean isNumeric, boolean isDate) {
 		super(GuiShared.get().popupMenuAddField());
 		this.gui = gui;
-		this.setIcon(Images.FILTER_CONTAIN.getIcon()); //FIXME - add icon
+		this.setIcon(Images.FILTER_CONTAIN.getIcon());
 		this.column = column;
 		this.text = text;
 		
