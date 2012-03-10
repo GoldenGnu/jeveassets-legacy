@@ -213,7 +213,7 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		} else {
 			text = jText.getText();
 		}
-		return new Filter(logic == LogicType.AND, column, compare, text);
+		return new Filter(logic, column, compare, text);
 	}
 	
 	void setFilter(Filter filter){

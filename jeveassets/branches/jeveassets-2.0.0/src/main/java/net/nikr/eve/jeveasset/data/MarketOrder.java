@@ -111,7 +111,6 @@ public class MarketOrder extends ApiMarketOrder implements Comparable<MarketOrde
 		return name;
 	}
 
-	//FIXME looks like EVEAPI return an incorrect date >_<
 	@Override
 	public Date getIssued() {
 		return super.getIssued();

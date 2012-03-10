@@ -120,10 +120,7 @@ public class Settings{
 	private PriceDataGetter priceDataGetter = new PriceDataGetter(this);
 	private CsvSettings csvSettings;
 	
-	//FIXME make like table columns
-	private final Map<String, List<Filter>> MarketOrdersFilters = new HashMap<String, List<Filter>>();
-	private final Map<String, List<Filter>> IndustryJobsFilters = new HashMap<String, List<Filter>>();
-	private final Map<String, List<Filter>> StockpileFilters = new HashMap<String, List<Filter>>();
+	private Map<String, Map<String, List<Filter>>> tableFilters = new HashMap<String, Map<String, List<Filter>>>();
 	private Map<String, List<SimpleColumn>> tableColumns = new HashMap<String, List<SimpleColumn>>();
 	
 	public Settings() {
@@ -751,16 +748,15 @@ public class Settings{
 		return tableSettings;
 	}
 
-	public Map<String, List<Filter>> getIndustryJobsFilters() {
-		return IndustryJobsFilters;
+	public Map<String, Map<String, List<Filter>>> getTableFilters() {
+		return tableFilters;
 	}
-
-	public Map<String, List<Filter>> getMarketOrdersFilters() {
-		return MarketOrdersFilters;
-	}
-
-	public Map<String, List<Filter>> getStockpileFilters() {
-		return StockpileFilters;
+	
+	public Map<String, List<Filter>> getTableFilters(String key){
+		if (!tableFilters.containsKey(key)){
+			tableFilters.put(key, new HashMap<String, List<Filter>>());
+		}
+		return tableFilters.get(key);
 	}
 
 	public Map<String, List<SimpleColumn>> getTableColumns() {
@@ -770,8 +766,6 @@ public class Settings{
 	public TableSettings getAssetTableSettings(){
 		return tableSettings.get(COLUMN_SETTINGS_ASSETS);
 	}
-
-
 	public boolean isFilterOnEnter() {
 		return flags.get(FLAG_FILTER_ON_ENTER);
 	}

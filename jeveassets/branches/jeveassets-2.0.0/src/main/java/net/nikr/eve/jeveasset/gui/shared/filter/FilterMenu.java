@@ -27,6 +27,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
@@ -67,9 +68,9 @@ public class FilterMenu<E> extends JMenu implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		CompareType compareType = Filter.CompareType.valueOf(e.getActionCommand());
 		if (CompareType.isColumnCompare(compareType)){
-			gui.addFilter( new Filter(true, column, compareType, column.name()));
+			gui.addFilter( new Filter(LogicType.AND, column, compareType, column.name()));
 		} else {
-			gui.addFilter( new Filter(true, column, compareType, text));
+			gui.addFilter( new Filter(LogicType.AND, column, compareType, text));
 		}
 	}
 }

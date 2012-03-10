@@ -85,7 +85,7 @@ public class IndustryJobsTab extends JMainTab {
 		//Filter
 		filterControl = new IndustryJobsFilterControl(
 				program.getMainWindow().getFrame(),
-				program.getSettings().getIndustryJobsFilters(),
+				program.getSettings().getTableFilters(NAME),
 				filterList,
 				jobsEventList);
 

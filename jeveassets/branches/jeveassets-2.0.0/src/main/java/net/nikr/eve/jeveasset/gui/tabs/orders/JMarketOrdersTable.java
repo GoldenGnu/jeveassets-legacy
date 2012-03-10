@@ -51,7 +51,7 @@ public class JMarketOrdersTable extends JAutoColumnTable {
 		component.setBackground(isSelected ? this.getSelectionBackground() : this.getBackground());
 		
 		if (columnName.equals(MarketTableFormat.EXPIRES.getColumnName())){
-			if (marketOrder.getExpires().before(new Date())){ //FIXME is Expires date in GMT or not?
+			if (marketOrder.getExpires().before(new Date())){
 				if (isSelected){
 					component.setBackground( this.getSelectionBackground().darker() );
 				} else {

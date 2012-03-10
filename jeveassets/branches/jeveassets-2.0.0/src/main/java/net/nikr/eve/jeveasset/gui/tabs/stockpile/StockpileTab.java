@@ -156,7 +156,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		
 		filterControl = new StockpileFilterControl(
 				program.getMainWindow().getFrame(),
-				program.getSettings().getStockpileFilters(),
+				program.getSettings().getTableFilters(NAME),
 				filterList,
 				stockpileEventList);
 		

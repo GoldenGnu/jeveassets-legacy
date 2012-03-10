@@ -59,6 +59,7 @@ public class MarketOrdersTab extends JMainTab{
 	
 	private MarketOrdersFilterControl filterControl;
 	
+	private final String NAME = "marketorders"; //Not to be changed!
 	private final String NAME_SELL = "marketorderssell"; //Not to be changed!
 	private final String NAME_BUY = "marketordersbuy"; //Not to be changed!
 
@@ -116,7 +117,7 @@ public class MarketOrdersTab extends JMainTab{
 		
 		filterControl = new MarketOrdersFilterControl(
 				program.getMainWindow().getFrame(),
-				program.getSettings().getMarketOrdersFilters(),
+				program.getSettings().getTableFilters(NAME),
 				filterLists,
 				eventLists);
 		

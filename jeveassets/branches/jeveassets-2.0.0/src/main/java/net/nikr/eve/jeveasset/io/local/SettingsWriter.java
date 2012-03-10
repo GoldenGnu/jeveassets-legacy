@@ -66,7 +66,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeTableSettings(xmldoc, settings.getTableSettings());
 		writeUpdates(xmldoc, settings);
 		writeAssetFilters(xmldoc, settings.getAssetFilters());
-		writeTableFilters(xmldoc, settings);
+		writeTableFilters(xmldoc, settings.getTableFilters());
 		writeTablesColumns(xmldoc, settings.getTableColumns());
 		writeCsv(xmldoc, settings.getCsvSettings());
 		writePriceFactionData(xmldoc, settings.getPriceFactionData());
@@ -77,32 +77,30 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 		LOG.info("Settings saved");
 	}
-	private static void writeTableFilters(Document xmldoc, Settings settings){
-		Element parentNode = xmldoc.createElementNS(null, "tablefilters");
-		xmldoc.getDocumentElement().appendChild(parentNode);
-		writeFilters(xmldoc, parentNode, settings.getStockpileFilters(), "stockpile");
-		writeFilters(xmldoc, parentNode, settings.getIndustryJobsFilters(), "industryjobs");
-		writeFilters(xmldoc, parentNode, settings.getMarketOrdersFilters(), "marketorders");
-	}
-	private static void writeFilters(Document xmldoc, Element tablefiltersNode, Map <String, List<Filter>> filters, String name){
-		Element parentNode = xmldoc.createElementNS(null, name);
-		tablefiltersNode.appendChild(parentNode);
-		for (Map.Entry<String, List<Filter>> entry : filters.entrySet()){
-			Element node = xmldoc.createElementNS(null, "filter");
-			node.setAttributeNS(null, "name", entry.getKey());
-			parentNode.appendChild(node);
 
-			List<Filter> filterFilters = entry.getValue();
-			for (Filter filter :  filterFilters){
-				Element childNode = xmldoc.createElementNS(null, "row");
-				childNode.setAttributeNS(null, "text", filter.getText());
-				childNode.setAttributeNS(null, "column",  filter.getColumn().name());
-				childNode.setAttributeNS(null, "compare", filter.getCompare());
-				childNode.setAttributeNS(null, "and", String.valueOf(filter.isAnd()));
-				node.appendChild(childNode);
+	private static void writeTableFilters(Document xmldoc, Map<String, Map<String, List<Filter>>> tableFilters) {
+		Element tablefiltersNode = xmldoc.createElementNS(null, "tablefilters");
+		xmldoc.getDocumentElement().appendChild(tablefiltersNode);
+		for (Map.Entry<String, Map<String, List<Filter>>> entry : tableFilters.entrySet()){
+			Element nameNode = xmldoc.createElementNS(null, "table");
+			nameNode.setAttributeNS(null, "name", entry.getKey());
+			tablefiltersNode.appendChild(nameNode);
+			for (Map.Entry<String, List<Filter>> filters : entry.getValue().entrySet()){
+				Element filterNode = xmldoc.createElementNS(null, "filter");
+				filterNode.setAttributeNS(null, "name", filters.getKey());
+				nameNode.appendChild(filterNode);
+				for (Filter filter :  filters.getValue()){
+					Element childNode = xmldoc.createElementNS(null, "row");
+					childNode.setAttributeNS(null, "text", filter.getText());
+					childNode.setAttributeNS(null, "column",  filter.getColumn().name());
+					childNode.setAttributeNS(null, "compare", filter.getCompare());
+					childNode.setAttributeNS(null, "logic", filter.getLogic().name());
+					filterNode.appendChild(childNode);
+				}
 			}
 		}
 	}
+
 	private static void writeTablesColumns(Document xmldoc, Map<String, List<SimpleColumn>> tableColumns) {
 		Element tablecolumnsNode = xmldoc.createElementNS(null, "tablecolumns");
 		xmldoc.getDocumentElement().appendChild(tablecolumnsNode);

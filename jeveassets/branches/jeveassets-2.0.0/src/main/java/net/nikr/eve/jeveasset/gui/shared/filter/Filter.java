@@ -211,7 +211,7 @@ public class Filter {
 				;
 		}
 	}
-	enum LogicType{
+	public enum LogicType{
 		AND() {
 			@Override
 			public String getI18N(){
@@ -238,12 +238,12 @@ public class Filter {
 	private CompareType compare;
 	private String text;
 	
-	public Filter(boolean and, Enum column, String compare, String text) {
-		this(and, column, CompareType.valueOf(compare), text);
+	public Filter(String logic, Enum column, String compare, String text) {
+		this(LogicType.valueOf(logic), column, CompareType.valueOf(compare), text);
 	}
 
-	public Filter(boolean and, Enum column, CompareType compare, String text) {
-		this.logic = and ? LogicType.AND : LogicType.OR;
+	public Filter(LogicType logic, Enum column, CompareType compare, String text) {
+		this.logic = logic;
 		this.column = column;
 		this.compare = compare;
 		this.text = text;
@@ -259,6 +259,10 @@ public class Filter {
 
 	public boolean isAnd() {
 		return logic == LogicType.AND;
+	}
+
+	public LogicType getLogic() {
+		return logic;
 	}
 	
 	public boolean isEmpty(){

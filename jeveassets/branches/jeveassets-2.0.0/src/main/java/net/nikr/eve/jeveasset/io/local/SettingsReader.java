@@ -24,10 +24,7 @@ package net.nikr.eve.jeveasset.io.local;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import net.nikr.eve.jeveasset.data.CsvSettings.DecimalSeperator;
 import net.nikr.eve.jeveasset.data.CsvSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.CsvSettings.LineDelimiter;
@@ -463,37 +460,32 @@ public class SettingsReader extends AbstractXmlReader {
 	}
 	
 	private static void parseTableFilters(Element element, Settings settings){
-		parseFilters(element, settings.getStockpileFilters(), "stockpile");
-		parseFilters(element, settings.getIndustryJobsFilters(), "industryjobs");
-		parseFilters(element, settings.getMarketOrdersFilters(), "marketorders");
-	}
-	private static void parseFilters(Element element, Map<String, List<Filter>> filters, String name){
-		NodeList filtersNodes = element.getElementsByTagName(name);
-		if (filtersNodes.getLength() == 1){
-			Element filterElement = (Element) filtersNodes.item(0);
-			parseFilter(filterElement, filters);
-		}
-	}
-	
-	private static void parseFilter(Element element, Map<String, List<Filter>> filters){
-		NodeList filterNodes = element.getElementsByTagName("filter");
-		for (int a = 0; a < filterNodes.getLength(); a++){
-			Element filterNode = (Element) filterNodes.item(a);
-			String name = AttributeGetters.getString(filterNode, "name");
-			List<Filter> filterFilters = new ArrayList<Filter>();
-			NodeList rowNodes = filterNode.getElementsByTagName("row");
-			for (int b = 0; b < rowNodes.getLength(); b++){
-				Element rowNode = (Element) rowNodes.item(b);
-				String text = AttributeGetters.getString(rowNode, "text");
-				String columnString = AttributeGetters.getString(rowNode, "column");
-				Enum column =  getColumn(columnString);
-				String compare = AttributeGetters.getString(rowNode, "compare");
-				boolean and = AttributeGetters.getBoolean(rowNode, "and");
-				filterFilters.add(new Filter(and, column, compare, text));
+		NodeList tableNodeList = element.getElementsByTagName("table");
+		for (int a = 0; a < tableNodeList.getLength(); a++){
+			Element tableNode = (Element) tableNodeList.item(a);
+			String tableName = AttributeGetters.getString(tableNode, "name");
+			NodeList filterNodeList = tableNode.getElementsByTagName("filter");
+			Map<String, List<Filter>> filters = new HashMap<String, List<Filter>>();
+			for (int b = 0; b < filterNodeList.getLength(); b++){
+				Element filterNode = (Element) filterNodeList.item(b);
+				String filterName = AttributeGetters.getString(filterNode, "name");
+				List<Filter> filter = new ArrayList<Filter>();
+				NodeList rowNodes = filterNode.getElementsByTagName("row");
+				for (int c = 0; c < rowNodes.getLength(); c++){
+					Element rowNode = (Element) rowNodes.item(c);
+					String text = AttributeGetters.getString(rowNode, "text");
+					String columnString = AttributeGetters.getString(rowNode, "column");
+					Enum column =  getColumn(columnString);
+					String compare = AttributeGetters.getString(rowNode, "compare");
+					String logic = AttributeGetters.getString(rowNode, "logic");
+					filter.add(new Filter(logic, column, compare, text));
+				}
+				filters.put(filterName, filter);
 			}
-			filters.put(name, filterFilters);
+			settings.getTableFilters().put(tableName, filters);
 		}
 	}
+
 	private static Enum getColumn(String s){
 		try {
 			return FilterType.valueOf(s);
@@ -515,7 +507,7 @@ public class SettingsReader extends AbstractXmlReader {
 		} catch (IllegalArgumentException exception) {
 			
 		}
-		try {
+		try { //All
 			return Filter.ExtraColumns.valueOf(s);
 		} catch (IllegalArgumentException exception) {
 			
