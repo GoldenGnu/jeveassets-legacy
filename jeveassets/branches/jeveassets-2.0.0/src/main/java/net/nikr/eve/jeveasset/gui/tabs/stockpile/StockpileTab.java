@@ -149,7 +149,6 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		}
 	}
 	
-	private JToolBar jToolBar;
 	private JButton jAdd;
 	private JButton jExpand;
 	private JButton jCollapse;
@@ -177,9 +176,19 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		stockpileDialog = new StockpileDialog(program);
 		stockpileItemDialog = new StockpileItemDialog(program);
 		
-		jToolBar = new JToolBar();
+		JToolBar jToolBar = new JToolBar();
 		jToolBar.setFloatable(false);
 		jToolBar.setRollover(true);
+		
+		jAdd = new JButton(TabsStockpile.get().newStockpile(), Images.LOC_GROUPS.getIcon());
+		jAdd.setActionCommand(ACTION_ADD);
+		jAdd.addActionListener(this);
+		jToolBar.add(jAdd);
+		
+		JLabel jSpacing = new JLabel();
+		jSpacing.setMinimumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
+		jSpacing.setMaximumSize( new Dimension(Integer.MAX_VALUE, Program.BUTTONS_HEIGHT));
+		jToolBar.add(jSpacing);
 		
 		jCollapse = new JButton(TabsStockpile.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.setActionCommand(ACTION_COLLAPSE);
@@ -196,10 +205,6 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		jExpand.setMaximumSize( new Dimension(90, Program.BUTTONS_HEIGHT));
 		jExpand.setHorizontalAlignment(SwingConstants.LEFT);
 		jToolBar.add(jExpand);
-		
-		jAdd = new JButton(TabsStockpile.get().newStockpile(), Images.LOC_GROUPS.getIcon());
-		jAdd.setActionCommand(ACTION_ADD);
-		jAdd.addActionListener(this);
 		
 		stockpileTableFormat = new EnumTableFormatAdaptor<StockpileTableFormat, StockpileItem>(StockpileTableFormat.class);
 		stockpileTableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
@@ -229,9 +234,6 @@ public class StockpileTab extends JMainTab implements ActionListener {
 				program.getSettings().getTableFilters(NAME),
 				filterList,
 				stockpileEventList);
-		
-		filterControl.addToolSeparator();
-		filterControl.addToolButton(jAdd, 100);
 		
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
