@@ -25,7 +25,6 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
@@ -63,12 +62,10 @@ public class SettingsWriter extends AbstractXmlWriter {
 		writeFlags(xmldoc, settings.getFlags());
 		writeUserPrices(xmldoc, settings.getUserPrices());
 		writeUserItemNames(xmldoc, settings.getUserItemNames());
-		writeTableSettings(xmldoc, settings.getTableSettings());
 		writeUpdates(xmldoc, settings);
-		writeAssetFilters(xmldoc, settings.getAssetFilters());
 		writeTableFilters(xmldoc, settings.getTableFilters());
 		writeTablesColumns(xmldoc, settings.getTableColumns());
-		writeCsv(xmldoc, settings.getCsvSettings());
+		writeCsv(xmldoc, Settings.getCsvSettings());
 		writePriceFactionData(xmldoc, settings.getPriceFactionData());
 		try {
 			writeXmlFile(xmldoc, Settings.getPathSettings());
@@ -93,7 +90,7 @@ public class SettingsWriter extends AbstractXmlWriter {
 					Element childNode = xmldoc.createElementNS(null, "row");
 					childNode.setAttributeNS(null, "text", filter.getText());
 					childNode.setAttributeNS(null, "column",  filter.getColumn().name());
-					childNode.setAttributeNS(null, "compare", filter.getCompare());
+					childNode.setAttributeNS(null, "compare", filter.getCompareType().name());
 					childNode.setAttributeNS(null, "logic", filter.getLogic().name());
 					filterNode.appendChild(childNode);
 				}
@@ -240,24 +237,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		}
 	}
 
-	public static void writeTableSettings(Document xmldoc, Map<String, TableSettings> tableSettings){
-		Element parentNode = xmldoc.createElementNS(null, "tables");
-		xmldoc.getDocumentElement().appendChild(parentNode);
-		for (Entry<String, TableSettings> entry : tableSettings.entrySet()){
-			Element tableNode = xmldoc.createElementNS(null, "table");
-			tableNode.setAttributeNS(null, "name", entry.getKey());
-			tableNode.setAttributeNS(null, "resize", entry.getValue().getMode().toString());
-			parentNode.appendChild(tableNode);
-			for (String column : entry.getValue().getTableColumnNames()){
-				boolean visible = entry.getValue().getTableColumnVisible().contains(column);
-				Element node = xmldoc.createElementNS(null, "column");
-				node.setAttributeNS(null, "name", column);
-				node.setAttributeNS(null, "visible", String.valueOf(visible));
-				tableNode.appendChild(node);
-			}
-		}
-	}
-
 	private static void writeUpdates(Document xmldoc, Settings settings){
 		Element parentNode = xmldoc.createElementNS(null, "updates");
 		xmldoc.getDocumentElement().appendChild(parentNode);
@@ -268,31 +247,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		node.setAttributeNS(null, "name", "conquerable station");
 		node.setAttributeNS(null, "nextupdate", String.valueOf(settings.getConquerableStationsNextUpdate().getTime()));
 		parentNode.appendChild(node);
-	}
-
-	private static void writeAssetFilters(Document xmldoc, Map<String, List<AssetFilter>> assetFilters){
-		Element parentNode = xmldoc.createElementNS(null, "filters");
-		xmldoc.getDocumentElement().appendChild(parentNode);
-		for (Map.Entry<String, List<AssetFilter>> entry : assetFilters.entrySet()){
-			Element node = xmldoc.createElementNS(null, "filter");
-			node.setAttributeNS(null, "name", entry.getKey());
-			parentNode.appendChild(node);
-
-			List<AssetFilter> assetFilterFilters = entry.getValue();
-			for (int a = 0; a < assetFilterFilters.size(); a++){
-				AssetFilter assetFilter = assetFilterFilters.get(a);
-
-				Element childNode = xmldoc.createElementNS(null, "row");
-				childNode.setAttributeNS(null, "text", assetFilter.getText());
-				childNode.setAttributeNS(null, "column", assetFilter.getColumn());
-				childNode.setAttributeNS(null, "mode", assetFilter.getMode().name());
-				childNode.setAttributeNS(null, "and", String.valueOf(assetFilter.isAnd()));
-				if (assetFilter.getColumnMatch() != null){
-					childNode.setAttributeNS(null, "columnmatch", assetFilter.getColumnMatch());
-				}
-				node.appendChild(childNode);
-			}
-		}
 	}
 
 	private static void writeApiProxy(Document xmldoc, String apiProxy) {
@@ -319,15 +273,9 @@ public class SettingsWriter extends AbstractXmlWriter {
 	private static void writeCsv(Document xmldoc, CsvSettings csvSettings) {
 		Element node = xmldoc.createElementNS(null, "csvexport");
 		xmldoc.getDocumentElement().appendChild(node);
-		node.setAttributeNS(null, "maxcolumns", String.valueOf(csvSettings.getMaxColumns()));
 		node.setAttributeNS(null, "decimal", csvSettings.getDecimalSeperator().name());
 		node.setAttributeNS(null, "field", csvSettings.getFieldDelimiter().name());
 		node.setAttributeNS(null, "line", csvSettings.getLineDelimiter().name());
-		node.setAttributeNS(null, "path", csvSettings.getPath());
-		for (String column : csvSettings.getColumns()){
-			Element columnNode = xmldoc.createElementNS(null, "column");
-			columnNode.setAttributeNS(null, "name", column);
-			node.appendChild(columnNode);
-		}
+		node.setAttributeNS(null, "filename", csvSettings.getFilename());
 	}
 }

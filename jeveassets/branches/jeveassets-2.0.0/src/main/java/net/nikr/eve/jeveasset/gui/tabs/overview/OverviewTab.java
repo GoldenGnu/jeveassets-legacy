@@ -31,37 +31,20 @@ import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JToggleButton;
+import java.util.*;
+import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
-import net.nikr.eve.jeveasset.data.AssetFilter;
-import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.Human;
-import net.nikr.eve.jeveasset.data.Overview;
-import net.nikr.eve.jeveasset.data.OverviewGroup;
-import net.nikr.eve.jeveasset.data.OverviewLocation;
+import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
 import net.nikr.eve.jeveasset.gui.shared.JMenuAssetFilter;
 import net.nikr.eve.jeveasset.gui.shared.JMenuCopy;
 import net.nikr.eve.jeveasset.gui.shared.JMenuLookup;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
+import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat;
 import net.nikr.eve.jeveasset.i18n.TabsOverview;
 
 
@@ -531,22 +514,18 @@ public class OverviewTab extends JMainTab {
 				int index = jTable.getSelectedRow();
 				Overview overview = overviewTableModel.getElementAt(index);
 				OverviewGroup overviewGroup = program.getSettings().getOverviewGroups().get(overview.getName());
-				List<AssetFilter> assetFilters = new ArrayList<AssetFilter>();
 				for (OverviewLocation location : overviewGroup.getLocations()){
 					if (location.isStation()){
-						AssetFilter assetFilter = new AssetFilter("Location", location.getName(), AssetFilter.Mode.MODE_EQUALS, AssetFilter.Junction.OR, null);
-						assetFilters.add(assetFilter);
-						program.getAssetsTab().addFilter(assetFilter, true);
+						Filter filter = new Filter(LogicType.OR, EveAssetTableFormat.LOCATION, CompareType.EQUALS, location.getName());
+						program.getAssetsTab().addFilter(filter);
 					}
 					if (location.isSystem()){
-						AssetFilter assetFilter = new AssetFilter("Location", location.getName(), AssetFilter.Mode.MODE_CONTAIN, AssetFilter.Junction.OR, null);
-						assetFilters.add(assetFilter);
-						program.getAssetsTab().addFilter(assetFilter, true);
+						Filter filter = new Filter(LogicType.OR, EveAssetTableFormat.LOCATION, CompareType.CONTAINS, location.getName());
+						program.getAssetsTab().addFilter(filter);
 					}
 					if (location.isRegion()){
-						AssetFilter assetFilter = new AssetFilter("Region", location.getName(), AssetFilter.Mode.MODE_EQUALS, AssetFilter.Junction.OR, null);
-						assetFilters.add(assetFilter);
-						program.getAssetsTab().addFilter(assetFilter, true);
+						Filter filter = new Filter(LogicType.OR, EveAssetTableFormat.REGION, CompareType.EQUALS, location.getName());
+						program.getAssetsTab().addFilter(filter);
 					}
 				}
 				program.getMainWindow().addTab(program.getAssetsTab());

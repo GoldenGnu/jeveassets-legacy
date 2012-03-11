@@ -19,32 +19,30 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.dialogs.export;
+package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import ca.odell.glazedlists.matchers.Matcher;
 import java.util.List;
-import net.nikr.eve.jeveasset.data.AssetFilter;
-import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.gui.shared.EveAssetMatching;
 
 
-public class AssetFilterLogicalMatcher implements Matcher<Asset> {
+public class FilterLogicalMatcher<E> implements Matcher<E> {
 
-	private List<AssetFilter> assetFilters;
-	private EveAssetMatching eveAssetMatching = new EveAssetMatching();
+	private final List<Filter> assetFilters;
+	private final ItemMatcher<E> itemMatcher;
 
-	public AssetFilterLogicalMatcher(List<AssetFilter> assetFilters) {
+	public FilterLogicalMatcher(List<Filter> assetFilters, FilterControl<E> matcherControl) {
 		this.assetFilters = assetFilters;
+		itemMatcher = new ItemMatcher<E>(matcherControl);
 	}
 	
 	@Override
-	public boolean matches(Asset item) {
+	public boolean matches(E item) {
 		boolean bOr = false;
 		boolean bAnyOrs = false;
 		for (int a = 0; a < assetFilters.size(); a++){
-			AssetFilter assetFilter = assetFilters.get(a);
-			boolean matches = eveAssetMatching.matches(item, assetFilter);
-			if (assetFilter.isAnd()){ //And
+			Filter filter = assetFilters.get(a);
+			boolean matches = itemMatcher.matches(item, filter);
+			if (filter.isAnd()){ //And
 				if (!matches){ //if just one don't match, none match
 					return false;
 				}
@@ -56,5 +54,18 @@ public class AssetFilterLogicalMatcher implements Matcher<Asset> {
 			}
 		}
 		return (bOr || !bAnyOrs);
+	}
+	
+	private static class ItemMatcher<E>{
+
+		private final FilterControl<E> matcherControl;
+
+		public ItemMatcher(FilterControl<E> matcherControl) {
+			this.matcherControl = matcherControl;
+		}		
+
+		public boolean matches(E item,  Filter filter) {
+			return matcherControl.matches(item, filter.getColumn(), filter.getCompareType(), filter.getText());
+		}
 	}
 }

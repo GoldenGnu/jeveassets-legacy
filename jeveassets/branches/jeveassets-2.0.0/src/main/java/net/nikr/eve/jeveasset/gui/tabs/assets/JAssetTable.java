@@ -28,17 +28,16 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.data.TableSettings;
-import net.nikr.eve.jeveasset.gui.shared.JColumnTable;
+import net.nikr.eve.jeveasset.gui.shared.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.DoubleCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.FloatCellRenderer;
-import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.LongCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.IntegerCellRenderer;
+import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.LongCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.ToStringCellRenderer;
 import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat.LongInt;
 
 
-public class JAssetTable extends JColumnTable {
+public class JAssetTable extends JAutoColumnTable {
 
 	private EventTableModel<Asset> eventTableModel;
 	private DoubleCellRenderer doubleCellRenderer;
@@ -50,8 +49,8 @@ public class JAssetTable extends JColumnTable {
 
 	private Program program;
 
-	public JAssetTable(Program program, EventTableModel<Asset> eventTableModel, TableSettings tableSettings) {
-		super(eventTableModel, tableSettings);
+	public JAssetTable(Program program, EventTableModel<Asset> eventTableModel) {
+		super(eventTableModel);
 		this.program = program;
 		this.eventTableModel = eventTableModel;
 
@@ -61,11 +60,6 @@ public class JAssetTable extends JColumnTable {
 		floatCellRenderer = new FloatCellRenderer();
 		tableCellRenderer = new DefaultTableCellRenderer();
 		toStringCellRenderer = new ToStringCellRenderer();
-		this.setDefaultRenderer(Double.class, new DoubleCellRenderer());
-		this.setDefaultRenderer(Long.class, new LongCellRenderer());
-		this.setDefaultRenderer(Float.class, new FloatCellRenderer());
-		this.setDefaultRenderer(Integer.class, new IntegerCellRenderer());
-		this.setDefaultRenderer(LongInt.class, new ToStringCellRenderer());
 	}
 	
 	private Component getMatchingTableCellRendererComponent(Object value, boolean isSelected, boolean hasFocus, int row, int column){

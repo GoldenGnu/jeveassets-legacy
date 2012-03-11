@@ -120,4 +120,5 @@ public abstract class GuiShared extends Bundle {
 	public abstract String filterEmpty();
 	public abstract String filterShowing(int rowCount, int size, String filterName);
 	public abstract String popupMenuAddField();
+	public abstract String export();
 }

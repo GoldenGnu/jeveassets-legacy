@@ -220,7 +220,7 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		jEnabled.setEnabled(true);
 		jLogic.setSelectedItem(filter.isAnd() ? LogicType.AND : LogicType.OR);
 		jColumn.setSelectedItem(filter.getColumn());
-		jCompare.setSelectedItem(CompareType.valueOf(filter.getCompare()));
+		jCompare.setSelectedItem(filter.getCompareType());
 		if (isColumnCompare()){
 			jCompareColumn.setSelectedItem(matcherControl.valueOf(filter.getText()));
 		} else if (isDateCompare()) {
@@ -365,7 +365,7 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		}
 	}
 	
-	public static class MyMatcher<E> implements Matcher<E>{
+	static class MyMatcher<E> implements Matcher<E>{
 
 		private FilterControl<E> matcherControl;
 		private boolean enabled;

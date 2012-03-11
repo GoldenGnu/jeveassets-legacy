@@ -28,11 +28,13 @@ import java.awt.event.ActionEvent;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Settings;
-import net.nikr.eve.jeveasset.gui.tabs.assets.FiltersManagerDialog;
-import net.nikr.eve.jeveasset.gui.tabs.assets.SaveFilterDialog;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
+import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
+import net.nikr.eve.jeveasset.gui.shared.JMainTab;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 
 /**
  * any method called will throw an exception. extend and override only the ones that are needed to perform the tests.
@@ -75,19 +77,10 @@ public abstract class FakeProgram extends Program {
 	}
 
 	@Override
-	public void savedFiltersChanged() {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-
-	@Override
 	public EventList<Asset> getEveAssetEventList() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
-	@Override
-	public FiltersManagerDialog getFiltersManagerDialog() {
-		throw new UnsupportedOperationException("Not implemented");
-	}
 
 	@Override
 	public MainWindow getMainWindow() {
@@ -96,11 +89,6 @@ public abstract class FakeProgram extends Program {
 
 	@Override
 	public String getProgramDataVersion() {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-
-	@Override
-	public SaveFilterDialog getSaveFilterDialog() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -123,4 +111,41 @@ public abstract class FakeProgram extends Program {
 	public void showSettings() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
+
+	@Override
+	public void addMainTab(JMainTab jMainTab) {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public StockpileTab getStockpileTool() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public UserNameSettingsPanel getUserNameSettingsPanel() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public UserPriceSettingsPanel getUserPriceSettingsPanel() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public void overviewGroupsChanged() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public void tabChanged() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+
+	@Override
+	public void updateTableMenu() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
+	
+	
 }

@@ -120,7 +120,6 @@ public class FilterManager<E> extends JDialogCentered {
 				.addComponent(jScrollPanel)
 				.addComponent(jDone, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 		);
-		updateFilters();
 	}
 
 	public String getSelectedString(){
@@ -230,6 +229,14 @@ public class FilterManager<E> extends JDialogCentered {
 			jRename.setEnabled(false);
 		}
 		gui.updateFilters();
+	}
+	
+	@Override
+	public void setVisible(boolean b) {
+		if (b){
+			updateFilters();
+		}
+		super.setVisible(b);
 	}
 
 	@Override

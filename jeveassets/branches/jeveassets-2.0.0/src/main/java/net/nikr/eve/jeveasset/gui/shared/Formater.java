@@ -25,6 +25,7 @@ import java.text.*;
 import java.util.Date;
 import java.util.Locale;
 import net.nikr.eve.jeveasset.data.Settings;
+import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
@@ -40,7 +41,7 @@ public class Formater {
 	private static DecimalFormat integerFormat  = new DecimalFormat("0");
 	private static DecimalFormat decimalFormat  = new DecimalFormat("#,##0.00");
 	private static DecimalFormat floatFormat  = new DecimalFormat("#,##0.####");
-	private static DecimalFormat compareFormat  = new DecimalFormat("0.####", new DecimalFormatSymbols(EveAssetMatching.LOCALE));
+	private static DecimalFormat compareFormat  = new DecimalFormat("0.####", new DecimalFormatSymbols(FilterControl.LOCALE));
 	
 	private static DateFormat columnDate = new SimpleDateFormat(COLUMN_FORMAT, new Locale("en")); //Must not be changed! please see: FilterControl
 	private static DateFormat todaysDate = new SimpleDateFormat("yyyyMMdd", new Locale("en"));
@@ -97,6 +98,7 @@ public class Formater {
 		return columnDate.format(date);
 	}
 	public static Date columnStringToDate(String date){
+		if (!date.matches("\\d{2}-\\d{2}-\\d{4}")) return null;
 		try {
 			return columnDate.parse(date);
 		} catch (ParseException ex) {

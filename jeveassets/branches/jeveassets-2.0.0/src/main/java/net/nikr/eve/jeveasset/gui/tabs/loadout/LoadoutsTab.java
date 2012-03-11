@@ -103,18 +103,18 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		loadoutsExportDialog = new LoadoutsExportDialog(program, this);
 
 		try {
-			jXmlFileChooser = new JCustomFileChooser(program, "xml");
+			jXmlFileChooser = new JCustomFileChooser(program.getMainWindow().getFrame(), "xml");
 		} catch (RuntimeException e) {
 			// Workaround for JRE bug 4711700. A NullPointer is thrown
 			// sometimes on the first construction under XP look and feel,
 			// but construction succeeds on successive attempts.
 			try {
-				jXmlFileChooser = new JCustomFileChooser(program, "xml");
+				jXmlFileChooser = new JCustomFileChooser(program.getMainWindow().getFrame(), "xml");
 			} catch (RuntimeException npe) {
 				// ok, now we use the metal file chooser, takes a long time to load
 				// but the user can still use the program
 				UIManager.getDefaults().put("FileChooserUI", "javax.swing.plaf.metal.MetalFileChooserUI");
-				jXmlFileChooser = new JCustomFileChooser(program, "xml");
+				jXmlFileChooser = new JCustomFileChooser(program.getMainWindow().getFrame(), "xml");
 			}
 		}
 		JLabel jCharactersLabel = new JLabel(TabsLoadout.get().character());

@@ -35,6 +35,7 @@ import javax.swing.table.TableModel;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.ExtraColumns;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 
 
@@ -49,6 +50,7 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 	private final List<FilterList<E>> filterLists;
 	private final List<EventList<E>> eventLists;
 	private FilterGui<E> gui;
+	private NumberFormat numberFormat = NumberFormat.getInstance(LOCALE);
 
 	/**
 	 * Do not use this constructor - it's here only for test purposes 
@@ -58,6 +60,7 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 		filterLists = null;
 		eventLists = null;
 		gui = null;
+		
 	}
 	
 	protected FilterControl(JFrame jFrame, Map<String, List<Filter>> filters, FilterList<E> filterList, EventList<E> eventList) {
@@ -67,10 +70,22 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 		this.filters = filters;
 		this.filterLists = filterLists;
 		this.eventLists = eventLists;
-		for (EventList<E> eventList : eventLists){
-			eventList.addListEventListener(this);
+		for (FilterList<E> filterList : filterLists){
+			filterList.addListEventListener(this);
 		}
 		gui = new FilterGui<E>(jFrame, this);
+	}
+	
+	public List<Filter> getCurrentFilters() {
+		return gui.getFilters();
+	}
+	
+	public void clearCurrentFilters() {
+		gui.clear();
+	}
+	
+	public void addFilter(Filter filter) {
+		gui.addFilter(filter);
 	}
 	
 	public JPanel getPanel(){
@@ -114,6 +129,10 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 		return new FilterMenu<E>(gui, column, text, isNumeric, isDate);
 	}
 
+	List<EventList<E>> getEventLists() {
+		return eventLists;
+	}
+
 	List<FilterList<E>> getFilterLists() {
 		return filterLists;
 	}
@@ -132,6 +151,7 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 	}
 
 	protected abstract Enum[] getColumns();
+	protected abstract List<EnumTableColumn<E>> getEnumColumns();
 	protected abstract Enum valueOf(String column);
 	/**
 	 * Use isNumeric(Enum column) instead
@@ -152,6 +172,13 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 	 * Overwrite to do stuff after filtering
 	 */
 	protected void afterFilter() {}
+	
+	
+	protected List<EnumTableColumn<E>> columnsAsList(EnumTableColumn<E>[] fixme){
+		List<EnumTableColumn<E>> columns = new ArrayList<EnumTableColumn<E>>();
+		columns.addAll(Arrays.asList(fixme));
+		return columns;
+	}
 	
 	boolean isNumeric(Enum column) {
 		if(column instanceof ExtraColumns){
@@ -179,13 +206,12 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 	boolean matches(final E item, final Enum enumColumn, final CompareType compare, final String text){
 		if (enumColumn instanceof ExtraColumns){
 			if (CompareType.isNot(compare)){
-				boolean found = false;
 				for (Enum testColumn : getColumns()){
 					if (!matches(item, testColumn, compare, text)){ //Found
-						found = true;
+						return false;
 					}
 				}
-				return !found;
+				return true;
 			} else {
 				for (Enum testColumn : getColumns()){
 					boolean found = matches(item, testColumn, compare, text);
@@ -325,7 +351,7 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 			//Used to check if parsing was successful
 			ParsePosition position = new ParsePosition(0);
 			//Parse number using the Locale
-			Number n = NumberFormat.getInstance(LOCALE).parse(filterValue, position);
+			Number n = numberFormat.parse(filterValue, position);
 			if (n != null && position.getIndex() == filterValue.length()){ //Numeric
 				return n.doubleValue();
 			}

@@ -43,6 +43,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.*;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
@@ -60,22 +61,91 @@ public class StockpileTab extends JMainTab implements ActionListener {
 	private final static String ACTION_EDIT_ITEM = "ACTION_EDIT_ITEM";
 	private final static String ACTION_DELETE_ITEM = "ACTION_DELETE_ITEM";
 	
-	public enum FilterType {
-		STOCKPILE_NAME(TabsStockpile.get().getFilterStockpileName()),
-		STOCKPILE_OWNER(TabsStockpile.get().getFilterStockpileOwner()),
-		STOCKPILE_LOCATION(TabsStockpile.get().getFilterStockpileLocation()),
-		STOCKPILE_FLAG(TabsStockpile.get().getFilterStockpileFlag()),
-		STOCKPILE_CONTAINER(TabsStockpile.get().getFilterStockpileContainer()),
+	public enum FilterType implements EnumTableColumn<StockpileItem> {
+		STOCKPILE_NAME(String.class, GlazedLists.comparableComparator()) {
+			@Override
+			public String getColumnName() {
+				return TabsStockpile.get().getFilterStockpileName();
+			}
+			@Override
+			public Object getColumnValue(StockpileItem from) {
+				return from.getStockpile().getName();
+			}
+		},
+		STOCKPILE_OWNER(String.class, GlazedLists.comparableComparator()) {
+			@Override
+			public String getColumnName() {
+				return TabsStockpile.get().getFilterStockpileOwner();
+			}
+			@Override
+			public Object getColumnValue(StockpileItem from) {
+				return from.getStockpile().getOwner();
+			}
+		},
+		STOCKPILE_LOCATION(String.class, GlazedLists.comparableComparator()) {
+			@Override
+			public String getColumnName() {
+				return TabsStockpile.get().getFilterStockpileLocation();
+			}
+			@Override
+			public Object getColumnValue(StockpileItem from) {
+				return from.getStockpile().getLocation();
+			}
+		},
+		STOCKPILE_FLAG(String.class, GlazedLists.comparableComparator()) {
+			@Override
+			public String getColumnName() {
+				return TabsStockpile.get().getFilterStockpileFlag();
+			}
+			@Override
+			public Object getColumnValue(StockpileItem from) {
+				return from.getStockpile().getFlag();
+			}
+		},
+		STOCKPILE_CONTAINER(String.class, GlazedLists.comparableComparator()) {
+			@Override
+			public String getColumnName() {
+				return TabsStockpile.get().getFilterStockpileContainer();
+			}
+			@Override
+			public Object getColumnValue(StockpileItem from) {
+				return from.getStockpile().getContainer();
+			}
+		},
 		;
 		
-		String name;
-		private FilterType(String name) {
-			this.name = name;
+		Class type;
+		Comparator<?> comparator;
+		private FilterType(Class type, Comparator<?> comparator) {
+			this.type = type;
+			this.comparator = comparator;
 		}
-
+		@Override
+		public Class getType() {
+			return type;
+		}
+		@Override
+		public Comparator getComparator() {
+			return comparator;
+		}
+		@Override
+		public String getColumnName() {
+			return getColumnName();
+		}
+		//XXX - Strange workaround >_<
+		@Override
+		public Object getColumnValue(StockpileItem from) {
+			return getColumnValue(from);
+		}
 		@Override
 		public String toString() {
-			return name;
+			return getColumnName();
+		}
+		@Override public boolean isColumnEditable(Object baseObject) {
+			return false;
+		}
+		@Override public StockpileItem setColumnValue(Object baseObject, Object editedValue) {
+			return null;
 		}
 	}
 	
@@ -577,7 +647,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 	
 	public class StockpileFilterControl extends FilterControl<StockpileItem>{
 
-		private Enum[] columns = null;
+		private Enum[] enumColumns = null;
+		private List<EnumTableColumn<StockpileItem>> columns = null;
 		
 		public StockpileFilterControl(JFrame jFrame, Map<String, List<Filter>> filters, FilterList<StockpileItem> filterList, EventList<StockpileItem> eventList) {
 			super(jFrame, filters, filterList, eventList);
@@ -593,17 +664,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 			
 			if (column instanceof FilterType){
 				FilterType format = (FilterType) column;
-				if (format.equals(FilterType.STOCKPILE_NAME)){
-					return item.getStockpile().getName();
-				} else if (format.equals(FilterType.STOCKPILE_LOCATION)){
-					return item.getStockpile().getLocation();
-				} else if (format.equals(FilterType.STOCKPILE_OWNER)){
-					return item.getStockpile().getOwner();
-				} else if (format.equals(FilterType.STOCKPILE_FLAG)){
-					return item.getStockpile().getFlag();
-				} else if (format.equals(FilterType.STOCKPILE_CONTAINER)){
-					return item.getStockpile().getContainer();
-				}
+				return format.getColumnValue(item);
 			}
 			return null; //Fallback: show all...
 		}
@@ -632,10 +693,10 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		
 		@Override
 		protected Enum[] getColumns() {
-			if (columns == null){
-				columns = concat(FilterType.values(), StockpileTableFormat.values());
+			if (enumColumns == null){
+				enumColumns = concat(FilterType.values(), StockpileTableFormat.values());
 			}
-			return columns;
+			return enumColumns;
 		}
 		
 		@Override
@@ -668,6 +729,18 @@ public class StockpileTab extends JMainTab implements ActionListener {
 			System.arraycopy(a, 0, c, 0, a.length);
 			System.arraycopy(b, 0, c, a.length, b.length);
 			return c;
+		}
+		private List<EnumTableColumn<StockpileItem>> concatB(EnumTableColumn<StockpileItem>[] a, EnumTableColumn<StockpileItem>[] b) {
+			List<EnumTableColumn<StockpileItem>> list = new ArrayList<EnumTableColumn<StockpileItem>>(a.length+b.length);
+			list.addAll(Arrays.asList(a));
+			list.addAll(Arrays.asList(b));
+			return list;
+		}
+
+		@Override
+		protected List<EnumTableColumn<StockpileItem>> getEnumColumns() {
+			if (columns == null) columns = concatB(FilterType.values(), StockpileTableFormat.values());
+			return columns;
 		}
 	}
 }

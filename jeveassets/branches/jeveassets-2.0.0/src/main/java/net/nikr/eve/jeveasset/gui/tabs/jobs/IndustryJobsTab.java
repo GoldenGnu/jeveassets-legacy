@@ -26,6 +26,8 @@ import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -37,6 +39,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.*;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
@@ -204,6 +207,11 @@ public class IndustryJobsTab extends JMainTab {
 		@Override
 		protected Enum valueOf(String column) {
 			return IndustryJobTableFormat.valueOf(column);
+		}
+
+		@Override
+		protected List<EnumTableColumn<IndustryJob>> getEnumColumns() {
+			return columnsAsList(IndustryJobTableFormat.values());
 		}
 	}
 }

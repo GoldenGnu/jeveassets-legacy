@@ -44,6 +44,7 @@ class FilterGui<E> implements ActionListener{
 	private final static String ACTION_SAVE = "ACTION_SAVE";
 	private final static String ACTION_MANAGER = "ACTION_MANAGER";
 	private final static String ACTION_SHOW_FILTERS = "ACTION_SHOW_FILTERS";
+	private final static String ACTION_EXPORT = "ACTION_EXPORT";
 	
 	private JPanel jPanel;
 	private GroupLayout layout;
@@ -59,10 +60,13 @@ class FilterGui<E> implements ActionListener{
 	private FilterSave filterSave;
 	private FilterManager<E> filterManager;
 	
+	private CsvExportDialog<E> export;
 	
 	FilterGui(JFrame jFrame, FilterControl<E> matcherControl) {
 		this.jFrame = jFrame;
 		this.matcherControl = matcherControl;
+		
+		export = new CsvExportDialog<E>(jFrame, matcherControl, matcherControl.getFilters(), matcherControl.getEventLists(), matcherControl.getEnumColumns());
 		
 		jPanel = new JPanel();
 
@@ -105,13 +109,28 @@ class FilterGui<E> implements ActionListener{
 		
 		addToolSeparator();
 		
+		//Export
+		JButton jExport = new JButton(GuiShared.get().export());
+		jExport.setIcon(Images.DIALOG_CSV_EXPORT.getIcon());
+		jExport.setActionCommand(ACTION_EXPORT);
+		jExport.addActionListener(this);
+		addToolButton(jExport);
+		
+		addToolSeparator();
+		
+		//Show Filters
 		jShowFilters = new JCheckBox(GuiShared.get().showFilters());
 		jShowFilters.setActionCommand(ACTION_SHOW_FILTERS);
 		jShowFilters.addActionListener(this);
 		jShowFilters.setSelected(true);
 		addToolButton(jShowFilters, 70);
 		
+		addToolSeparator();
+		
+		//Showing
 		jShowing = new JLabel();
+		
+		
 		
 		updateFilters();
 		add();
@@ -161,10 +180,10 @@ class FilterGui<E> implements ActionListener{
 				}
 			}
 		}
-		jShowing.setText(GuiShared.get().filterShowing(showing, showing, filterName));
+		jShowing.setText(GuiShared.get().filterShowing(showing, matcherControl.getTotalSize(), filterName));
 	}
 	
-	private List<Filter> getFilters(){
+	List<Filter> getFilters(){
 		List<Filter> filters = new ArrayList<Filter>();
 		for (FilterPanel<E> filterPanel : filterPanels){
 			Filter filter = filterPanel.getFilter();
@@ -234,7 +253,7 @@ class FilterGui<E> implements ActionListener{
 		update();
 	}
 	
-	private void clear(){
+	void clear(){
 		while(filterPanels.size() > 0){
 			remove( filterPanels.get(0) );
 		}
@@ -344,6 +363,10 @@ class FilterGui<E> implements ActionListener{
 					updateFilters();
 				}
 			}
+			return;
+		}
+		if (ACTION_EXPORT.equals(e.getActionCommand())){
+			export.setVisible(true);
 			return;
 		}
 		loadFilter(e.getActionCommand(), (e.getModifiers() & ActionEvent.CTRL_MASK) != 0);

@@ -22,8 +22,10 @@
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import java.util.Date;
+import java.util.List;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import static org.junit.Assert.assertEquals;
 import org.junit.*;
 
@@ -368,6 +370,11 @@ public class FilterControlTest {
 				}
 			}
 			return null;
+		}
+		
+		@Override
+		protected List<EnumTableColumn<Item>> getEnumColumns() {
+			return null; //Only used by the GUI
 		}
 	}
 }

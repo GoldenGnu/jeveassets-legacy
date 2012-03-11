@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 
-public class FilterMenu<E> extends JMenu implements ActionListener {
+class FilterMenu<E> extends JMenu implements ActionListener {
 
 	private FilterGui<E> gui;
 	private Enum column;
@@ -47,20 +47,23 @@ public class FilterMenu<E> extends JMenu implements ActionListener {
 		boolean isValid = column != null && text != null;
 		
 		JMenuItem jMenuItem;
+		CompareType[] compareTypes;
+		if (isNumeric){
+			compareTypes = CompareType.valuesNumeric();
+		} else if (isDate){
+			compareTypes = CompareType.valuesDate();
+		} else {
+			compareTypes = CompareType.valuesString();
+		}
 		
-		for (CompareType compareType : CompareType.values()){
+		
+		for (CompareType compareType : compareTypes){
 			jMenuItem = new JMenuItem(compareType.toString());
 			jMenuItem.setIcon(compareType.getIcon());
 			jMenuItem.setActionCommand(compareType.name());
 			jMenuItem.addActionListener(this);
 			jMenuItem.setEnabled(isValid);
-			if (CompareType.isDateCompare(compareType)){
-				if (isDate) add(jMenuItem);
-			} else if (CompareType.isNumericCompare(compareType)){
-				if (isNumeric) add(jMenuItem);
-			} else {
-				add(jMenuItem);
-			}
+			add(jMenuItem);
 		}
 	}
 

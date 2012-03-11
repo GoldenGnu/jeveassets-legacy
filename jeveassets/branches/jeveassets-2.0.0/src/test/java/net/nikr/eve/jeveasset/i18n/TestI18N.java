@@ -110,7 +110,7 @@ public class TestI18N {
 				Bundle.LoadIgnoreExtra.NO,
 				Bundle.LoadIgnoreParameterMisMatch.NO
 				);
-		assertNotNull(g.allAssets());
+		assertNotNull(g.noFilter());
 	}
 	
 	@Test
@@ -176,7 +176,7 @@ public class TestI18N {
 				Bundle.LoadIgnoreExtra.NO,
 				Bundle.LoadIgnoreParameterMisMatch.NO
 				);
-		assertNotNull(g.addField());
+		assertNotNull(g.assets());
 	}
 	
 	@Test public void testTabsJobsBundle_en() throws Exception {

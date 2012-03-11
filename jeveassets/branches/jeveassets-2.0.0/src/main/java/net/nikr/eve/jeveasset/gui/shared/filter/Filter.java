@@ -252,9 +252,9 @@ public class Filter {
 	public Enum getColumn() {
 		return column;
 	}
-
-	public String getCompare() {
-		return compare.name();
+	
+	public CompareType getCompareType() {
+		return compare;
 	}
 
 	public boolean isAnd() {
@@ -270,6 +270,11 @@ public class Filter {
 	}
 
 	public String getText() {
+		return text;
+	}
+
+	@Override
+	public String toString() {
 		return text;
 	}
 

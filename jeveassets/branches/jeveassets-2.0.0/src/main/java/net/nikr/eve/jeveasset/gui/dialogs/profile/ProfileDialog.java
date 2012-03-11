@@ -335,7 +335,7 @@ public class ProfileDialog extends JDialogCentered implements ActionListener, Mo
 				setAllEnabled(true);
 				program.getMainWindow().updateTitle();
 				jWait.hideWaitDialog();
-				if (!program.getAssetsTab().getAssetFilters().isEmpty()){
+				if (!program.getAssetsTab().isFiltersEmpty()){
 					int value = JOptionPane.showConfirmDialog(this.getDialog(),
 							DialoguesProfiles.get().clearFilter(),
 							DialoguesProfiles.get().profileLoadedMsg(),

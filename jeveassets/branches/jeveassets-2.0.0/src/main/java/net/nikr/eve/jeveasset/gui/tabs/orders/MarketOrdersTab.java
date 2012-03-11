@@ -40,6 +40,7 @@ import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.*;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
 import net.nikr.eve.jeveasset.gui.shared.filter.FilterControl;
+import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.i18n.TabsOrders;
 import net.nikr.eve.jeveasset.io.shared.ApiConverter;
@@ -331,6 +332,11 @@ public class MarketOrdersTab extends JMainTab{
 		@Override
 		protected Enum valueOf(String column) {
 			return MarketTableFormat.valueOf(column);
+		}
+
+		@Override
+		protected List<EnumTableColumn<MarketOrder>> getEnumColumns() {
+			return columnsAsList(MarketTableFormat.values());
 		}
 		
 	}

@@ -29,12 +29,15 @@ import net.nikr.eve.jeveasset.data.CsvSettings.DecimalSeperator;
 import net.nikr.eve.jeveasset.data.CsvSettings.FieldDelimiter;
 import net.nikr.eve.jeveasset.data.CsvSettings.LineDelimiter;
 import net.nikr.eve.jeveasset.data.PriceDataSettings.FactionPrice;
-import net.nikr.eve.jeveasset.data.TableSettings.ResizeMode;
 import net.nikr.eve.jeveasset.data.*;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel.UserName;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel.UserPrice;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.LogicType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColumn;
+import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
+import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
@@ -154,13 +157,6 @@ public class SettingsReader extends AbstractXmlReader {
 		Element flagsElement = (Element) flagNodes.item(0);
 		parseFlags(flagsElement, settings);
 
-		//TableSettings
-		NodeList tableSettingsNodes = element.getElementsByTagName("tables");
-		if (tableSettingsNodes.getLength() == 1){
-			Element tableSettingsElement = (Element) tableSettingsNodes.item(0);
-			parseTableSettings(tableSettingsElement, settings);
-		}
-
 		//Updates
 		NodeList updateNodes = element.getElementsByTagName("updates");
 		if (updateNodes.getLength() != 1){
@@ -168,14 +164,6 @@ public class SettingsReader extends AbstractXmlReader {
 		}
 		Element updatesElement = (Element) updateNodes.item(0);
 		parseUpdates(updatesElement, settings);
-
-		//Asset Filters
-		NodeList filterNodes = element.getElementsByTagName("filters");
-		if (filterNodes.getLength() != 1){
-			throw new XmlException("Wrong filters element count.");
-		}
-		Element filtersElement = (Element) filterNodes.item(0);
-		parseAssetFilters(filtersElement, settings.getAssetFilters());
 		
 		//Table Filters
 		NodeList tablefiltersNodes = element.getElementsByTagName("tablefilters");
@@ -183,6 +171,14 @@ public class SettingsReader extends AbstractXmlReader {
 			Element tablefiltersElement = (Element) tablefiltersNodes.item(0);
 			parseTableFilters(tablefiltersElement, settings);
 		}
+		
+		//Asset Filters
+		NodeList filterNodes = element.getElementsByTagName("filters");
+		if (filterNodes.getLength() == 1){
+			Element filtersElement = (Element) filterNodes.item(0);
+			parseAssetFilters(filtersElement, settings);
+		}
+		
 		//Table Columns
 		NodeList tablecolumnsNodes = element.getElementsByTagName("tablecolumns");
 		if (tablecolumnsNodes.getLength() == 1){
@@ -369,61 +365,6 @@ public class SettingsReader extends AbstractXmlReader {
 			settings.getFlags().put(key, enabled);
 		}
 	}
-	private static void parseTableSettings(Element element, Settings settings){
-		NodeList tablesNodes = element.getElementsByTagName("table");
-		for (int a = 0; a < tablesNodes.getLength(); a++){
-			Element tableNode = (Element) tablesNodes.item(a);
-			String table = AttributeGetters.getString(tableNode, "name");
-			ResizeMode resize = ResizeMode.valueOf(AttributeGetters.getString(tableNode, "resize"));
-			NodeList columnNodes = tableNode.getElementsByTagName("column");
-			List<String> tableColumnNames = new ArrayList<String>();
-			List<String> tableColumnVisible = new ArrayList<String>();
-			for (int b = 0; b < columnNodes.getLength(); b++){
-				Element columnNode = (Element) columnNodes.item(b);
-				String name = AttributeGetters.getString(columnNode, "name");
-				boolean visible = AttributeGetters.getBoolean(columnNode, "visible");
-				tableColumnNames.add(name);
-				if (visible) tableColumnVisible.add(name);
-			}
-			TableSettings tableSettings = settings.getTableSettings().get(table);
-			//Adding new columns (if any...)
-			if (tableSettings.getTableColumnOriginal().size() != tableColumnNames.size()){
-				for (String column : tableSettings.getTableColumnOriginal()){
-					if (!tableColumnNames.contains(column)){
-						LOG.info("Adding new column: "+column);
-						tableColumnNames.add(tableSettings.getTableColumnOriginal().indexOf(column), column);
-						int index = 0;
-						for (String visibleColumn : tableColumnNames){
-							if (tableColumnVisible.contains(visibleColumn)){
-								index++;
-							} else if (column.equals(visibleColumn)){
-								tableColumnVisible.add(index, column);
-							}
-						}
-					}
-				}
-			}
-			//Updaing column names
-			removeOldColumns(tableSettings, tableColumnNames, tableColumnVisible);
-			
-			tableSettings.setMode(resize);
-			tableSettings.setTableColumnNames(tableColumnNames);
-			tableSettings.setTableColumnVisible(tableColumnVisible);
-		}
-	}
-	
-	private static void removeOldColumns(TableSettings tableSettings, List<String> tableColumnNames, List<String> tableColumnVisible){
-		for (String column : tableColumnNames){
-			if (!tableSettings.getTableColumnOriginal().contains(column)){
-				LOG.info("Removing old column: "+column);
-				tableColumnNames.remove(column);
-				tableColumnVisible.remove(column);
-				removeOldColumns(tableSettings, tableColumnNames, tableColumnVisible);
-				break; 
-				
-			}
-		}
-	}
 
 	private static void parseUpdates(Element element, Settings settings){
 		NodeList updateNodes = element.getElementsByTagName("update");
@@ -437,15 +378,6 @@ public class SettingsReader extends AbstractXmlReader {
 		Date nextUpdate = new Date( AttributeGetters.getLong(element, "nextupdate") );
 		if (text.equals("conquerable station")){
 			settings.setConquerableStationsNextUpdate(nextUpdate);
-		}
-	}
-
-	private static void parseAssetFilters(Element element, Map<String, List<AssetFilter>> assetFilters){
-		NodeList filterNodes = element.getElementsByTagName("filter");
-		for (int a = 0; a < filterNodes.getLength(); a++){
-			Element currentNode = (Element) filterNodes.item(a);
-			String name = parseFilter(currentNode);
-			assetFilters.put(name, parseFilterRows(currentNode));
 		}
 	}
 
@@ -492,6 +424,80 @@ public class SettingsReader extends AbstractXmlReader {
 			settings.getTableFilters().put(tableName, filters);
 		}
 	}
+	
+	private static void parseAssetFilters(Element filtersElement, Settings settings) {
+		NodeList filterNodeList = filtersElement.getElementsByTagName("filter");
+		for (int a = 0; a < filterNodeList.getLength(); a++){
+			Element filterNode = (Element) filterNodeList.item(a);
+			String filterName = AttributeGetters.getString(filterNode, "name");
+			
+			List<Filter> filters = new ArrayList<Filter>();
+			
+			NodeList rowNodeList = filterNode.getElementsByTagName("row");
+			for (int b = 0; b < rowNodeList.getLength(); b++){
+				Element rowNode = (Element) rowNodeList.item(b);
+				boolean logic = AttributeGetters.getBoolean(rowNode, "and");
+				String column = AttributeGetters.getString(rowNode, "column");
+				String compare = AttributeGetters.getString(rowNode, "mode");
+				String text = AttributeGetters.getString(rowNode, "text");
+				Filter filter = new Filter( convertLogic(logic), 
+											convertColumn(column),
+											convertMode(compare),
+											text);
+				filters.add(filter);
+			}
+			settings.getTableFilters(AssetsTab.NAME).put(filterName, filters);
+		}
+	}
+	
+	private static LogicType convertLogic(boolean logic){
+		if (logic){
+			return LogicType.AND;
+		} else {
+			return LogicType.OR;
+		}
+	}
+	
+	private static Enum convertColumn(String column){
+		if (column.equals("Name")) return EveAssetTableFormat.NAME;
+		if (column.equals("Group")) return EveAssetTableFormat.GROUP;
+		if (column.equals("Category")) return EveAssetTableFormat.CATEGORY;
+		if (column.equals("Owner")) return EveAssetTableFormat.OWNER;
+		if (column.equals("Count")) return EveAssetTableFormat.COUNT;
+		if (column.equals("Location")) return EveAssetTableFormat.LOCATION;
+		if (column.equals("Container")) return EveAssetTableFormat.CONTAINER;
+		if (column.equals("Flag")) return EveAssetTableFormat.FLAG;
+		if (column.equals("Price")) return EveAssetTableFormat.PRICE;
+		if (column.equals("Sell Min")) return EveAssetTableFormat.PRICE_SELL_MIN;
+		if (column.equals("Buy Max")) return EveAssetTableFormat.PRICE_BUY_MAX;
+		if (column.equals("Base Price")) return EveAssetTableFormat.PRICE_BASE;
+		if (column.equals("Value")) return EveAssetTableFormat.VALUE;
+		if (column.equals("Meta")) return EveAssetTableFormat.META;
+		if (column.equals("ID")) return EveAssetTableFormat.ITEM_ID;
+		if (column.equals("Volume")) return EveAssetTableFormat.VOLUME;
+		if (column.equals("Type ID")) return EveAssetTableFormat.TYPE_ID;
+		if (column.equals("Region")) return EveAssetTableFormat.REGION;
+		if (column.equals("Type Count")) return EveAssetTableFormat.COUNT_TYPE;
+		if (column.equals("Security")) return EveAssetTableFormat.SECURITY;
+		if (column.equals("Reprocessed")) return EveAssetTableFormat.PRICE_REPROCESSED;
+		if (column.equals("Reprocessed Value")) return EveAssetTableFormat.VALUE_REPROCESSED;
+		if (column.equals("Singleton")) return EveAssetTableFormat.SINGLETON;
+		if (column.equals("Total Volume")) return EveAssetTableFormat.VOLUME_TOTAL;
+		return Filter.ExtraColumns.ALL; //Fallback
+	}
+	
+	private static CompareType convertMode(String compare) {
+		compare = compare.toUpperCase();
+		if (compare.contains("MODE_EQUALS"))              return CompareType.EQUALS;
+		if (compare.contains("MODE_CONTAIN"))             return CompareType.CONTAINS;
+		if (compare.contains("MODE_CONTAIN_NOT"))         return CompareType.CONTAINS_NOT;
+		if (compare.contains("MODE_EQUALS_NOT"))          return CompareType.EQUALS_NOT;
+		if (compare.contains("MODE_GREATER_THAN"))        return CompareType.GREATER_THAN;
+		if (compare.contains("MODE_LESS_THAN"))           return CompareType.LESS_THAN;
+		if (compare.contains("MODE_GREATER_THAN_COLUMN")) return CompareType.GREATER_THAN_COLUMN;
+		if (compare.contains("MODE_LESS_THAN_COLUMN"))    return CompareType.LESS_THAN_COLUMN;
+		return CompareType.CONTAINS;
+	}
 
 	private static Enum getColumn(String s){
 		try {
@@ -515,38 +521,16 @@ public class SettingsReader extends AbstractXmlReader {
 			
 		}
 		try { //All
+			return EveAssetTableFormat.valueOf(s);
+		} catch (IllegalArgumentException exception) {
+			
+		}
+		try { //All
 			return Filter.ExtraColumns.valueOf(s);
 		} catch (IllegalArgumentException exception) {
 			
 		}
 		throw new RuntimeException("Fail to load filter column: "+s);
-	}
-
-	private static String parseFilter(Element element){
-		return AttributeGetters.getString(element, "name");
-	}
-
-	private static List<AssetFilter> parseFilterRows(Element element){
-		List<AssetFilter> assetFilters = new ArrayList<AssetFilter>();
-		NodeList rowNodes = element.getElementsByTagName("row");
-		for (int a = 0; a < rowNodes.getLength(); a++){
-			Element currentNode = (Element) rowNodes.item(a);
-			AssetFilter assetFilter = parseAssetFilter(currentNode);
-			assetFilters.add(assetFilter);
-		}
-		return assetFilters;
-	}
-
-	private static AssetFilter parseAssetFilter(Element element){
-		String text = AttributeGetters.getString(element, "text");
-		String column = AttributeGetters.getString(element, "column");
-		String mode = AttributeGetters.getString(element, "mode");
-		boolean and = AttributeGetters.getBoolean(element, "and");
-		String columnMatch = null;
-		if (AttributeGetters.haveAttribute(element, "columnmatch")){
-			columnMatch = AttributeGetters.getString(element, "columnmatch");
-		}
-		return new AssetFilter(column, text, AssetFilter.Mode.valueOf(mode), and ? AssetFilter.Junction.AND : AssetFilter.Junction.OR, columnMatch);
 	}
 
 	private static void parseApiProxy(Element apiProxyElement, Settings settings) {
@@ -555,23 +539,15 @@ public class SettingsReader extends AbstractXmlReader {
 	}
 
 	private static void parseCsv(Element element, Settings settings) {
-		int maxColumns = AttributeGetters.getInt(element, "maxcolumns");
 		DecimalSeperator decimal = DecimalSeperator.valueOf(AttributeGetters.getString(element, "decimal"));
 		FieldDelimiter field = FieldDelimiter.valueOf(AttributeGetters.getString(element, "field"));
 		LineDelimiter line = LineDelimiter.valueOf(AttributeGetters.getString(element, "line"));
-		String path = AttributeGetters.getString(element, "path");
-		List<String> columns = new ArrayList<String>();
-		NodeList columnNodes = element.getElementsByTagName("column");
-		for (int b = 0; b < columnNodes.getLength(); b++){
-			Element columnNode = (Element) columnNodes.item(b);
-			String column = AttributeGetters.getString(columnNode, "name");
-			columns.add(column);
+		if (AttributeGetters.haveAttribute(element, "filename")){
+			String filename = AttributeGetters.getString(element, "filename");
+			Settings.getCsvSettings().setFilename(filename);
 		}
-		settings.getCsvSettings().setColumns(columns);
-		settings.getCsvSettings().setDecimalSeperator(decimal);
-		settings.getCsvSettings().setFieldDelimiter(field);
-		settings.getCsvSettings().setLineDelimiter(line);
-		settings.getCsvSettings().setMaxColumns(maxColumns);
-		settings.getCsvSettings().setPath(path);
+		Settings.getCsvSettings().setDecimalSeperator(decimal);
+		Settings.getCsvSettings().setFieldDelimiter(field);
+		Settings.getCsvSettings().setLineDelimiter(line);
 	}
 }
