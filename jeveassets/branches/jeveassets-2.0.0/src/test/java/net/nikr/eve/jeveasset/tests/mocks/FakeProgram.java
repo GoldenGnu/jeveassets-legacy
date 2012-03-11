@@ -22,7 +22,6 @@
 package net.nikr.eve.jeveasset.tests.mocks;
 
 import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.matchers.MatcherEditor.Event;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import net.nikr.eve.jeveasset.Program;
@@ -30,10 +29,11 @@ import net.nikr.eve.jeveasset.data.Asset;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserNameSettingsPanel;
 import net.nikr.eve.jeveasset.gui.dialogs.settings.UserPriceSettingsPanel;
-import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.frame.MainWindow;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.shared.JMainTab;
+import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
+import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewTab;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab;
 
 /**
@@ -58,11 +58,6 @@ public abstract class FakeProgram extends Program {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		throw new UnsupportedOperationException("Not implemented");
-	}
-
-	@Override
-	public void changedMatcher(Event<Asset> matcherEvent) {
 		throw new UnsupportedOperationException("Not implemented");
 	}
 
@@ -146,6 +141,9 @@ public abstract class FakeProgram extends Program {
 	public void updateTableMenu() {
 		throw new UnsupportedOperationException("Not implemented");
 	}
-	
-	
+
+	@Override
+	public OverviewTab getOverviewTab() {
+		throw new UnsupportedOperationException("Not implemented");
+	}
 }

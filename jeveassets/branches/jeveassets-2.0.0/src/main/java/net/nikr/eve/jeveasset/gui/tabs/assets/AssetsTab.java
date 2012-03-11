@@ -295,6 +295,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 	@Override
 	public void listChanged(ListEvent<Asset> listChanges) {
 		updateStatusbar();
+		program.getOverviewTab().updateTable();
 	}
 	
 	public static class AssetFilterControl extends FilterControl<Asset>{

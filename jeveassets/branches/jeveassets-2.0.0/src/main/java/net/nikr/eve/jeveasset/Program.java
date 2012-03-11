@@ -24,8 +24,6 @@ package net.nikr.eve.jeveasset;
 import apple.dts.samplecode.osxadapter.OSXAdapter;
 import ca.odell.glazedlists.BasicEventList;
 import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.matchers.MatcherEditor.Event;
-import ca.odell.glazedlists.matchers.MatcherEditor.Listener;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -62,7 +60,7 @@ import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Program implements ActionListener, Listener<Asset>{
+public class Program implements ActionListener{
 	private final static Logger LOG = LoggerFactory.getLogger(Program.class);
 
 	//Major.Minor.Bugfix [Release Candidate n] [BETA n] [DEV BUILD #n];
@@ -340,6 +338,11 @@ public class Program implements ActionListener, Listener<Asset>{
 	public AssetsTab getAssetsTab(){
 		return assetsTab;
 	}
+
+	public OverviewTab getOverviewTab() {
+		return overviewTab;
+	}
+	
 	public StatusPanel getStatusPanel(){
 		return this.getMainWindow().getStatusPanel();
 	}
@@ -406,14 +409,6 @@ public class Program implements ActionListener, Listener<Asset>{
 	public void tabChanged(){
 		getStatusPanel().tabChanged();
 		updateTableMenu();
-	}
-
-	/**
-	 * Called when the asset table is filtered
-	 */
-	@Override
-	public void changedMatcher(Event<Asset> matcherEvent) {
-		overviewTab.updateTable();
 	}
 
 	@Override
