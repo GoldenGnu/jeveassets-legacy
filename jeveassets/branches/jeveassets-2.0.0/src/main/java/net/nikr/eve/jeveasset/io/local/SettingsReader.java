@@ -43,7 +43,7 @@ import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileDialog;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab.FilterType;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileExtendedTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.online.FactionGetter;
@@ -501,7 +501,7 @@ public class SettingsReader extends AbstractXmlReader {
 
 	private static Enum getColumn(String s){
 		try {
-			return FilterType.valueOf(s);
+			return StockpileExtendedTableFormat.valueOf(s);
 		} catch (IllegalArgumentException exception) {
 			
 		}
@@ -520,7 +520,7 @@ public class SettingsReader extends AbstractXmlReader {
 		} catch (IllegalArgumentException exception) {
 			
 		}
-		try { //All
+		try {
 			return EveAssetTableFormat.valueOf(s);
 		} catch (IllegalArgumentException exception) {
 			

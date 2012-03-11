@@ -47,7 +47,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileTotal;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTab.FilterType;
 import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -60,94 +59,6 @@ public class StockpileTab extends JMainTab implements ActionListener {
 	private final static String ACTION_EXPAND = "ACTION_EXPAND";
 	private final static String ACTION_EDIT_ITEM = "ACTION_EDIT_ITEM";
 	private final static String ACTION_DELETE_ITEM = "ACTION_DELETE_ITEM";
-	
-	public enum FilterType implements EnumTableColumn<StockpileItem> {
-		STOCKPILE_NAME(String.class, GlazedLists.comparableComparator()) {
-			@Override
-			public String getColumnName() {
-				return TabsStockpile.get().getFilterStockpileName();
-			}
-			@Override
-			public Object getColumnValue(StockpileItem from) {
-				return from.getStockpile().getName();
-			}
-		},
-		STOCKPILE_OWNER(String.class, GlazedLists.comparableComparator()) {
-			@Override
-			public String getColumnName() {
-				return TabsStockpile.get().getFilterStockpileOwner();
-			}
-			@Override
-			public Object getColumnValue(StockpileItem from) {
-				return from.getStockpile().getOwner();
-			}
-		},
-		STOCKPILE_LOCATION(String.class, GlazedLists.comparableComparator()) {
-			@Override
-			public String getColumnName() {
-				return TabsStockpile.get().getFilterStockpileLocation();
-			}
-			@Override
-			public Object getColumnValue(StockpileItem from) {
-				return from.getStockpile().getLocation();
-			}
-		},
-		STOCKPILE_FLAG(String.class, GlazedLists.comparableComparator()) {
-			@Override
-			public String getColumnName() {
-				return TabsStockpile.get().getFilterStockpileFlag();
-			}
-			@Override
-			public Object getColumnValue(StockpileItem from) {
-				return from.getStockpile().getFlag();
-			}
-		},
-		STOCKPILE_CONTAINER(String.class, GlazedLists.comparableComparator()) {
-			@Override
-			public String getColumnName() {
-				return TabsStockpile.get().getFilterStockpileContainer();
-			}
-			@Override
-			public Object getColumnValue(StockpileItem from) {
-				return from.getStockpile().getContainer();
-			}
-		},
-		;
-		
-		Class type;
-		Comparator<?> comparator;
-		private FilterType(Class type, Comparator<?> comparator) {
-			this.type = type;
-			this.comparator = comparator;
-		}
-		@Override
-		public Class getType() {
-			return type;
-		}
-		@Override
-		public Comparator getComparator() {
-			return comparator;
-		}
-		@Override
-		public String getColumnName() {
-			return getColumnName();
-		}
-		//XXX - Strange workaround >_<
-		@Override
-		public Object getColumnValue(StockpileItem from) {
-			return getColumnValue(from);
-		}
-		@Override
-		public String toString() {
-			return getColumnName();
-		}
-		@Override public boolean isColumnEditable(Object baseObject) {
-			return false;
-		}
-		@Override public StockpileItem setColumnValue(Object baseObject, Object editedValue) {
-			return null;
-		}
-	}
 	
 	private JButton jAdd;
 	private JButton jExpand;
@@ -664,8 +575,8 @@ public class StockpileTab extends JMainTab implements ActionListener {
 				return format.getColumnValue(item);
 			}
 			
-			if (column instanceof FilterType){
-				FilterType format = (FilterType) column;
+			if (column instanceof StockpileExtendedTableFormat){
+				StockpileExtendedTableFormat format = (StockpileExtendedTableFormat) column;
 				return format.getColumnValue(item);
 			}
 			return null; //Fallback: show all...
@@ -696,7 +607,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 		@Override
 		protected Enum[] getColumns() {
 			if (enumColumns == null){
-				enumColumns = concat(FilterType.values(), StockpileTableFormat.values());
+				enumColumns = concat(StockpileExtendedTableFormat.values(), StockpileTableFormat.values());
 			}
 			return enumColumns;
 		}
@@ -709,7 +620,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 
 			}
 			try {
-				return FilterType.valueOf(column);
+				return StockpileExtendedTableFormat.valueOf(column);
 			} catch (IllegalArgumentException exception) {
 
 			}
@@ -732,16 +643,14 @@ public class StockpileTab extends JMainTab implements ActionListener {
 			System.arraycopy(b, 0, c, a.length, b.length);
 			return c;
 		}
-		private List<EnumTableColumn<StockpileItem>> concatB(EnumTableColumn<StockpileItem>[] a, EnumTableColumn<StockpileItem>[] b) {
-			List<EnumTableColumn<StockpileItem>> list = new ArrayList<EnumTableColumn<StockpileItem>>(a.length+b.length);
-			list.addAll(Arrays.asList(a));
-			list.addAll(Arrays.asList(b));
-			return list;
-		}
-
+		
 		@Override
 		protected List<EnumTableColumn<StockpileItem>> getEnumColumns() {
-			if (columns == null) columns = concatB(FilterType.values(), StockpileTableFormat.values());
+			if (columns == null){
+				columns = new ArrayList<EnumTableColumn<StockpileItem>>();
+				columns.addAll(Arrays.asList(StockpileExtendedTableFormat.values()));
+				columns.addAll(Arrays.asList(StockpileTableFormat.values()));
+			}
 			return columns;
 		}
 	}
