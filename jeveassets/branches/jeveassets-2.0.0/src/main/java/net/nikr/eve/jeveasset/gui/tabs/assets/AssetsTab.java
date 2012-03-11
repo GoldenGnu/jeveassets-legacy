@@ -85,15 +85,15 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 		layout.setAutoCreateGaps(true);
 
 		eveAssetEventList = program.getEveAssetEventList();
-		//For soring the table
-		SortedList<Asset> sortedList = new SortedList<Asset>(eveAssetEventList);
 		eveAssetTableFormat = new EnumTableFormatAdaptor<EveAssetTableFormat, Asset>(EveAssetTableFormat.class);
 		eveAssetTableFormat.setColumns(program.getSettings().getTableColumns().get(NAME));
 		//For filtering the table
-		filterList = new FilterList<Asset>(sortedList);
+		filterList = new FilterList<Asset>(eveAssetEventList);
 		filterList.addListEventListener(this);
+		//For soring the table
+		SortedList<Asset> sortedList = new SortedList<Asset>(filterList);
 		//Table Model
-		eveAssetTableModel = new EventTableModel<Asset>(filterList, eveAssetTableFormat);
+		eveAssetTableModel = new EventTableModel<Asset>(sortedList, eveAssetTableFormat);
 		//Table
 		jTable = new JAssetTable(program, eveAssetTableModel);
 		jTable.getTableHeader().setReorderingAllowed(true);
@@ -104,7 +104,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 		//install the sorting/filtering
 		TableComparatorChooser.install(jTable, sortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, eveAssetTableFormat);
 		//Table Selection
-		EventSelectionModel<Asset> selectionModel = new EventSelectionModel<Asset>(filterList);
+		EventSelectionModel<Asset> selectionModel = new EventSelectionModel<Asset>(sortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
