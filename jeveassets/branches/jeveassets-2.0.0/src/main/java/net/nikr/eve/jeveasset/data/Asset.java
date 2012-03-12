@@ -237,7 +237,11 @@ public class Asset implements Comparable<Asset> {
 	}
 	
 	public String getMeta() {
-		return meta;
+		if (meta.isEmpty()){
+			return "0 (Tech I)";
+		} else {
+			return meta;
+		}
 	}
 
 	public String getName() {
