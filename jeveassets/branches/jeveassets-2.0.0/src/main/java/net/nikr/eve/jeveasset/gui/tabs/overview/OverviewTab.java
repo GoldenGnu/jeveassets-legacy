@@ -21,10 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.overview;
 
-import ca.odell.glazedlists.BasicEventList;
-import ca.odell.glazedlists.EventList;
-import ca.odell.glazedlists.ListSelection;
-import ca.odell.glazedlists.SortedList;
+import ca.odell.glazedlists.*;
 import ca.odell.glazedlists.swing.EventSelectionModel;
 import ca.odell.glazedlists.swing.EventTableModel;
 import ca.odell.glazedlists.swing.TableComparatorChooser;
@@ -59,6 +56,7 @@ public class OverviewTab extends JMainTab {
 	private EventList<Overview> overviewEventList;
 	private EventTableModel<Overview> overviewTableModel;
 	private EnumTableFormatAdaptor<OverviewTableFormat, Overview> overviewTableFormat;
+	private SortedList<Overview> overviewSortedList;
 	private JOverviewTable jTable;
 	private JToggleButton jStations;
 	private JToggleButton jSystems;
@@ -120,19 +118,19 @@ public class OverviewTab extends JMainTab {
 		//Backend
 		overviewEventList = new BasicEventList<Overview>();
 		//For soring the table
-		SortedList<Overview> overviewSortedList = new SortedList<Overview>(overviewEventList);
+		overviewSortedList = new SortedList<Overview>(overviewEventList);
 		//Table Model
 		overviewTableModel = new EventTableModel<Overview>(overviewSortedList, overviewTableFormat);
 		//Tables
 		jTable = new JOverviewTable(overviewTableModel);
+		//Sorters
+		TableComparatorChooser.install(jTable, overviewSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, overviewTableFormat);
 		//Table Selection
 		EventSelectionModel<Overview> selectionModel = new EventSelectionModel<Overview>(overviewSortedList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
 		installTableMenu(jTable);
-		//Sorters
-		TableComparatorChooser.install(jTable, overviewSortedList, TableComparatorChooser.MULTIPLE_COLUMN_MOUSE, overviewTableFormat);
 		//Scroll Panels
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 
@@ -383,9 +381,6 @@ public class OverviewTab extends JMainTab {
 	public void updateTable(){
 		//Only need to update when added to the main window
 		if (!program.getMainWindow().getTabs().contains(this)) return;
-		overviewEventList.getReadWriteLock().writeLock().lock();
-		overviewEventList.clear();
-		overviewEventList.getReadWriteLock().writeLock().unlock();
 		String character = (String) jCharacters.getSelectedItem();
 		String view = getSelectedView();
 		String source = (String) jSource.getSelectedItem();
@@ -414,13 +409,19 @@ public class OverviewTab extends JMainTab {
 			overviewTableFormat.hideColumn(OverviewTableFormat.SECURITY);
 			overviewTableModel.fireTableStructureChanged();
 		}
-		overviewEventList.getReadWriteLock().writeLock().lock();
-		if (source.equals(TabsOverview.get().filteredAssets())){
-			overviewEventList.addAll(getList(program.getAssetsTab().getFilteredAssets(), character, view));
-		} else {
-			overviewEventList.addAll(getList(program.getEveAssetEventList(), character, view));
+		//XXX - set default comparator or we can get IndexOutOfBoundsException
+		overviewSortedList.setComparator(GlazedLists.comparableComparator());
+		try {
+			overviewEventList.getReadWriteLock().writeLock().lock();
+			overviewEventList.clear();
+			if (source.equals(TabsOverview.get().filteredAssets())){
+				overviewEventList.addAll(getList(program.getAssetsTab().getFilteredAssets(), character, view));
+			} else {
+				overviewEventList.addAll(getList(program.getEveAssetEventList(), character, view));
+			}
+		} finally {
+			overviewEventList.getReadWriteLock().writeLock().unlock();
 		}
-		overviewEventList.getReadWriteLock().writeLock().unlock();
 		program.overviewGroupsChanged();
 	}
 
