@@ -30,11 +30,9 @@ import java.beans.PropertyChangeListener;
 import java.util.Date;
 import javax.swing.JTable;
 import javax.swing.JViewport;
+import javax.swing.SwingConstants;
 import javax.swing.event.*;
 import javax.swing.table.*;
-import net.nikr.eve.jeveasset.data.ISK;
-import net.nikr.eve.jeveasset.data.MarketOrder.Quantity;
-import net.nikr.eve.jeveasset.data.Module.ModulePriceValue;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.DateCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.DoubleCellRenderer;
 import net.nikr.eve.jeveasset.gui.shared.TableCellRenderers.FloatCellRenderer;
@@ -68,9 +66,8 @@ public class JAutoColumnTable extends JTable {
 		this.setDefaultRenderer(Long.class, new LongCellRenderer());
 		this.setDefaultRenderer(Integer.class, new IntegerCellRenderer());
 		this.setDefaultRenderer(Date.class, new DateCellRenderer());
-		this.setDefaultRenderer(Quantity.class, new ToStringCellRenderer());
-		this.setDefaultRenderer(ISK.class, new ToStringCellRenderer());
-		this.setDefaultRenderer(ModulePriceValue.class, new ToStringCellRenderer());
+		this.setDefaultRenderer(String.class, new ToStringCellRenderer(SwingConstants.LEFT));
+		this.setDefaultRenderer(Object.class, new ToStringCellRenderer());
 	}
 	
 	public void autoResizeColumns() {
@@ -110,18 +107,11 @@ public class JAutoColumnTable extends JTable {
 	}
 	
 	private void resizeColumnsText(JTable jTable) {
-		if (jTable.getRowCount() > 0){
-			size = 0;
-			for (int i = 0; i < jTable.getColumnCount(); i++) {
-				 size = size+resizeColumn(jTable, jTable.getColumnModel().getColumn(i), i);
-			}
-			updateScroll();
-		} else {
-			for (int i = 0; i < jTable.getColumnCount(); i++) {
-				jTable.getColumnModel().getColumn(i).setPreferredWidth(75);
-			}
-			jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		size = 0;
+		for (int i = 0; i < jTable.getColumnCount(); i++) {
+				size = size+resizeColumn(jTable, jTable.getColumnModel().getColumn(i), i);
 		}
+		updateScroll();
 	}
 	
 	private void updateScroll(){
@@ -162,11 +152,7 @@ public class JAutoColumnTable extends JTable {
 		@Override
 		public void tableChanged(TableModelEvent e) {
 			//FIXME JAutoColumnTable.tableChanged() removed jTable.isEditing() - this might cause a bug
-			/*
-			if(getTable().isEditing()) {
-				getTable().getCellEditor().cancelCellEditing();
-			}
-			*/
+			//if(getTable().isEditing()) getTable().getCellEditor().cancelCellEditing();
 			if (e.getType() == TableModelEvent.DELETE) rowsCount = rowsCount - (Math.abs(e.getFirstRow()-e.getLastRow())+1);
 			if (e.getType() == TableModelEvent.INSERT) rowsCount = rowsCount + (Math.abs(e.getFirstRow()-e.getLastRow())+1);
 			if (Math.abs(rowsLastTime + rowsCount) == getRowCount() && e.getType() != TableModelEvent.UPDATE) { //Last Table Update
