@@ -42,8 +42,8 @@ import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.*;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.*;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.online.FactionGetter;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
@@ -469,14 +469,16 @@ public class SettingsReader extends AbstractXmlReader {
 			NodeList rowNodeList = filterNode.getElementsByTagName("row");
 			for (int b = 0; b < rowNodeList.getLength(); b++){
 				Element rowNode = (Element) rowNodeList.item(b);
-				boolean logic = AttributeGetters.getBoolean(rowNode, "and");
-				String column = AttributeGetters.getString(rowNode, "column");
-				String compare = AttributeGetters.getString(rowNode, "mode");
-				String text = AttributeGetters.getString(rowNode, "text");
-				Filter filter = new Filter( convertLogic(logic), 
-											convertColumn(column),
-											convertMode(compare),
-											text);
+				LogicType logic = convertLogic(AttributeGetters.getBoolean(rowNode, "and")) ;
+				Enum column = convertColumn(AttributeGetters.getString(rowNode, "column")) ;
+				CompareType compare = convertMode(AttributeGetters.getString(rowNode, "mode"));
+				String text;
+				if (AttributeGetters.haveAttribute(rowNode, "columnmatch")){
+					text =  convertColumn(AttributeGetters.getString(rowNode, "columnmatch")).name();
+				} else {
+					text = AttributeGetters.getString(rowNode, "text");
+				}
+				Filter filter = new Filter(logic, column, compare, text);
 				filters.add(filter);
 			}
 			settings.getTableFilters(AssetsTab.NAME).put(filterName, filters);
@@ -521,14 +523,14 @@ public class SettingsReader extends AbstractXmlReader {
 	
 	private static CompareType convertMode(String compare) {
 		compare = compare.toUpperCase();
-		if (compare.contains("MODE_EQUALS"))              return CompareType.EQUALS;
-		if (compare.contains("MODE_CONTAIN"))             return CompareType.CONTAINS;
-		if (compare.contains("MODE_CONTAIN_NOT"))         return CompareType.CONTAINS_NOT;
-		if (compare.contains("MODE_EQUALS_NOT"))          return CompareType.EQUALS_NOT;
-		if (compare.contains("MODE_GREATER_THAN"))        return CompareType.GREATER_THAN;
-		if (compare.contains("MODE_LESS_THAN"))           return CompareType.LESS_THAN;
-		if (compare.contains("MODE_GREATER_THAN_COLUMN")) return CompareType.GREATER_THAN_COLUMN;
-		if (compare.contains("MODE_LESS_THAN_COLUMN"))    return CompareType.LESS_THAN_COLUMN;
+		if (compare.equals("MODE_EQUALS"))              return CompareType.EQUALS;
+		if (compare.equals("MODE_CONTAIN"))             return CompareType.CONTAINS;
+		if (compare.equals("MODE_CONTAIN_NOT"))         return CompareType.CONTAINS_NOT;
+		if (compare.equals("MODE_EQUALS_NOT"))          return CompareType.EQUALS_NOT;
+		if (compare.equals("MODE_GREATER_THAN"))        return CompareType.GREATER_THAN;
+		if (compare.equals("MODE_LESS_THAN"))           return CompareType.LESS_THAN;
+		if (compare.equals("MODE_GREATER_THAN_COLUMN")) return CompareType.GREATER_THAN_COLUMN;
+		if (compare.equals("MODE_LESS_THAN_COLUMN"))    return CompareType.LESS_THAN_COLUMN;
 		return CompareType.CONTAINS;
 	}
 
