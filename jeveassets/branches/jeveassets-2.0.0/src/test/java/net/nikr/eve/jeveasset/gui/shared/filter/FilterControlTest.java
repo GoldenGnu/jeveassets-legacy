@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.List;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
+import net.nikr.eve.jeveasset.gui.shared.filter.Filter.ExtraColumns;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import static org.junit.Assert.assertEquals;
 import org.junit.*;
@@ -132,9 +133,9 @@ public class FilterControlTest {
 	
 	private void matches(Object expected, final Item item, final Enum enumColumn, final CompareType compare, final String text, final String textColumn, final Number numberColumn, final Date dateColumn){
 		//Test matches
-		if (textColumn != null) this.textColumn = textColumn;
-		if (numberColumn != null) this.numberColumn = numberColumn;
-		if (dateColumn != null) this.dateColumn = dateColumn; 
+		this.textColumn = textColumn;
+		this.numberColumn = numberColumn;
+		this.dateColumn = dateColumn; 
 		assertEquals(enumColumn.name(), expected, filterControl.matches(item, enumColumn, compare, text));
 	}
 	
@@ -313,7 +314,76 @@ public class FilterControlTest {
 	}
 	
 	private void allTest() {
-		//FIXME write test for all
+		long startTime = System.currentTimeMillis();
+	//Text
+		//Equals
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS, TEXT);
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS, TEXT_PART);
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS, TEXT_NOT);
+		//Equals not
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT, TEXT);
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT, TEXT_PART);
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT, TEXT_NOT);
+		//Contains
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS, TEXT);
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS, TEXT_PART);
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS, TEXT_NOT);
+		//Contains not
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, TEXT);
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, TEXT_PART);
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, TEXT_NOT);
+	//Number
+		//Equals
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS, "222");
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS, "222.0");
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS, "223");
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS, "223.1");
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS, "222.1");
+		//Equals not
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT, "223");
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT, "223.1");
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT, "222.1");
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT, "222");
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT, "222.0");
+		//Contains
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS, "222");
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS, "222.0");
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS, "223");
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS, "223.1");
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS, "222.1");
+		//Contains not
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, "223");
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, "223.1");
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, "222.1");
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, "222");
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, "222.0");
+	//Date
+		//Equals
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS, DATE);
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS, DATE_PART);
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS, DATE_NOT);
+		//Equals not
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT, DATE);
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT, DATE_PART);
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT, DATE_NOT);
+		//Equals date
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS_DATE, DATE);
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS_DATE, DATE_PART);
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS_DATE, DATE_NOT);
+		//Equals not date
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT_DATE, DATE);
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT_DATE, DATE_PART);
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.EQUALS_NOT_DATE, DATE_NOT);
+		//Contains
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS, DATE);
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS, DATE_PART);
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS, DATE_NOT);
+		//Contains not
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, DATE);
+		matches(false, item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, DATE_PART);
+		matches(true,  item, ExtraColumns.ALL, Filter.CompareType.CONTAINS_NOT, DATE_NOT);
+		long endTime = System.currentTimeMillis();
+		System.out.println("Filter time:"+ (endTime-startTime));
 	}
 	
 	public class Item{

@@ -247,38 +247,23 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 	}
 	
 	private boolean matchesAll(final E item, final CompareType compare, final String text){
-		if (CompareType.isNot(compare)){
-			for (Enum testColumn : getColumns()){
-				if (!matches(item, testColumn, compare, text)){ //Found
-					return false;
-				}
-			}
-			return true;
-		} else {
-			for (Enum testColumn : getColumns()){
-				boolean found = matches(item, testColumn, compare, text);
-				if (found) return true;
-			}
-			return false;
-		}
-		//FIXME - Enable this to make filtering faster - but less accurate
-		/*
-		String s = "";
+		String haystack = "";
 		for (Enum testColumn : getColumns()){
-			s = s+"\n"+ getColumnValue(item, testColumn.name()).toString()+"\r";
+			Object columnValue = getColumnValue(item, testColumn.name());
+			if (columnValue != null) haystack = haystack+"\n"+ format(columnValue)+"\r";
 		}
+		String find = format(text);
 		if (compare == CompareType.CONTAINS){
-			return s.contains(text);
+			return haystack.contains(find);
 		} else if (compare == CompareType.CONTAINS_NOT){
-			return !s.contains(text);
+			return !haystack.contains(find);
 		} else if (compare == CompareType.EQUALS || compare == CompareType.EQUALS_DATE){
-			return s.contains("\n"+text+"\r");
+			return haystack.contains("\n"+find+"\r");
 		} else if (compare == CompareType.EQUALS_NOT || compare == CompareType.EQUALS_NOT_DATE){
-			return !s.contains("\n"+text+"\r");
+			return !haystack.contains("\n"+find+"\r");
 		} else {
 			return true;
 		}
-		*/
 	}
 	
 	private boolean equals(Object object1, Object object2){
