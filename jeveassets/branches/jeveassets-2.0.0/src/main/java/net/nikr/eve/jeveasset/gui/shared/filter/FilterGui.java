@@ -158,10 +158,6 @@ class FilterGui<E> implements ActionListener{
 		jToolBar.addSeparator();
 	}
 	
-	private List<FilterPanel.MyMatcher<E>> getMatchers(){
-		return getMatchers(true);
-	}
-	
 	void updateShowing(){
 		int showing = 0;
 		for (FilterList<E> filterList : matcherControl.getFilterLists()){
@@ -192,11 +188,11 @@ class FilterGui<E> implements ActionListener{
 		return filters;
 	}
 	
-	private List<FilterPanel.MyMatcher<E>> getMatchers(boolean includeEmpty){
+	private List<FilterPanel.MyMatcher<E>> getMatchers(){
 		List<FilterPanel.MyMatcher<E>> matchers = new ArrayList<FilterPanel.MyMatcher<E>>();
 		for (FilterPanel<E> filterPanel : filterPanels){
 			MyMatcher<E> matcher = filterPanel.getMatcher();
-			if (!matcher.isEmpty() || includeEmpty) matchers.add(matcher);
+			if (!matcher.isEmpty()) matchers.add(matcher);
 		}
 		return matchers;
 	}
@@ -235,7 +231,6 @@ class FilterGui<E> implements ActionListener{
 			filterPanels.get(0).setEnabled(false);
 		}
 		update();
-		refilter();
 	}
 	
 	private void add(){
@@ -326,11 +321,17 @@ class FilterGui<E> implements ActionListener{
 	
 	void refilter() {
 		matcherControl.beforeFilter();
-		int showing = 0;
-		for (FilterList<E> filterList : matcherControl.getFilterLists()){
-			filterList.setMatcher(new LogicalMatcher<E>(getMatchers()));
-			showing = showing + filterList.size();
+		List<MyMatcher<E>> matchers = getMatchers();
+		if (matchers.isEmpty()){
+			for (FilterList<E> filterList : matcherControl.getFilterLists()){
+				filterList.setMatcher(null);
+			}
+		} else {
+			for (FilterList<E> filterList : matcherControl.getFilterLists()){
+				filterList.setMatcher(new LogicalMatcher<E>(matchers));
+			}
 		}
+		
 		matcherControl.afterFilter();
 		updateShowing();
 	}
@@ -354,7 +355,7 @@ class FilterGui<E> implements ActionListener{
 			return;
 		}
 		if (ACTION_SAVE.equals(e.getActionCommand())){
-			if (getMatchers(false).isEmpty()){
+			if (getMatchers().isEmpty()){
 				JOptionPane.showMessageDialog(jFrame, GuiShared.get().nothingToSave(), GuiShared.get().saveFilter(), JOptionPane.PLAIN_MESSAGE);
 			} else {
 				String name = filterSave.show(new ArrayList<String>( matcherControl.getFilters().keySet() ));

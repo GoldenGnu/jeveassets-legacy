@@ -75,7 +75,7 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 	private EventList<Asset> eveAssetEventList;
 	private FilterList<Asset> filterList;
 	
-	public static final String NAME = "assets";
+	public static final String NAME = "assets"; //Not to be changed!
 	
 	private AssetFilterControl filterControl;
 	private EnumTableFormatAdaptor<EveAssetTableFormat, Asset> eveAssetTableFormat;

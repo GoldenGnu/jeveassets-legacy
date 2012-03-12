@@ -39,12 +39,11 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor.SimpleColu
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.EveAssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobTableFormat;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJobsTab;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrdersTab;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile;
+import net.nikr.eve.jeveasset.gui.tabs.stockpile.*;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileDialog;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileExtendedTableFormat;
-import net.nikr.eve.jeveasset.gui.tabs.stockpile.StockpileTableFormat;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.online.FactionGetter;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
@@ -414,7 +413,7 @@ public class SettingsReader extends AbstractXmlReader {
 					Element rowNode = (Element) rowNodes.item(c);
 					String text = AttributeGetters.getString(rowNode, "text");
 					String columnString = AttributeGetters.getString(rowNode, "column");
-					Enum column =  getColumn(columnString);
+					Enum column =  getColumn(columnString, tableName);
 					String compare = AttributeGetters.getString(rowNode, "compare");
 					String logic = AttributeGetters.getString(rowNode, "logic");
 					filter.add(new Filter(logic, column, compare, text));
@@ -423,6 +422,40 @@ public class SettingsReader extends AbstractXmlReader {
 			}
 			settings.getTableFilters().put(tableName, filters);
 		}
+	}
+	
+	private static Enum getColumn(String column, String tableName){
+		try {
+			if (tableName.equals(StockpileTab.NAME)) return StockpileExtendedTableFormat.valueOf(column);
+		} catch (IllegalArgumentException exception) {
+			
+		}
+		try {
+			if (tableName.equals(StockpileTab.NAME)) return StockpileTableFormat.valueOf(column);
+		} catch (IllegalArgumentException exception) {
+			
+		}
+		try {
+			if (tableName.equals(IndustryJobsTab.NAME)) return IndustryJobTableFormat.valueOf(column);
+		} catch (IllegalArgumentException exception) {
+			
+		}
+		try {
+			if (tableName.equals(MarketOrdersTab.NAME)) return MarketTableFormat.valueOf(column);
+		} catch (IllegalArgumentException exception) {
+			
+		}
+		try {
+			if (tableName.equals(AssetsTab.NAME)) return EveAssetTableFormat.valueOf(column);
+		} catch (IllegalArgumentException exception) {
+			
+		}
+		try { //All
+			return Filter.ExtraColumns.valueOf(column);
+		} catch (IllegalArgumentException exception) {
+			
+		}
+		throw new RuntimeException("Fail to load filter column: "+column);
 	}
 	
 	private static void parseAssetFilters(Element filtersElement, Settings settings) {
@@ -497,40 +530,6 @@ public class SettingsReader extends AbstractXmlReader {
 		if (compare.contains("MODE_GREATER_THAN_COLUMN")) return CompareType.GREATER_THAN_COLUMN;
 		if (compare.contains("MODE_LESS_THAN_COLUMN"))    return CompareType.LESS_THAN_COLUMN;
 		return CompareType.CONTAINS;
-	}
-
-	private static Enum getColumn(String s){
-		try {
-			return StockpileExtendedTableFormat.valueOf(s);
-		} catch (IllegalArgumentException exception) {
-			
-		}
-		try {
-			return StockpileTableFormat.valueOf(s);
-		} catch (IllegalArgumentException exception) {
-			
-		}
-		try {
-			return IndustryJobTableFormat.valueOf(s);
-		} catch (IllegalArgumentException exception) {
-			
-		}
-		try {
-			return MarketTableFormat.valueOf(s);
-		} catch (IllegalArgumentException exception) {
-			
-		}
-		try {
-			return EveAssetTableFormat.valueOf(s);
-		} catch (IllegalArgumentException exception) {
-			
-		}
-		try { //All
-			return Filter.ExtraColumns.valueOf(s);
-		} catch (IllegalArgumentException exception) {
-			
-		}
-		throw new RuntimeException("Fail to load filter column: "+s);
 	}
 
 	private static void parseApiProxy(Element apiProxyElement, Settings settings) {

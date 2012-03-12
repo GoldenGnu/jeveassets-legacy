@@ -79,7 +79,7 @@ public class StockpileTab extends JMainTab implements ActionListener {
 	
 	private StockpileFilterControl filterControl;
 	
-	private final String NAME = "stockpile"; //Not to be changed!
+	public static final String NAME = "stockpile"; //Not to be changed!
 	
 	public StockpileTab(Program program) {
 		super(program, TabsStockpile.get().stockpile(), Images.TOOL_STOCKPILE.getIcon(), true);

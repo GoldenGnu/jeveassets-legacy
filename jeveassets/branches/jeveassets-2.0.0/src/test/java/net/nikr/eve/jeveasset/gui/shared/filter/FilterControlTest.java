@@ -31,7 +31,7 @@ import org.junit.*;
 
 
 public class FilterControlTest {
-	
+
 	public enum TestEnum{
 		TEXT(false, false),
 		LONG(true, false),
@@ -110,6 +110,8 @@ public class FilterControlTest {
 		numberTest(TestEnum.INTEGER);
 	//Date
 		dateTest();
+	//All
+		allTest();
 		
 	}
 	
@@ -308,6 +310,10 @@ public class FilterControlTest {
 		matches(false, item, testEnum, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_NUMBER.name(), 221.0);
 		matches(false, item, testEnum, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_NUMBER.name(), 221.9);
 		matches(false, item, testEnum, Filter.CompareType.LESS_THAN_COLUMN, TestEnum.COLUMN_NUMBER.name(), 221);
+	}
+	
+	private void allTest() {
+		//FIXME write test for all
 	}
 	
 	public class Item{

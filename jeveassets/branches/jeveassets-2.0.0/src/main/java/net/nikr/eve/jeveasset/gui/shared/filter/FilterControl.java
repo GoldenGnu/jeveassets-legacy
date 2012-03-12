@@ -205,20 +205,7 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 	
 	boolean matches(final E item, final Enum enumColumn, final CompareType compare, final String text){
 		if (enumColumn instanceof ExtraColumns){
-			if (CompareType.isNot(compare)){
-				for (Enum testColumn : getColumns()){
-					if (!matches(item, testColumn, compare, text)){ //Found
-						return false;
-					}
-				}
-				return true;
-			} else {
-				for (Enum testColumn : getColumns()){
-					boolean found = matches(item, testColumn, compare, text);
-					if (found) return true;
-				}
-				return false;
-			}
+			return matchesAll(item, compare, text);
 		}
 		Object column = getColumnValue(item, enumColumn.name());
 		if (column == null) return false;
@@ -257,6 +244,41 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 		} else { //Fallback: show all...
 			return true;
 		}
+	}
+	
+	private boolean matchesAll(final E item, final CompareType compare, final String text){
+		if (CompareType.isNot(compare)){
+			for (Enum testColumn : getColumns()){
+				if (!matches(item, testColumn, compare, text)){ //Found
+					return false;
+				}
+			}
+			return true;
+		} else {
+			for (Enum testColumn : getColumns()){
+				boolean found = matches(item, testColumn, compare, text);
+				if (found) return true;
+			}
+			return false;
+		}
+		//FIXME - Enable this to make filtering faster - but less accurate
+		/*
+		String s = "";
+		for (Enum testColumn : getColumns()){
+			s = s+"\n"+ getColumnValue(item, testColumn.name()).toString()+"\r";
+		}
+		if (compare == CompareType.CONTAINS){
+			return s.contains(text);
+		} else if (compare == CompareType.CONTAINS_NOT){
+			return !s.contains(text);
+		} else if (compare == CompareType.EQUALS || compare == CompareType.EQUALS_DATE){
+			return s.contains("\n"+text+"\r");
+		} else if (compare == CompareType.EQUALS_NOT || compare == CompareType.EQUALS_NOT_DATE){
+			return !s.contains("\n"+text+"\r");
+		} else {
+			return true;
+		}
+		*/
 	}
 	
 	private boolean equals(Object object1, Object object2){

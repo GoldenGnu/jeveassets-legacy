@@ -31,7 +31,7 @@ import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 public class Formater {
 
-	//FIXME - this can not be changed after release!
+	//FIXME - Date format can not be changed after release!
 	//Must not be changed! please see: FilterControl
 	public static final String COLUMN_FORMAT = "dd-MM-yyyy";
 	

@@ -72,6 +72,8 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 	private final List<Enum> allColumns;
 	private final List<Enum> numericColumns;
 	private final List<Enum> dateColumns;
+	
+	private boolean loading = false;
 
 	FilterPanel(FilterGui<E> gui, FilterControl<E> matcherControl) {
 		this.gui = gui;
@@ -217,8 +219,9 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 	}
 	
 	void setFilter(Filter filter){
+		loading = true;
 		jEnabled.setEnabled(true);
-		jLogic.setSelectedItem(filter.isAnd() ? LogicType.AND : LogicType.OR);
+		jLogic.setSelectedItem(filter.getLogic());
 		jColumn.setSelectedItem(filter.getColumn());
 		jCompare.setSelectedItem(filter.getCompareType());
 		if (isColumnCompare()){
@@ -228,6 +231,7 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		} else {
 			jText.setText(filter.getText());
 		}
+		loading = false;
 	}
 	
 	private String getDataString(){
@@ -235,7 +239,7 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 	}
 	
 	private void refilter() {
-		gui.refilter();
+		if (!loading) gui.refilter();
 	}
 	
 	private boolean isColumnCompare(){
@@ -344,6 +348,7 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 	public void actionPerformed(ActionEvent e) {
 		if (ACTION_REMOVE.equals(e.getActionCommand())){
 			gui.remove(this);
+			refilter();
 		}
 		if (ACTION_FILTER.equals(e.getActionCommand())){
 			if (jColumn.equals(e.getSource())) updateNumeric(true);

@@ -47,6 +47,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 public class JAutoColumnTable extends JTable {
 	
 	private JViewport jViewport = null;
+	private int size = 0;
 	
 	public JAutoColumnTable(TableModel tableModel) {
 		super(tableModel);
@@ -73,7 +74,7 @@ public class JAutoColumnTable extends JTable {
 	}
 	
 	public void autoResizeColumns() {
-		resizeColumnsText(this, jViewport);
+		resizeColumnsText(this);
 	}
 	
 	private JTable getTable(){
@@ -108,16 +109,13 @@ public class JAutoColumnTable extends JTable {
 		}
 	}
 	
-	private void resizeColumnsText(JTable jTable, JViewport jViewport) {
+	private void resizeColumnsText(JTable jTable) {
 		if (jTable.getRowCount() > 0){
-			int size = 0;
-			jTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			size = 0;
 			for (int i = 0; i < jTable.getColumnCount(); i++) {
 				 size = size+resizeColumn(jTable, jTable.getColumnModel().getColumn(i), i);
 			}
-			if (jViewport != null && size < jViewport.getSize().width){
-				jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-			}
+			updateScroll();
 		} else {
 			for (int i = 0; i < jTable.getColumnCount(); i++) {
 				jTable.getColumnModel().getColumn(i).setPreferredWidth(75);
@@ -125,15 +123,23 @@ public class JAutoColumnTable extends JTable {
 			jTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		}
 	}
+	
+	private void updateScroll(){
+		if (jViewport != null && size < jViewport.getSize().width){
+			getTable().setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+		} else {
+			getTable().setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		}
+	}
 
 	private int resizeColumn(JTable jTable, TableColumn column, int columnIndex) {
-		int maxWidth = 0;
+		//Header
 		TableCellRenderer renderer = column.getHeaderRenderer();
-		if (renderer == null) {
-			renderer = jTable.getTableHeader().getDefaultRenderer();
-		}
+		if (renderer == null) renderer = jTable.getTableHeader().getDefaultRenderer();
 		Component component = renderer.getTableCellRendererComponent(jTable, column.getHeaderValue(), false, false, 0, 0);
-		maxWidth = component.getPreferredSize().width;
+		int maxWidth = component.getPreferredSize().width;
+		
+		//Rows
 		for (int a = 0; a < jTable.getRowCount(); a++){
 			renderer = jTable.getCellRenderer(a, columnIndex);
 			if (renderer instanceof SeparatorTableCell) continue;
@@ -170,7 +176,7 @@ public class JAutoColumnTable extends JTable {
 
 		@Override
 		public void componentResized(ComponentEvent e) {
-			autoResizeColumns();
+			updateScroll();
 		}
 
 		@Override

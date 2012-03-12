@@ -56,7 +56,7 @@ public class IndustryJobsTab extends JMainTab {
 	private IndustryJobsFilterControl filterControl;
 	private EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> industryJobsTableFormat;
 	
-	private final String NAME = "industryjobs"; //Not to be changed!
+	public static final String NAME = "industryjobs"; //Not to be changed!
 
 	public IndustryJobsTab(Program program) {
 		super(program, TabsJobs.get().industry(), Images.TOOL_INDUSTRY_JOBS.getIcon(), true);
