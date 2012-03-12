@@ -99,7 +99,7 @@ public enum StockpileExtendedTableFormat implements EnumTableColumn<StockpileIte
 		public String getColumnName() {
 			return getColumnName();
 		}
-		//XXX - Strange workaround >_<
+		//XXX - TableFormat.getColumnValue(...) Workaround
 		@Override
 		public Object getColumnValue(StockpileItem from) {
 			return getColumnValue(from);

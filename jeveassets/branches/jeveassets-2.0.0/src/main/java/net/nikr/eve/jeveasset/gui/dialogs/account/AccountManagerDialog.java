@@ -55,7 +55,7 @@ import net.nikr.eve.jeveasset.i18n.DialoguesAccount;
 
 public class AccountManagerDialog extends JDialogCentered implements ActionListener  {
 
-	// TODO enum - more string enum pattern, to be converted to an enum
+	// TODO action enum - more string enum pattern, to be converted to an enum
 	private final static String ACTION_ADD = "ACTION_ADD";
 	private final static String ACTION_CLOSE = "ACTION_CLOSE";
 	private final static String ACTION_COLLAPSE = "ACTION_COLLAPSE";

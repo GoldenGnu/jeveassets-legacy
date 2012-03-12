@@ -211,7 +211,6 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return from.getTypeCount();
 		}
 	},
-	//FIXME - meta will not be compared correct...
 	META(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
@@ -232,7 +231,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 			return from.getVolume();
 		}
 	},
-	VOLUME_TOTAL(String.class, GlazedLists.comparableComparator()) {
+	VOLUME_TOTAL(Float.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnVolumeTotal();
@@ -289,7 +288,7 @@ public enum EveAssetTableFormat implements EnumTableColumn<Asset> {
 	public Comparator getComparator() {
 		return comparator;
 	}
-	//XXX - Strange workaround >_<
+	//XXX - TableFormat.getColumnValue(...) Workaround
 	@Override
 	public Object getColumnValue(Asset from) {
 		return getColumnValue(from);

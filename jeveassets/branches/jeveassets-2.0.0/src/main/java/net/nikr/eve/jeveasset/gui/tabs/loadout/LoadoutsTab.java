@@ -97,6 +97,8 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 	private FilterList<Module> moduleFilterList;
 	private SeparatorList<Module> separatorList;
 
+	//TODO - LoadoutsTab is not translated properly
+	
 	public LoadoutsTab(Program program) {
 		super(program, TabsLoadout.get().ship(), Images.TOOL_SHIP_LOADOUTS.getIcon(), true);
 
@@ -359,7 +361,7 @@ public class LoadoutsTab extends JMainTab implements ActionListener {
 		if (!characters.isEmpty()){
 			jCharacters.setEnabled(true);
 			Collections.sort(characters);
-			characters.add(0, "All"); //TODO i18n translation missing
+			characters.add(0, "All");
 			jCharacters.setModel( new DefaultComboBoxModel(characters.toArray()));
 			jCharacters.setSelectedIndex(0);
 		} else {

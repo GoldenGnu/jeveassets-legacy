@@ -63,12 +63,12 @@ public abstract class JMenuTool extends JMenu {
 		}
 		if (object instanceof MarketOrder){
 			MarketOrder marketOrder = (MarketOrder) object;
-			//TODO can not edit price from Orders Tool
+			//TODO - can not edit price from Orders Tool
 			return init(program, true, marketOrder.getName(), marketOrder.getTypeID(), marketOrder.getLocation(), marketOrder.getSystem(), marketOrder.getRegion(), -1);
 		}
 		if (object instanceof IndustryJob){
 			IndustryJob industryJob = (IndustryJob) object;
-			//TODO can not edit price from Jobs Tool
+			//TODO - can not edit price from Jobs Tool
 			return init(program, true, industryJob.getName(), industryJob.getInstalledItemTypeID(), industryJob.getLocation(), industryJob.getSystem(), industryJob.getRegion(), -1);
 		}
 		if (object instanceof Asset){

@@ -156,7 +156,7 @@ public enum IndustryJobTableFormat implements EnumTableColumn<IndustryJob> {
 	public Comparator getComparator() {
 		return comparator;
 	}
-	//XXX - Strange workaround >_<
+	//XXX - TableFormat.getColumnValue(...) Workaround
 	@Override
 	public Object getColumnValue(IndustryJob from) {
 		return getColumnValue(from);
