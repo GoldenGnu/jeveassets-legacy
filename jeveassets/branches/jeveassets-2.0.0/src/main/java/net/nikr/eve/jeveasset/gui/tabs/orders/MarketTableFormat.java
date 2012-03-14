@@ -171,6 +171,11 @@ public enum MarketTableFormat implements EnumTableColumn<MarketOrder> {
 	public Object getColumnValue(MarketOrder from) {
 		return getColumnValue(from);
 	}
+	//XXX - TableFormat.getColumnName(...) Workaround
+	@Override
+	public String getColumnName() {
+		return getColumnName();
+	}
 	@Override
 	public String toString() {
 		return getColumnName();
