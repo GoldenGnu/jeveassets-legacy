@@ -304,7 +304,6 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 			super(jFrame, filters, filterList, eventList);
 		}
 		
-		//FIXME - meta will not be compared correct...
 		@Override
 		protected Object getColumnValue(Asset item, String column) {
 			EveAssetTableFormat format = EveAssetTableFormat.valueOf(column);
