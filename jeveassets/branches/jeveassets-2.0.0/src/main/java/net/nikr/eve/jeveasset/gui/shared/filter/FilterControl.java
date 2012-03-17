@@ -27,13 +27,9 @@ import ca.odell.glazedlists.event.ListEvent;
 import ca.odell.glazedlists.event.ListEventListener;
 import ca.odell.glazedlists.gui.TableFormat;
 import ca.odell.glazedlists.swing.EventTableModel;
-import java.text.NumberFormat;
-import java.text.ParsePosition;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.table.TableModel;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
-import net.nikr.eve.jeveasset.gui.shared.filter.Filter.CompareType;
 import net.nikr.eve.jeveasset.gui.shared.filter.Filter.ExtraColumns;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
@@ -41,16 +37,10 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 
 public abstract class FilterControl<E> implements ListEventListener<E>{
 	
-	//TODO i18n Use localized input
-	//public static final Locale LOCALE = Locale.getDefault();
-	
-	public static final Locale LOCALE = Locale.ENGLISH; //Use english AKA US_EN
-	
 	private final Map<String, List<Filter>> filters;
 	private final List<FilterList<E>> filterLists;
 	private final List<EventList<E>> eventLists;
 	private FilterGui<E> gui;
-	private NumberFormat numberFormat = NumberFormat.getInstance(LOCALE);
 
 	/**
 	 * Do not use this constructor - it's here only for test purposes 
@@ -121,7 +111,7 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 					column = (Enum) adaptor.getShownColumns().get(columnIndex);
 					isNumeric = isNumeric(column);
 					isDate = isDate(column);
-					text = format(getColumnValue(item, column.name()));
+					text = FilterMatcher.format(getColumnValue(item, column.name()));
 				}
 
 			}
@@ -201,195 +191,6 @@ public abstract class FilterControl<E> implements ListEventListener<E>{
 		} else {
 			return false;
 		}
-	}
-	
-	boolean matches(final E item, final Enum enumColumn, final CompareType compare, final String text){
-		if (enumColumn instanceof ExtraColumns){
-			return matchesAll(item, compare, text);
-		}
-		Object column = getColumnValue(item, enumColumn.name());
-		if (column == null) return false;
-		if (compare == CompareType.CONTAINS){
-			return contains(column, text);
-		} else if (compare == CompareType.CONTAINS_NOT){
-			return !contains(column, text);
-		} else if (compare == CompareType.EQUALS || compare == CompareType.EQUALS_DATE){
-			return equals(column, text);
-		} else if (compare == CompareType.EQUALS_NOT || compare == CompareType.EQUALS_NOT_DATE){
-			return !equals(column, text);
-		} else if (compare == CompareType.GREATER_THAN){
-			return great(column, text);
-		} else if (compare == CompareType.LESS_THAN){
-			return less(column, text);
-		} else if (compare == CompareType.BEFORE){
-			return before(column, text);
-		} else if (compare == CompareType.AFTER){
-			return after(column, text);
-		} else if (compare == CompareType.GREATER_THAN_COLUMN){
-			return great(column, getColumnValue(item, text));
-		} else if (compare == CompareType.LESS_THAN_COLUMN){
-			return less(column, getColumnValue(item, text));
-		} else if (compare == CompareType.EQUALS_COLUMN){
-			return equals(column, getColumnValue(item, text));
-		} else if (compare == CompareType.EQUALS_NOT_COLUMN){
-			return !equals(column, getColumnValue(item, text));
-		} else if (compare == CompareType.CONTAINS_COLUMN){
-			return contains(column, getColumnValue(item, text));
-		} else if (compare == CompareType.CONTAINS_NOT_COLUMN){
-			return !contains(column, getColumnValue(item, text));
-		} else if (compare == CompareType.BEFORE_COLUMN){
-			return before(column, getColumnValue(item, text));
-		} else if (compare == CompareType.AFTER_COLUMN){
-			return after(column, getColumnValue(item, text));
-		} else { //Fallback: show all...
-			return true;
-		}
-	}
-	
-	private boolean matchesAll(final E item, final CompareType compare, final String text){
-		String haystack = "";
-		for (Enum testColumn : getColumns()){
-			Object columnValue = getColumnValue(item, testColumn.name());
-			if (columnValue != null) haystack = haystack+"\n"+ format(columnValue)+"\r";
-		}
-		String find = format(text);
-		if (compare == CompareType.CONTAINS){
-			return haystack.contains(find);
-		} else if (compare == CompareType.CONTAINS_NOT){
-			return !haystack.contains(find);
-		} else if (compare == CompareType.EQUALS || compare == CompareType.EQUALS_DATE){
-			return haystack.contains("\n"+find+"\r");
-		} else if (compare == CompareType.EQUALS_NOT || compare == CompareType.EQUALS_NOT_DATE){
-			return !haystack.contains("\n"+find+"\r");
-		} else {
-			return true;
-		}
-	}
-	
-	private boolean equals(Object object1, Object object2){
-		//Null
-		if (object1 == null || object2 == null) return false;
-		
-		//Equals (case insentive)
-		return format(object1).equals(format(object2));
-	}
-	private boolean contains(Object object1, Object object2){
-		//Null
-		if (object1 == null || object2 == null) return false;
-		
-		//Contains (case insentive)
-		return format(object1).contains(format(object2));
-	}
-	private boolean less(Object object1, Object object2){
-		return greatThen(object2, object1, false);
-	}
-	private boolean great(Object object1, Object object2){
-		return greatThen(object1, object2, true);
-	}
-	private boolean greatThen(Object object1, Object object2, boolean fallback){
-		//Null
-		if (object1 == null || object2 == null) return fallback;
-		
-		//Double / Float
-		Double double1 = getDouble(object1);
-		Double double2 = getDouble(object2);
-		
-		//Long / Integer
-		Long long1 = getLong(object1);
-		Long long2 = getLong(object2);
-		
-		if (long1 != null && long2 != null) return long1 > long2;
-		if (long1 != null && double2 != null) return long1 > double2;
-		if (double1 != null && double2 != null) return double1 > double2;
-		if (double1 != null && long2 != null) return double1 > long2;
-		
-		
-		return fallback; //Fallback
-	}
-	
-	private boolean before(Object object1, Object object2) {
-		//Date
-		Date date1 = getDate(object1);
-		Date date2 = getDate(object2);
-		if (date1 != null && date2 != null){
-			return date1.before(date2);
-		}
-		return false; //Fallback
-	}
-
-	private boolean after(Object object1, Object object2) {
-		Date date1 = getDate(object1);
-		Date date2 = getDate(object2);
-		if (date1 != null && date2 != null){
-			return date1.after(date2);
-		}
-		return false;
-	}
-	
-	private Number getNumber(Object obj){
-		if ( (obj instanceof Long) || (obj instanceof Integer)
-				|| (obj instanceof Double) || (obj instanceof Float) ){
-			return (Number)obj;
-		} else {
-			return createNumber(obj);
-		}
-	}
-	private Double getDouble(Object obj){
-		if (obj instanceof Double){
-			return (Double)obj;
-		} else if (obj instanceof Float){
-			return Double.valueOf((Float) obj);
-		} else {
-			return createNumber(obj);
-		}
-	}
-	private Long getLong(Object obj){
-		if (obj instanceof Long){
-			return (Long)obj;
-		} else if (obj instanceof Integer){
-			return Long.valueOf((Integer) obj);
-		} else {
-			return null;
-		}
-	}
-	private Double createNumber(Object object){
-		if (object instanceof String){
-			String filterValue = (String) object;
-			//Used to check if parsing was successful
-			ParsePosition position = new ParsePosition(0);
-			//Parse number using the Locale
-			Number n = numberFormat.parse(filterValue, position);
-			if (n != null && position.getIndex() == filterValue.length()){ //Numeric
-				return n.doubleValue();
-			}
-		}
-		return null;
-	}
-	
-	
-	private Date getDate(Object obj){
-		if (obj instanceof Date){
-			return (Date)obj;
-		} else if (obj instanceof String){
-			return Formater.columnStringToDate((String) obj);
-		} else {
-			return null;
-		}
-	}
-	
-	private String format(Object object){
-		//String
-		String compare = object.toString();
-		
-		//Number
-		Number number = getNumber(object);
-		if (number != null) compare = Formater.compareFormat(number);
-		
-		//Date
-		Date date = getDate(object);
-		if (date != null) compare = Formater.columnDate(date);
-		
-		return compare.toLowerCase();
 	}
 	
 	@Override

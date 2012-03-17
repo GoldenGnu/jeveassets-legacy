@@ -384,7 +384,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 		} else if (jCurrentFilter.isSelected()){
 			List<Filter> filter = matcherControl.getCurrentFilters();
 			for (EventList<E> eventList : eventLists){
-				FilterList<E> filterList = new FilterList<E>(eventList, new FilterLogicalMatcher<E>(filter, matcherControl));
+				FilterList<E> filterList = new FilterList<E>(eventList, new FilterLogicalMatcher<E>(matcherControl, filter));
 				for (E e : filterList){
 					items.add(e);
 				}
@@ -393,7 +393,7 @@ public class CsvExportDialog<E> extends JDialogCentered implements ActionListene
 			String filterName = (String)jFilters.getSelectedItem();
 			List<Filter> filter = filters.get(filterName);
 			for (EventList<E> eventList : eventLists){
-				FilterList<E> filterList = new FilterList<E>(eventList, new FilterLogicalMatcher<E>(filter, matcherControl));
+				FilterList<E> filterList = new FilterList<E>(eventList, new FilterLogicalMatcher<E>(matcherControl, filter));
 				for (E e : filterList){
 					items.add(e);
 				}

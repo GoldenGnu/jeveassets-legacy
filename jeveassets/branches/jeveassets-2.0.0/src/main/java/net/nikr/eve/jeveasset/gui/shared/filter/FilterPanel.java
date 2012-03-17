@@ -20,7 +20,6 @@
  */
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
-import ca.odell.glazedlists.matchers.Matcher;
 import com.toedter.calendar.JCalendar;
 import com.toedter.calendar.JDateChooser;
 import com.toedter.calendar.JTextFieldDateEditor;
@@ -185,7 +184,7 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		return jPanel;
 	}
 	
-	MyMatcher<E> getMatcher(){
+	FilterMatcher<E> getMatcher(){
 		boolean enabled = jEnabled.isSelected();
 		LogicType logic = (LogicType) jLogic.getSelectedItem();
 		Enum column = (Enum)jColumn.getSelectedItem();
@@ -199,7 +198,7 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		} else {
 			text = jText.getText();
 		}
-		return new MyMatcher<E>(matcherControl, enabled, logic, column, compare, text);
+		return new FilterMatcher<E>(matcherControl, logic, column, compare, text, enabled);
 	}
 	
 	Filter getFilter(){
@@ -230,6 +229,7 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 			jDate.setDate(Formater.columnStringToDate(filter.getText()));
 		} else {
 			jText.setText(filter.getText());
+			timer.stop();
 		}
 		loading = false;
 	}
@@ -368,38 +368,5 @@ class FilterPanel<E> implements ActionListener, KeyListener, DocumentListener, P
 		if ("date".equals(evt.getPropertyName())) {
 			refilter();
 		}
-	}
-	
-	static class MyMatcher<E> implements Matcher<E>{
-
-		private FilterControl<E> matcherControl;
-		private boolean enabled;
-		private LogicType logic;
-		private Enum column;
-		private CompareType compare;
-		private String text;
-
-		public MyMatcher(FilterControl<E> matcherControl, boolean enabled, LogicType logic, Enum column, CompareType compare, String text) {
-			this.matcherControl = matcherControl;
-			this.logic = logic;
-			this.enabled = enabled;
-			this.column = column;
-			this.compare = compare;
-			this.text = text;
-		}
-		
-		boolean isAnd(){
-			return logic == LogicType.AND;
-		}
-		
-		public boolean isEmpty(){
-			return text.isEmpty() || !enabled;
-		}
-		
-		@Override
-		public boolean matches(E item) {
-			return matcherControl.matches(item, column, compare, text);
-		}
-		
 	}
 }

@@ -31,7 +31,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.*;
 
 
-public class FilterControlTest {
+public class FilterMatcherTest {
 
 	public enum TestEnum{
 		TEXT(false, false),
@@ -136,7 +136,8 @@ public class FilterControlTest {
 		this.textColumn = textColumn;
 		this.numberColumn = numberColumn;
 		this.dateColumn = dateColumn; 
-		assertEquals(enumColumn.name(), expected, filterControl.matches(item, enumColumn, compare, text));
+		FilterMatcher<Item> filterMatcher = new FilterMatcher<Item>(filterControl, Filter.LogicType.AND, enumColumn, compare, text, true);
+		assertEquals(enumColumn.name(), expected, filterMatcher.matches(item));
 	}
 	
 	private void dateTest(){

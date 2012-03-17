@@ -22,7 +22,6 @@
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import ca.odell.glazedlists.FilterList;
-import ca.odell.glazedlists.matchers.Matcher;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,7 +33,6 @@ import javax.swing.*;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.JDropDownButton;
-import net.nikr.eve.jeveasset.gui.shared.filter.FilterPanel.MyMatcher;
 import net.nikr.eve.jeveasset.i18n.GuiShared;
 
 class FilterGui<E> implements ActionListener{
@@ -188,10 +186,10 @@ class FilterGui<E> implements ActionListener{
 		return filters;
 	}
 	
-	private List<FilterPanel.MyMatcher<E>> getMatchers(){
-		List<FilterPanel.MyMatcher<E>> matchers = new ArrayList<FilterPanel.MyMatcher<E>>();
+	private List<FilterMatcher<E>> getMatchers(){
+		List<FilterMatcher<E>> matchers = new ArrayList<FilterMatcher<E>>();
 		for (FilterPanel<E> filterPanel : filterPanels){
-			MyMatcher<E> matcher = filterPanel.getMatcher();
+			FilterMatcher<E> matcher = filterPanel.getMatcher();
 			if (!matcher.isEmpty()) matchers.add(matcher);
 		}
 		return matchers;
@@ -321,14 +319,14 @@ class FilterGui<E> implements ActionListener{
 	
 	void refilter() {
 		matcherControl.beforeFilter();
-		List<MyMatcher<E>> matchers = getMatchers();
+		List<FilterMatcher<E>> matchers = getMatchers();
 		if (matchers.isEmpty()){
 			for (FilterList<E> filterList : matcherControl.getFilterLists()){
 				filterList.setMatcher(null);
 			}
 		} else {
 			for (FilterList<E> filterList : matcherControl.getFilterLists()){
-				filterList.setMatcher(new LogicalMatcher<E>(matchers));
+				filterList.setMatcher(new FilterLogicalMatcher<E>(matchers));
 			}
 		}
 		
@@ -371,37 +369,5 @@ class FilterGui<E> implements ActionListener{
 			return;
 		}
 		loadFilter(e.getActionCommand(), (e.getModifiers() & ActionEvent.CTRL_MASK) != 0);
-	}
-	
-	private static class LogicalMatcher<E> implements Matcher<E> {
-
-		private List<MyMatcher<E>> matchers;
-
-		public LogicalMatcher(List<MyMatcher<E>> matchers) {
-			this.matchers = matchers;
-		}
-
-		@Override
-		public boolean matches(E item) {
-			boolean bOR = false;
-			boolean bAnyORs = false;
-			for (MyMatcher<E> matcher : matchers){
-				if (!matcher.isEmpty()){
-					if (matcher.isAnd()){ //And
-						if (!matcher.matches(item)){ //if just one don't match, none match
-							return false;
-						}
-					} else { //Or
-						bAnyORs = true;
-						if (matcher.matches(item)){ //if just one is true all is true
-							bOR = true;
-						}
-					}
-				}
-			}
-			//if any "Or" is true | if no "Or" is included | if just one "Or" it's considered as "And"
-			return (bOR || !bAnyORs);
-		}
-	}
-	
+	}	
 }

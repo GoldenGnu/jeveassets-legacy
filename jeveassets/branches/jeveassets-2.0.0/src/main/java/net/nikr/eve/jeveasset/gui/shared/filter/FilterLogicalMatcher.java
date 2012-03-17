@@ -22,50 +22,45 @@
 package net.nikr.eve.jeveasset.gui.shared.filter;
 
 import ca.odell.glazedlists.matchers.Matcher;
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class FilterLogicalMatcher<E> implements Matcher<E> {
 
-	private final List<Filter> assetFilters;
-	private final ItemMatcher<E> itemMatcher;
+	private final List<FilterMatcher<E>> matchers;
 
-	public FilterLogicalMatcher(List<Filter> assetFilters, FilterControl<E> matcherControl) {
-		this.assetFilters = assetFilters;
-		itemMatcher = new ItemMatcher<E>(matcherControl);
+	public FilterLogicalMatcher(List<FilterMatcher<E>> matchers) {
+		this.matchers = matchers;
+	}
+
+	
+	public FilterLogicalMatcher(FilterControl<E> matcherControl, List<Filter> filters) {
+		this.matchers = new ArrayList<FilterMatcher<E>>();
+		for (Filter filter : filters){
+			this.matchers.add(new FilterMatcher<E>(matcherControl, filter));
+		}
 	}
 	
 	@Override
 	public boolean matches(E item) {
 		boolean bOr = false;
 		boolean bAnyOrs = false;
-		for (int a = 0; a < assetFilters.size(); a++){
-			Filter filter = assetFilters.get(a);
-			boolean matches = itemMatcher.matches(item, filter);
-			if (filter.isAnd()){ //And
-				if (!matches){ //if just one don't match, none match
-					return false;
-				}
-			} else { //Or
-				bAnyOrs = true;
-				if (matches){ //if just one is true all is true
-					bOr = true;
+		for (FilterMatcher<E> matcher : matchers){
+			if (!matcher.isEmpty()){
+				boolean matches = matcher.matches(item);
+				if (matcher.isAnd()){ //And
+					if (!matches){ //if just one don't match, none match
+						return false;
+					}
+				} else { //Or
+					bAnyOrs = true;
+					if (matches){ //if just one is true all is true
+						bOr = true;
+					}
 				}
 			}
 		}
 		return (bOr || !bAnyOrs);
-	}
-	
-	private static class ItemMatcher<E>{
-
-		private final FilterControl<E> matcherControl;
-
-		public ItemMatcher(FilterControl<E> matcherControl) {
-			this.matcherControl = matcherControl;
-		}		
-
-		public boolean matches(E item,  Filter filter) {
-			return matcherControl.matches(item, filter.getColumn(), filter.getCompareType(), filter.getText());
-		}
 	}
 }

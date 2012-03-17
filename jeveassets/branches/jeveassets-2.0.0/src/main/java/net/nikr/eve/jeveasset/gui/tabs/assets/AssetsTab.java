@@ -160,10 +160,10 @@ public class AssetsTab extends JMainTab implements ListEventListener<Asset>{
 		filterControl.clearCurrentFilters();
 	}
 	public FilterLogicalMatcher<Asset> getFilterLogicalMatcher(List<Filter> filters){
-		return new FilterLogicalMatcher<Asset>(filters, filterControl);
+		return new FilterLogicalMatcher<Asset>(filterControl, filters);
 	}
 	public FilterLogicalMatcher<Asset> getFilterLogicalMatcher(){
-		return new FilterLogicalMatcher<Asset>(getFilters(), filterControl);
+		return new FilterLogicalMatcher<Asset>(filterControl, getFilters());
 	}
 
 	private void updateStatusbar(){
