@@ -87,8 +87,10 @@ public abstract class JMenuTool extends JMenu {
 		this.isMarketGroup = isMarketGroup;
 		this.typeName = typeName;
 		this.typeId = typeId;
-		//station can be a system
-		if (station != null && system != null && !station.equals(system)){
+		//station can be a system or a region
++		if (station != null && system != null && region != null 
++				&& !station.equals(system) && !station.equals(region)
++				&& !stations.contains(station)){
 			this.station = station;
 		} else {
 			this.station = null;
