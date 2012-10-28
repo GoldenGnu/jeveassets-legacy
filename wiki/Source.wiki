@@ -1,0 +1,29 @@
+#summary Building jEveAssets source
+
+= General Coding Guidelines =
+
+  * We use tab and not space. Be sure to disable "expand tabs to space" in your IDE.
+  * Swing JComponent variable names should have leading "j". Ex.: jMyTable
+  * No other variable names should use Systems Hungarian
+= SVN =
+
+Checkout:
+https://jeveassets.googlecode.com/svn/jeveassets/trunk/
+
+We usually work in two branches. If the latest version is 1.0.0 they would be named as follow:
+  * New Features: jeveassets-1.1.0
+  * Bug Fixes: jeveassets-1.0.X
+
+Bug fixes are committed to both branches.
+Experimental features get their own branch.
+
+= Compile =
+
+
+== NetBeans ==
+
+Simply open the project and compile (F11)
+
+== Eclipse ==
+
+I do not use Eclipse. If you have instructions to compile with Eclipse, please email niklaskr@gmail.com
