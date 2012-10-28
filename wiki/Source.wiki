@@ -1,4 +1,4 @@
-#summary Building jEveAssets from source
+#summary Compile jEveAssets from source
 
 = SVN =
 
