@@ -31,7 +31,7 @@ I do not use Eclipse. If you have instructions to compile with Eclipse, please e
 
 = Contribute =
 
-We are looking for people to:
+We are looking for people to (in random order):
   * Make user tutorials
   * Java Programmers
   * Dedicated testers
