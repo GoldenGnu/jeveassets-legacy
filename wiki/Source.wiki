@@ -1,4 +1,4 @@
-#summary Building jEveAssets source
+#summary Building jEveAssets from source
 
 = General Coding Guidelines =
 
