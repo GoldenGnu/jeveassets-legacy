@@ -23,7 +23,7 @@ Open the project and compile (F11)
 
 I do not use Eclipse. If you have instructions to compile with Eclipse, please email niklaskr@gmail.com
 
-= General Coding Guidelines =
+= Coding Guidelines =
 
   * We use tab and not space. Be sure to disable "expand tabs to space" in your IDE.
   * Swing JComponent variable names should have leading "j". Ex.: jMyTable
