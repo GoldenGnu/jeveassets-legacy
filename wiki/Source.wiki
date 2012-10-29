@@ -25,6 +25,7 @@ I do not use Eclipse. If you have instructions to compile with Eclipse, please e
 
 = Coding Guidelines =
 
+  * We compile with the latest version of Oracle Java SE 6
   * We use tab and not space. Be sure to disable "expand tabs to space" in your IDE.
   * Swing JComponent variable names should have leading "j". Ex.: jMyTable
   * No other variable names should use Systems Hungarian
