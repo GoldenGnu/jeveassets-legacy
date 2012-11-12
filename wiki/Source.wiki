@@ -37,5 +37,6 @@ We are looking for (in random order):
   * Documentation (User tutorials)
   * Java Programmers
   * Dedicated Testers
+  * Translators
 
 If you want to join the project send an email the niklaskr@gmail.com
