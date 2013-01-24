@@ -1,11 +1,17 @@
 #summary Common Issues and Solutions
 
 <wiki:toc max_depth="1" />
-
+<br><br><br>
 = Requirements =
 
 1) Java Runtime Environment (Get it free at: http://java.com/)<br>
 2) An active Eve-Online account (to have any use of the program)<br>
+<br><br><br>
+
+
+
+
+
 
 = How to run =
 
@@ -23,26 +29,46 @@ where "path/to" is the path on your computer to the jeveassets directory
 
 cd to jEveAssets directory and run:
 <pre>java -jar jeveassets.jar</pre>
+<br><br><br>
+
+
+
 
 = Update jEveAssets to a new version =
 
-Simply overwrite all the old files with the new ones. Your settings and assets will stay untouched,
+Simply overwrite all the old files with the new ones. Your settings and assets will stay untouched.<br>
+<br><br><br>
+
+
+
 
 =Bugs=
 
 Please send an email to niklaskr@gmail.com and include the following:<br>
 1) The jeveassets.log in the user directory (see below)<br>
 2) Instructions on how to reproduce the bug<br>
+<br><br><br>
+
+
+
 
 =Sort columns=
 
-You need to double click to sort a new column. A single click will sub-sort the column.
+You need to double click to sort a new column. A single click will sub-sort the column.<br>
+<br><br><br>
+
+
+
 
 =Portable=
 
 Add the command line argument: -portable
 
 <pre>java -jar jeveassets.jar -portable</pre>
+<br><br><br>
+
+
+
 
 =Settings location=
 
@@ -56,7 +82,11 @@ Vista: C:\Users\*USERNAME*\.jeveassets\<br>
 /home/*USERNAME*/.jeveassets/
 
 ==Mac==
-~/Library/Preferences/JEveAssets
+~/Library/Preferences/JEveAssets<br>
+<br><br><br>
+
+
+
 
 = jEveAssets will not run =
 
