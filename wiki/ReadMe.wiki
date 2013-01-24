@@ -1,0 +1,82 @@
+#summary Common Issues and Solutions
+
+<wiki:toc max_depth="1" />
+
+= Requirements =
+
+1) Java Runtime Environment (Get it free at: http://java.com/)<br>
+2) An active Eve-Online account (to have any use of the program)<br>
+
+= How to run =
+
+== Windows ==
+
+Double click on jeveassets.jar
+
+== Linux ==
+
+in terminal run:<br>
+<pre>java -jar /path/to/jEveAssets/jeveassets.jar</pre>
+where "path/to" is the path on your computer to the jeveassets directory
+
+*or*
+
+cd to jEveAssets directory and run:
+<pre>java -jar jeveassets.jar</pre>
+
+= Update jEveAssets to a new version =
+
+Simply overwrite all the old files with the new ones. Your settings and assets will stay untouched,
+
+=Bugs=
+
+Please send an email to niklaskr@gmail.com and include the following:<br>
+1) The jeveassets.log in the user directory (see below)<br>
+2) Instructions on how to reproduce the bug<br>
+
+=Sort columns=
+
+You need to double click to sort a new column. A single click will sub-sort the column.
+
+=Portable=
+
+Add the command line argument: -portable
+
+<pre>java -jar jeveassets.jar -portable</pre>
+
+=Settings location=
+
+Replace *USERNAME* with your username
+
+==Windows==
+XP: C:\Documents and Settings\*USERNAME*\.jeveassets\<br>
+Vista: C:\Users\*USERNAME*\.jeveassets\<br>
+
+==Linux==
+/home/*USERNAME*/.jeveassets/
+
+==Mac==
+~/Library/Preferences/JEveAssets
+
+= jEveAssets will not run =
+
+== Solutions 1 ==
+Re-download jEveAssets (jEveAsset can get corrupted doing download)
+
+1) Download [http://eve.nikr.net/jeveasset jEveAssets]<br>
+2) Unzip<br>
+3) Double click on jeveasset.jar<br>
+
+== Solutions 2 ==
+Re-install java (old versions of java are bad)
+
+1) Uninstall all versions of java ([http://www.java.com/en/download/uninstall.jsp help])<br>
+2) Download the latest version of [http://www.java.com/en/download/index.jsp java]<br>
+3) Install java ([http://www.java.com/en/download/help/windows_manual_download.xml help])<br>
+
+== Solutions 3 ==
+If nothing of the above solve you problem.
+
+1) Make a post in the [https://forums.eveonline.com/default.aspx?g=posts&t=6419 forum thread]<br>
+2) Please include the following information: Operation System and Java version (if you know)<br>
+3) I'll do my best to help you.<br>
