@@ -4,9 +4,9 @@
 <br><br><br>
 = Requirements =
 
-1) Java Runtime Environment (Get it free at: http://java.com/)<br>
-2) An active Eve-Online account (to have any use of the program)<br>
-<br><br><br>
+ # Java Runtime Environment (Get it free at: http://java.com/)
+ # An active Eve-Online account (to have any use of the program)
+<br><br>
 
 
 
@@ -29,7 +29,9 @@ where "path/to" is the path on your computer to the jeveassets directory
 
 cd to jEveAssets directory and run:
 <pre>java -jar jeveassets.jar</pre>
-<br><br><br>
+<br><br>
+
+
 
 
 
@@ -37,7 +39,8 @@ cd to jEveAssets directory and run:
 = Update jEveAssets to a new version =
 
 Simply overwrite all the old files with the new ones. Your settings and assets will stay untouched.<br>
-<br><br><br>
+<br><br>
+
 
 
 
@@ -45,9 +48,10 @@ Simply overwrite all the old files with the new ones. Your settings and assets w
 =Bugs=
 
 Please send an email to niklaskr@gmail.com and include the following:<br>
-1) The jeveassets.log in the user directory (see below)<br>
-2) Instructions on how to reproduce the bug<br>
-<br><br><br>
+ # The jeveassets.log in the user directory (see below)<br>
+ # Instructions on how to reproduce the bug<br>
+<br><br>
+
 
 
 
@@ -55,7 +59,9 @@ Please send an email to niklaskr@gmail.com and include the following:<br>
 =Sort columns=
 
 You need to double click to sort a new column. A single click will sub-sort the column.<br>
-<br><br><br>
+<br><br>
+
+
 
 
 
@@ -65,7 +71,8 @@ You need to double click to sort a new column. A single click will sub-sort the 
 Add the command line argument: -portable
 
 <pre>java -jar jeveassets.jar -portable</pre>
-<br><br><br>
+<br><br>
+
 
 
 
@@ -83,7 +90,8 @@ Vista: C:\Users\*USERNAME*\.jeveassets\<br>
 
 ==Mac==
 ~/Library/Preferences/JEveAssets<br>
-<br><br><br>
+<br><br>
+
 
 
 
@@ -93,20 +101,20 @@ Vista: C:\Users\*USERNAME*\.jeveassets\<br>
 == Solutions 1 ==
 Re-download jEveAssets (jEveAsset can get corrupted doing download)
 
-1) Download [http://eve.nikr.net/jeveasset jEveAssets]<br>
-2) Unzip<br>
-3) Double click on jeveasset.jar<br>
+ # Download [http://eve.nikr.net/jeveasset jEveAssets]
+ # Unzip
+ # Double click on jeveasset.jar
 
 == Solutions 2 ==
 Re-install java (old versions of java are bad)
 
-1) Uninstall all versions of java ([http://www.java.com/en/download/uninstall.jsp help])<br>
-2) Download the latest version of [http://www.java.com/en/download/index.jsp java]<br>
-3) Install java ([http://www.java.com/en/download/help/windows_manual_download.xml help])<br>
+ # Uninstall all versions of java ([http://www.java.com/en/download/uninstall.jsp help])
+ # Download the latest version of [http://www.java.com/en/download/index.jsp java]
+ # Install java ([http://www.java.com/en/download/help/windows_manual_download.xml help])
 
 == Solutions 3 ==
 If nothing of the above solve your problem.
 
-1) Make a post in the [https://forums.eveonline.com/default.aspx?g=posts&t=6419 forum thread]<br>
-2) Please include the following information: Operation System and Java version (if you know)<br>
-3) I'll do my best to help you.<br>
+ # Make a post in the [https://forums.eveonline.com/default.aspx?g=posts&t=6419 forum thread]
+ # Please include the following information: Operation System and Java version (if you know)
+ # I'll do my best to help you.
