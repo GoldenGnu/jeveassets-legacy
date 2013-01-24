@@ -75,7 +75,7 @@ Re-install java (old versions of java are bad)
 3) Install java ([http://www.java.com/en/download/help/windows_manual_download.xml help])<br>
 
 == Solutions 3 ==
-If nothing of the above solve you problem.
+If nothing of the above solve your problem.
 
 1) Make a post in the [https://forums.eveonline.com/default.aspx?g=posts&t=6419 forum thread]<br>
 2) Please include the following information: Operation System and Java version (if you know)<br>
