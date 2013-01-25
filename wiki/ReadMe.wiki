@@ -1,7 +1,9 @@
 #summary Common Issues and Solutions
 
 <wiki:toc max_depth="1" />
-<br><br>
+<br>
+----
+<br>
 
 
 
