@@ -1,7 +1,13 @@
 #summary Common Issues and Solutions
 
 <wiki:toc max_depth="1" />
-<br><br><br>
+<br><br>
+
+
+
+
+
+----
 = Requirements =
 
  # Java Runtime Environment (Get it free at: http://java.com/)
@@ -13,6 +19,7 @@
 
 
 
+----
 = How to run =
 
 == Windows ==
@@ -36,6 +43,7 @@ cd to jEveAssets directory and run:
 
 
 
+----
 = Update jEveAssets to a new version =
 
 Simply overwrite all the old files with the new ones. Your settings and assets will stay untouched.<br>
@@ -45,17 +53,8 @@ Simply overwrite all the old files with the new ones. Your settings and assets w
 
 
 
-=Bugs=
 
-Please send an email to niklaskr@gmail.com and include the following:<br>
- # The jeveassets.log in the user directory (see below)<br>
- # Instructions on how to reproduce the bug<br>
-<br><br>
-
-
-
-
-
+----
 =Sort columns=
 
 You need to double click to sort a new column. A single click will sub-sort the column.<br>
@@ -66,6 +65,7 @@ You need to double click to sort a new column. A single click will sub-sort the 
 
 
 
+----
 =Portable=
 
 Add the command line argument: -portable
@@ -77,6 +77,7 @@ Add the command line argument: -portable
 
 
 
+----
 =Settings location=
 
 Replace *USERNAME* with your username
@@ -96,6 +97,7 @@ Vista: C:\Users\*USERNAME*\.jeveassets\<br>
 
 
 
+----
 = jEveAssets will not run =
 
 == Solutions 1 ==
@@ -111,8 +113,26 @@ Re-install java (old versions of java are bad)
  # Uninstall all versions of java ([http://www.java.com/en/download/uninstall.jsp help])
  # Download the latest version of [http://www.java.com/en/download/index.jsp java]
  # Install java ([http://www.java.com/en/download/help/windows_manual_download.xml help])
+<br><br>
 
-== Solutions 3 ==
+
+
+
+
+----
+=Bugs=
+
+Please send an email to niklaskr@gmail.com and include the following:<br>
+ # The jeveassets.log in the user directory (see below)<br>
+ # Instructions on how to reproduce the bug<br>
+<br><br>
+
+
+
+
+
+----
+= Asking for help =
 If nothing of the above solve your problem.
 
  # Make a post in the [https://forums.eveonline.com/default.aspx?g=posts&t=6419 forum thread]
