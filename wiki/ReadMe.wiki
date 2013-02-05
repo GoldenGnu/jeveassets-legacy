@@ -61,7 +61,7 @@ Simply overwrite all the old files with the new ones. Your settings and assets w
 
 
 
-=Sort columns=
+= Sort columns =
 
 You need to double click to sort a new column. A single click will sub-sort the column.<br>
 <br>
@@ -73,7 +73,7 @@ You need to double click to sort a new column. A single click will sub-sort the 
 
 
 
-=Portable=
+= Portable =
 
 Add the command line argument: -portable
 
@@ -130,7 +130,55 @@ Re-install java (old versions of java are bad)
 
 
 
-=Bugs=
+= Character API Key =
+ # Go to Options > Accounts...
+ # Click "Add"
+ # Click on the "New API Key" link
+ # Enter a name for the API Key
+ # Click "Submit" on the webpage
+ # Copy and Paste the ID and Verification Code in to jEveAssets
+ # Click "Next" and wait...
+ # Click "OK"
+*Note:* step 1 and 2 can be skipped if you run jEveAssets for the first time.
+
+To have full use of jEveAssets you need:
+ * MarketOrders
+ * AccountBalance
+ * Contracts
+ * AssetList
+ * IndustryJobs
+It will work with just the AssetList, but, with limited functionality.
+<br>
+----
+<br>
+
+
+
+
+
+= Corporation API Key =
+You need to create a Customizable API key for the corporation
+ # Go to https://support.eveonline.com/api/Key/Create
+ # Select a Character that is CEO (Will have "Corp" after the name)
+ # in "Type" select Corporation
+ # Now select:
+   * MarketOrders
+   * AccountBalance
+   * Contracts
+   * AssetList
+   * IndustryJobs
+ # Create the API Key by pressing "submit"
+ # Enter the API Key in jEveAssets (Just like a normal API Key)
+ # Update everything in jEveAssets, to get the corporation stuff
+<br>
+----
+<br>
+
+
+
+
+
+= Bugs =
 
 Please send an email to niklaskr@gmail.com and include the following:<br>
  # The jeveassets.log in the settings location (see above)<br>
