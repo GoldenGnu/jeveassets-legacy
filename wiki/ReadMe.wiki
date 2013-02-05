@@ -147,7 +147,7 @@ To have full use of jEveAssets you need:
  * `Contracts`
  * `AssetList`
  * `IndustryJobs`
-It will work with just the AssetList, but, with limited functionality.
+It will work with just the `AssetList`, but, with limited functionality.
 <br>
 ----
 <br>
