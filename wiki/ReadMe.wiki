@@ -142,11 +142,11 @@ Re-install java (old versions of java are bad)
 *Note:* step 1 and 2 can be skipped if you run jEveAssets for the first time.
 
 To have full use of jEveAssets you need:
- * MarketOrders
- * AccountBalance
- * Contracts
- * AssetList
- * IndustryJobs
+ * `MarketOrders`
+ * `AccountBalance`
+ * `Contracts`
+ * `AssetList`
+ * `IndustryJobs`
 It will work with just the AssetList, but, with limited functionality.
 <br>
 ----
@@ -162,11 +162,11 @@ You need to create a Customizable API key for the corporation
  # Select a Character that is CEO (Will have "Corp" after the name)
  # in "Type" select Corporation
  # Now select:
-   * MarketOrders
-   * AccountBalance
-   * Contracts
-   * AssetList
-   * IndustryJobs
+   * `MarketOrders`
+   * `AccountBalance`
+   * `Contracts`
+   * `AssetList`
+   * `IndustryJobs`
  # Create the API Key by pressing "submit"
  # Enter the API Key in jEveAssets (Just like a normal API Key)
  # Update everything in jEveAssets, to get the corporation stuff
