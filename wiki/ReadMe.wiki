@@ -133,8 +133,8 @@ Re-install java (old versions of java are bad)
 
 = File Lock =
 File locks are necessary to prevent file corruption.<br>
-If jEveAssets is terminated while reading/writing a file, the file will be locked.<br>
-This prevent jEveAssets from accessing the file, until all instances of jEveAssets is closed. 
+If jEveAssets is forcefully terminated while reading/writing a file, the file will never be unlocked.<br>
+This prevent jEveAssets from accessing the file.
  # Close all instances of jEveAssets (You can restart your computer to be 100% sure all instances of jEveAssets is closed)
  # Run a single instance of jEveAssets (This will delete all existing file locks)
 <br>
