@@ -12,7 +12,7 @@
 
 = Requirements =
 
- # Java Runtime Environment (Get it free at: http://java.com/)
+ # Java Runtime Environment (Get it free at: [http://java.com/ java.com])
  # An active Eve-Online account (to have any use of the program)
 <br>
 ----
@@ -130,6 +130,21 @@ Re-install java (old versions of java are bad)
 
 
 
+
+= File Lock =
+If jEveAssets is terminated while writing to a file, the file will remain locked.<br>
+This prevent jEveAssets from reading/writing to the file, until all instances of jEveAssets is closed.
+ # Close all instances of jEveAssets (You can restart your computer to be 100% sure all instances of jEveAssets is closed)
+ # Run a single instance of jEveAssets (This will delete all existing file locks)
+<br>
+----
+<br>
+
+
+
+
+
+
 = Character API Key =
  # Go to Options > Accounts...
  # Click "Add"
@@ -181,7 +196,7 @@ You need to create a Customizable API key for the corporation
 = Bugs =
 
 Please send an email to niklaskr@gmail.com and include the following:<br>
- # The jeveassets.log in the settings location (see above)<br>
+ # The jeveassets.log in the [https://code.google.com/p/jeveassets/wiki/ReadMe#Settings_location settings location]<br>
  # Instructions on how to reproduce the bug<br>
 <br>
 ----
