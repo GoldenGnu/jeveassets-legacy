@@ -132,8 +132,8 @@ Re-install java (old versions of java are bad)
 
 
 = File Lock =
-If jEveAssets is terminated while writing to a file, the file will remain locked.<br>
-This prevent jEveAssets from reading/writing to the file, until all instances of jEveAssets is closed.
+If jEveAssets is terminated while reading/writing a file, the file will be locked.<br>
+This prevent jEveAssets from accessing the file, until all instances of jEveAssets is closed.
  # Close all instances of jEveAssets (You can restart your computer to be 100% sure all instances of jEveAssets is closed)
  # Run a single instance of jEveAssets (This will delete all existing file locks)
 <br>
