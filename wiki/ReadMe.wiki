@@ -154,7 +154,7 @@ This prevent jEveAssets from accessing the file.
  # Click "Submit" on the webpage
  # Copy and Paste the ID and Verification Code in to jEveAssets
  # Click "Next" and wait...
- * If you get an error see: [https://code.google.com/p/jeveassets/wiki/ReadMe#API_Key_Troubleshooting API Key Troubleshooting]
+   * If you get an error see: [https://code.google.com/p/jeveassets/wiki/ReadMe#API_Key_Troubleshooting API Key Troubleshooting]
  # Click "OK"
 *Note:* step 1 and 2 can be skipped if you run jEveAssets for the first time.
 
