@@ -223,7 +223,7 @@ Wait until it's back up (wait a day or less...)
 Try a couple of times (Press `"Previous"` to retry...)
 == API Error ==
 This is a CCP API Error.
-Feel free to [https://code.google.com/p/jeveassets/wiki/ReadMe#Asking_for_help ask for help] 
+Feel free to [https://code.google.com/p/jeveassets/wiki/ReadMe#Asking_for_help ask for help] (please include the error code)
 == I give up... ==
 No problem! if you have tried everything above, please send a [https://code.google.com/p/jeveassets/wiki/ReadMe#Bugs bug report]
 <br>
