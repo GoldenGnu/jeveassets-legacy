@@ -197,7 +197,7 @@ You need to create a Customizable API key for the corporation
 
 
 = API Key Troubleshooting =
-Most common solutions to errors while importing API Keys
+Solutions to common errors while importing API Keys
 == API Proxy ==
 Invalid API Proxy.
  # In the menu select: `"Options"` > `"Options..."`
