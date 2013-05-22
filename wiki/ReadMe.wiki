@@ -194,6 +194,44 @@ You need to create a Customizable API key for the corporation
 
 
 
+
+= API Key Import (errors and solutions) =
+== API Proxy ==
+Invalid API Proxy.
+ # In the menu select: `"Options"` > `"Options..."`
+ # Select `"Proxy"`
+ # Uncheck `"Enable API Proxy"` or make sure `"API Proxy Address"` is set correct.
+== Proxy Server ==
+If you're behind a proxy server, you need to enable it in jEveAssets.
+ # In the menu select: `"Options"` > `"Options"`...
+ # Select `"Proxy"`
+ # Select your `"Proxy Type"`
+   * `"Direct"` = No proxy server
+   * `"HTTP"` = Http proxy server
+   * `"SOCKS"` = Socks proxy server
+ # Enter your `"Proxy Address"` and `"Proxy Port"`
+== Firewall blocks Java ==
+ # Disable your firewall (at your own risk...)
+ # Import API Keys in jEveAssets
+ # Enable your firewall
+If you succeed, you need to add a firewall exception for Java (Please contact your firewall provider, for additional help)
+== API is down ==
+Wait until it's back up (wait a day or less...)
+== API is unstable ==
+Try a couple of times (Press `"Previous"` to retry...)
+== API Error ==
+This is a CCP API Error.
+Feel free to [https://code.google.com/p/jeveassets/wiki/ReadMe#Asking_for_help ask for help] 
+== I give up... ==
+No problem! if you have tried everything above, please send a [https://code.google.com/p/jeveassets/wiki/ReadMe#Bugs bug report]
+<br>
+----
+<br>
+
+
+
+
+
 = Bugs =
 
 Please send an email to niklaskr@gmail.com and include the following:<br>
