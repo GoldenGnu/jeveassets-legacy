@@ -175,7 +175,7 @@ It will work with just the `AssetList`, but, with limited functionality.
 
 = Corporation API Key =
 You need to create a Customizable API key for the corporation
- # Go to https://support.eveonline.com/api/Key/Create
+ # Go to http://community.eveonline.com/support/api-key/update
  # Select a Character that is CEO (Will have "Corp" after the name)
  # in "Type" select Corporation
  # Now select:
