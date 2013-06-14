@@ -159,6 +159,7 @@ This prevent jEveAssets from accessing the file.
 *Note:* step 1 and 2 can be skipped if you run jEveAssets for the first time.
 
 To have full use of jEveAssets you need:
+ * `WalletTransactions`
  * `MarketOrders`
  * `AccountBalance`
  * `Contracts`
@@ -179,6 +180,7 @@ You need to create a Customizable API key for the corporation
  # Select a Character that is CEO (Will have "Corp" after the name)
  # in "Type" select Corporation
  # Now select:
+   * `WalletTransactions`
    * `MarketOrders`
    * `AccountBalance`
    * `Contracts`
