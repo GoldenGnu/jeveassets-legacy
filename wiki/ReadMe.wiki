@@ -220,7 +220,7 @@ If you're behind a proxy server, you need to enable it in jEveAssets.
  # Enable your firewall
 If you succeed, you need to add a firewall exception for Java (Please contact your firewall provider, for additional help)
 == API is down ==
-[http://eve-offline.net/ check it now]
+[http://eve-offline.net/ Check if API is down]<br>.
 Wait until it's back up...
 == API is unstable ==
 Try a couple of times (Press `"Previous"` to retry...)
