@@ -70,6 +70,7 @@ import net.nikr.eve.jeveasset.gui.tabs.tracker.TrackerTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueRetroTab;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
 import net.nikr.eve.jeveasset.gui.tabs.transaction.TransactionTab;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.io.online.PriceDataGetter;
 import net.nikr.eve.jeveasset.io.online.ProgramUpdateChecker;
 import net.nikr.eve.jeveasset.io.shared.DesktopUtil;
@@ -171,6 +172,9 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Assets Tab");
 		assetsTab = new AssetsTab(this);
 		mainWindow.addTab(assetsTab);
+		LOG.info("Loading: Tree Assets Tab");
+		TreeTab treeTab = new TreeTab(this);
+		mainWindow.addTab(treeTab);
 		SplashUpdater.setProgress(55);
 		LOG.info("Loading: Industry Jobs Tab");
 		industryJobsTab = new IndustryJobsTab(this);

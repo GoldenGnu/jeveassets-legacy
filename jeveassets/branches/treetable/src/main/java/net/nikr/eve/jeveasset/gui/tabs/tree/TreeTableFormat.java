@@ -19,27 +19,26 @@
  *
  */
 
-package net.nikr.eve.jeveasset.gui.tabs.assets;
+package net.nikr.eve.jeveasset.gui.tabs.tree;
 
 import ca.odell.glazedlists.GlazedLists;
 import java.util.Comparator;
 import java.util.Date;
-import net.nikr.eve.jeveasset.data.Asset;
-import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.filter.Percent;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
+import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat.LongInt;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
-public enum AssetTableFormat implements EnumTableColumn<Asset> {
+public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 	NAME(String.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return TabsAssets.get().columnName();
+			return "Name";
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
-			return from.getName();
+		public Object getColumnValue(final TreeAsset from) {
+			return from.getTreeName();
 		}
 	},
 	GROUP(String.class, GlazedLists.comparableComparator()) {
@@ -48,7 +47,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnGroup();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getItem().getGroup();
 		}
 	},
@@ -58,7 +57,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnCategory();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getItem().getCategory();
 		}
 	},
@@ -68,7 +67,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnOwner();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getOwner();
 		}
 	},
@@ -78,7 +77,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnLocation();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getLocation().getLocation();
 		}
 	},
@@ -88,7 +87,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnSecurity();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getLocation().getSecurity();
 		}
 	},
@@ -98,7 +97,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnRegion();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getLocation().getRegion();
 		}
 	},
@@ -108,7 +107,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnContainer();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getContainer();
 		}
 	},
@@ -118,7 +117,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnFlag();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getFlag();
 		}
 	},
@@ -128,7 +127,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnPrice();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getDynamicPrice();
 		}
 	},
@@ -138,7 +137,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnPriceSellMin();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getPriceSellMin();
 		}
 	},
@@ -148,7 +147,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnPriceBuyMax();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getPriceBuyMax();
 		}
 	},
@@ -158,7 +157,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnPriceReprocessed();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getPriceReprocessed();
 		}
 	},
@@ -168,7 +167,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnMarketOrderLatest();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getMarketPriceData().getLatest();
 		}
 	},
@@ -178,7 +177,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnMarketOrderAverage();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getMarketPriceData().getAverage();
 		}
 	},
@@ -188,7 +187,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnMarketOrderMaximum();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getMarketPriceData().getMaximum();
 		}
 	},
@@ -198,7 +197,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnMarketOrderMinimum();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getMarketPriceData().getMinimum();
 		}
 	},
@@ -208,7 +207,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnPriceBase();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getItem().getPriceBase();
 		}
 	},
@@ -218,7 +217,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnValueReprocessed();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getValueReprocessed();
 		}
 	},
@@ -228,7 +227,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnValue();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getValue();
 		}
 	},
@@ -238,7 +237,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnPriceReprocessedDifference();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getPriceReprocessedDifference();
 		}
 	},
@@ -248,7 +247,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnPriceReprocessedPercent();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return new Percent(from.getPriceReprocessedPercent());
 		}
 	},
@@ -258,7 +257,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnCount();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getCount();
 		}
 	},
@@ -268,7 +267,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnTypeCount();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getTypeCount();
 		}
 	},
@@ -278,7 +277,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnMeta();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getItem().getMeta();
 		}
 	},
@@ -288,7 +287,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnTech();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getItem().getTech();
 		}
 	},
@@ -298,7 +297,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnVolume();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getVolume();
 		}
 	},
@@ -308,7 +307,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnVolumeTotal();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getVolumeTotal();
 		}
 	},
@@ -318,7 +317,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnSingleton();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getSingleton();
 		}
 	},
@@ -328,7 +327,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnAdded();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getAdded();
 		}
 		@Override
@@ -342,7 +341,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnItemID();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return new LongInt(from.getItemID());
 		}
 	},
@@ -352,7 +351,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 			return TabsAssets.get().columnTypeID();
 		}
 		@Override
-		public Object getColumnValue(final Asset from) {
+		public Object getColumnValue(final TreeAsset from) {
 			return from.getItem().getTypeID();
 		}
 	};
@@ -360,7 +359,7 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 	private Class<?> type;
 	private Comparator<?> comparator;
 
-	private AssetTableFormat(final Class<?> type, final Comparator<?> comparator) {
+	private TreeTableFormat(final Class<?> type, final Comparator<?> comparator) {
 		this.type = type;
 		this.comparator = comparator;
 	}
@@ -385,33 +384,9 @@ public enum AssetTableFormat implements EnumTableColumn<Asset> {
 		return true;
 	}
 	@Override
-	public Asset setColumnValue(final Object baseObject, final Object editedValue) {
+	public TreeAsset setColumnValue(final Object baseObject, final Object editedValue) {
 		return null;
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
-	@Override public abstract Object getColumnValue(final Asset from);
-
-	public static class LongInt implements Comparable<LongInt> {
-		private final Long number;
-		private final String formatted;
-
-		public LongInt(final Long number) {
-			this.number = number;
-			this.formatted = Formater.integerFormat(number);
-		}
-
-		public Long getNumber() {
-			return number;
-		}
-
-		@Override
-		public String toString() {
-			return formatted;
-		}
-
-		@Override
-		public int compareTo(final LongInt o) {
-			return number.compareTo(o.getNumber());
-		}
-	}
+	@Override public abstract Object getColumnValue(final TreeAsset from);
 }
