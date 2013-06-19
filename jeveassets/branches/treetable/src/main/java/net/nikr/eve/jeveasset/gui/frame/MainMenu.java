@@ -57,6 +57,7 @@ public class MainMenu extends JMenuBar {
 	public static final String ACTION_OPEN_STOCKPILE = "ACTION_OPEN_STOCKPILE";
 	public static final String ACTION_OPEN_UPDATE = "ACTION_OPEN_UPDATE";
 	public static final String ACTION_OPEN_ITEMS = "ACTION_OPEN_ITEMS";
+	public static final String ACTION_OPEN_TREE = "ACTION_OPEN_TREE";
 	public static final String ACTION_OPEN_TRACKER = "ACTION_OPEN_TRACKER";
 	public static final String ACTION_OPEN_REPROCESSED = "ACTION_OPEN_REPROCESSED";
 	public static final String ACTION_OPEN_CONTRACTS = "ACTION_OPEN_CONTRACTS";
@@ -180,6 +181,15 @@ public class MainMenu extends JMenuBar {
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_OVERVIEW.getIcon());
 		menuItem.setActionCommand(ACTION_OPEN_OVERVIEW);
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
+		
+		menuItem = new JMenuItem(GuiFrame.get().tree());
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		//FIXME - - > TreeTable: need Its own icon?
+		menuItem.setIcon(Images.TOOL_ASSETS.getIcon());
+		menuItem.setActionCommand(ACTION_OPEN_TREE);
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 

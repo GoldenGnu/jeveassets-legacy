@@ -81,7 +81,7 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 	private JLabel jCount;
 	private JLabel jAverage;
 	private JLabel jVolume;
-	private JToggleButton jCategory;
+	private JToggleButton jCategories;
 	private JToggleButton jLocation;
 
 	//Table
@@ -100,7 +100,8 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 
 	public TreeTab(final Program program) {
 		//FIXME - - > TreeTable: i18n
-		super(program, "Tree Assets", Images.TOOL_ASSETS.getIcon(), false);
+		//FIXME - - > TreeTable: need Its own icon?
+		super(program, "Tree Assets", Images.TOOL_ASSETS.getIcon(), true);
 		layout.setAutoCreateGaps(true);
 
 		ListenerClass listener = new ListenerClass();
@@ -112,14 +113,14 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 		ButtonGroup buttonGroup = new ButtonGroup();
 
 		//FIXME - - > TreeTable: i18n
-		jCategory = new JToggleButton("Category");
-		jCategory.setActionCommand(ACTION_UPDATE);
-		jCategory.addActionListener(listener);
-		buttonGroup.add(jCategory);
-		addToolButton(jToolBarLeft, jCategory);
+		jCategories = new JToggleButton("Categories", Images.LOC_GROUPS.getIcon());
+		jCategories.setActionCommand(ACTION_UPDATE);
+		jCategories.addActionListener(listener);
+		buttonGroup.add(jCategories);
+		addToolButton(jToolBarLeft, jCategories);
 
 		//FIXME - - > TreeTable: i18n
-		jLocation = new JToggleButton("Locations");
+		jLocation = new JToggleButton("Locations", Images.LOC_LOCATIONS.getIcon());
 		jLocation.setActionCommand(ACTION_UPDATE);
 		jLocation.addActionListener(listener);
 		jLocation.setSelected(true);
@@ -267,7 +268,7 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 
 	@Override
 	public void updateData() {
-		//Create data (is very expensive)
+		//FIXME - - > TreeTable: creating data is very expensive!
 		locations.clear();
 		categories.clear();
 		for (Asset asset : program.getAssetEventList()) {
@@ -279,7 +280,7 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 
 	public void updateTable() {
 		List<TreeAsset> treeAssets = locations;
-		if (jCategory.isSelected()) {
+		if (jCategories.isSelected()) {
 			treeAssets = categories;
 		}
 		eventList.getReadWriteLock().writeLock().lock();

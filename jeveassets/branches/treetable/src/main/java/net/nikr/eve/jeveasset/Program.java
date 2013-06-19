@@ -124,6 +124,7 @@ public class Program implements ActionListener {
 	private TrackerTab trackerTab;
 	private ReprocessedTab reprocessedTab;
 	private ContractsTab contractsTab;
+	private TreeTab treeTab;
 
 	//Misc
 	private ProgramUpdateChecker programUpdateChecker;
@@ -173,8 +174,8 @@ public class Program implements ActionListener {
 		assetsTab = new AssetsTab(this);
 		mainWindow.addTab(assetsTab);
 		LOG.info("Loading: Tree Assets Tab");
-		TreeTab treeTab = new TreeTab(this);
-		mainWindow.addTab(treeTab);
+		treeTab = new TreeTab(this);
+		mainWindow.addTab(treeTab); //FIXME - - > TreeTable: do not open by defailt
 		SplashUpdater.setProgress(55);
 		LOG.info("Loading: Industry Jobs Tab");
 		industryJobsTab = new IndustryJobsTab(this);
@@ -533,6 +534,9 @@ public class Program implements ActionListener {
 		}
 		if (MainMenu.ACTION_OPEN_CONTRACTS.equals(e.getActionCommand())) {
 			mainWindow.addTab(contractsTab);
+		}
+		if (MainMenu.ACTION_OPEN_TREE.equals(e.getActionCommand())) {
+			mainWindow.addTab(treeTab);
 		}
 	//Settings
 		if (MainMenu.ACTION_OPEN_ACCOUNT_MANAGER.equals(e.getActionCommand())) {
