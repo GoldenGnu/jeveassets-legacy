@@ -93,6 +93,8 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 	private EnumTableFormatAdaptor<TreeTableFormat, TreeAsset> tableFormat;
 	private DefaultEventSelectionModel<TreeAsset> selectionModel;
 	private AssetTreeExpansionModel expansionModel;
+	private List<TreeAsset> locations = new ArrayList<TreeAsset>();
+	private List<TreeAsset> categories = new ArrayList<TreeAsset>();
 
 	public static final String NAME = "treeassets"; //Not to be changed!
 
@@ -265,13 +267,20 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 
 	@Override
 	public void updateData() {
-		TreeType treeType = TreeType.LOCATION;
-		if (jCategory.isSelected()) {
-			treeType = TreeType.CATEGORY;
-		}
-		List<TreeAsset> treeAssets = new ArrayList<TreeAsset>();
+		//Create data (is very expensive)
+		locations.clear();
+		categories.clear();
 		for (Asset asset : program.getAssetEventList()) {
-			treeAssets.add(new TreeAsset(asset, treeType));
+			locations.add(new TreeAsset(asset, TreeType.LOCATION));
+			categories.add(new TreeAsset(asset, TreeType.CATEGORY));
+		}
+		updateTable();
+	}
+
+	public void updateTable() {
+		List<TreeAsset> treeAssets = locations;
+		if (jCategory.isSelected()) {
+			treeAssets = categories;
 		}
 		eventList.getReadWriteLock().writeLock().lock();
 		try {
@@ -311,13 +320,13 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (ACTION_UPDATE.equals(e.getActionCommand())) {
-				updateData();
+				updateTable();
 			} else if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
 				expansionModel.setExpande(false);
-				updateData();
+				updateTable();
 			} else if (ACTION_EXPAND.equals(e.getActionCommand())) {
 				expansionModel.setExpande(true);
-				updateData();
+				updateTable();
 			}
 		}
 
