@@ -36,7 +36,6 @@ import ca.odell.glazedlists.swing.TreeTableCellRenderer;
 import ca.odell.glazedlists.swing.TreeTableSupport;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -69,8 +68,9 @@ import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 
-	private static final String ACTION_CATEGORY = "ACTION_CATEGORY";
-	private static final String ACTION_LOCATION = "ACTION_LOCATION";
+	private static final String ACTION_UPDATE = "ACTION_UPDATE";
+	private static final String ACTION_COLLAPSE = "ACTION_COLLAPSE";
+	private static final String ACTION_EXPAND = "ACTION_EXPAND";
 
 	private final int INDENT = 10;
 
@@ -92,6 +92,7 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 	private AssetFilterControl filterControl;
 	private EnumTableFormatAdaptor<TreeTableFormat, TreeAsset> tableFormat;
 	private DefaultEventSelectionModel<TreeAsset> selectionModel;
+	private AssetTreeExpansionModel expansionModel;
 
 	public static final String NAME = "treeassets"; //Not to be changed!
 
@@ -102,26 +103,43 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 
 		ListenerClass listener = new ListenerClass();
 		
-		JToolBar jToolBar = new JToolBar();
-		jToolBar.setFloatable(false);
-		jToolBar.setRollover(true);
+		JToolBar jToolBarLeft = new JToolBar();
+		jToolBarLeft.setFloatable(false);
+		jToolBarLeft.setRollover(true);
 
 		ButtonGroup buttonGroup = new ButtonGroup();
 
 		//FIXME - - > TreeTable: i18n
 		jCategory = new JToggleButton("Category");
-		jCategory.setActionCommand(ACTION_CATEGORY);
+		jCategory.setActionCommand(ACTION_UPDATE);
 		jCategory.addActionListener(listener);
 		buttonGroup.add(jCategory);
-		addToolButton(jToolBar, jCategory);
+		addToolButton(jToolBarLeft, jCategory);
 
 		//FIXME - - > TreeTable: i18n
 		jLocation = new JToggleButton("Locations");
-		jLocation.setActionCommand(ACTION_LOCATION);
+		jLocation.setActionCommand(ACTION_UPDATE);
 		jLocation.addActionListener(listener);
 		jLocation.setSelected(true);
 		buttonGroup.add(jLocation);
-		addToolButton(jToolBar, jLocation);
+		addToolButton(jToolBarLeft, jLocation);
+
+		JToolBar jToolBarRight = new JToolBar();
+		jToolBarRight.setFloatable(false);
+		jToolBarRight.setRollover(true);
+
+		//FIXME - - > TreeTable: i18n
+		JButton jCollapse = new JButton("Collapse", Images.MISC_COLLAPSED.getIcon());
+		jCollapse.setActionCommand(ACTION_COLLAPSE);
+		jCollapse.addActionListener(listener);
+		addToolButton(jToolBarRight, jCollapse);
+
+		//FIXME - - > TreeTable: i18n
+		JButton jExpand = new JButton("Expand", Images.MISC_EXPANDED.getIcon());
+		jExpand.setActionCommand(ACTION_EXPAND);
+		jExpand.addActionListener(listener);
+		addToolButton(jToolBarRight, jExpand);
+
 
 		//Table Format
 		tableFormat = new EnumTableFormatAdaptor<TreeTableFormat, TreeAsset>(TreeTableFormat.class);
@@ -130,7 +148,8 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 		//Filter
 		filterList = new FilterList<TreeAsset>(eventList);
 		//Tree
-		treeList = new TreeList<TreeAsset>(filterList, new AssetTreeFormat(), new AssetTreeExpansionModel());
+		expansionModel = new AssetTreeExpansionModel();
+		treeList = new TreeList<TreeAsset>(filterList, new AssetTreeFormat(), expansionModel);
 		treeList.addListEventListener(listener);
 		//Table Model
 		tableModel = EventModels.createTableModel(treeList, tableFormat);
@@ -185,17 +204,24 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 		jValue = StatusPanel.createLabel(TabsAssets.get().totalValue(), Images.TOOL_VALUES.getIcon());
 		this.addStatusbarLabel(jValue);
 
-		final int TOOLBAR_HEIGHT = jToolBar.getInsets().top + jToolBar.getInsets().bottom + Program.BUTTONS_HEIGHT;
+		final int TOOLBAR_HEIGHT = jToolBarLeft.getInsets().top + jToolBarLeft.getInsets().bottom + Program.BUTTONS_HEIGHT;
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addComponent(filterControl.getPanel())
-				.addComponent(jToolBar)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(jToolBarLeft)
+					.addGap(0, 0, Integer.MAX_VALUE)
+					.addComponent(jToolBarRight)
+				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(filterControl.getPanel())
-				.addComponent(jToolBar, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jToolBarLeft, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
+					.addComponent(jToolBarRight, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
+				)
 				.addComponent(jTableScroll, 0, 0, Short.MAX_VALUE)
 		);
 	}
@@ -226,7 +252,7 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 	@Override
 	public JMenu getColumnMenu() {
 		//FIXME - - > TreeTable: Column Menu
-		return null; // tableFormat.getMenu(program, tableModel, jTable, NAME);
+		return tableFormat.getMenu(program, tableModel, jTable, NAME, false);
 	}
 
 	@Override
@@ -239,10 +265,10 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 
 	@Override
 	public void updateData() {
-		updateData(TreeType.LOCATION);
-	}
-
-	public void updateData(TreeType treeType) {
+		TreeType treeType = TreeType.LOCATION;
+		if (jCategory.isSelected()) {
+			treeType = TreeType.CATEGORY;
+		}
 		List<TreeAsset> treeAssets = new ArrayList<TreeAsset>();
 		for (Asset asset : program.getAssetEventList()) {
 			treeAssets.add(new TreeAsset(asset, treeType));
@@ -284,10 +310,14 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 		
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if (ACTION_CATEGORY.equals(e.getActionCommand())) {
-				updateData(TreeType.CATEGORY);
-			} else if (ACTION_LOCATION.equals(e.getActionCommand())) {
-				updateData(TreeType.LOCATION);
+			if (ACTION_UPDATE.equals(e.getActionCommand())) {
+				updateData();
+			} else if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
+				expansionModel.setExpande(false);
+				updateData();
+			} else if (ACTION_EXPAND.equals(e.getActionCommand())) {
+				expansionModel.setExpande(true);
+				updateData();
 			}
 		}
 
@@ -327,15 +357,21 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 
 	public static class AssetTreeExpansionModel implements TreeList.ExpansionModel<TreeAsset> {
 
+		private boolean expande = false;
+		
 		@Override
 		public boolean isExpanded(TreeAsset element, List<TreeAsset> path) {
-			return false;
+			return expande;
 		}
 
 		@Override
 		public void setExpanded(TreeAsset element, List<TreeAsset> path, boolean expanded) {
 			//FIXME - - > TreeTable: Save Tree expanded state
-		}	
+		}
+
+		public void setExpande(boolean expande) {
+			this.expande = expande;
+		}
 	}
 
 	public static class AssetTreeComparator implements Comparator<TreeAsset> {

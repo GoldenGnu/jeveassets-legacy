@@ -24,7 +24,6 @@ package net.nikr.eve.jeveasset.gui.tabs.tree;
 import ca.odell.glazedlists.swing.DefaultEventTableModel;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
@@ -33,7 +32,6 @@ import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 public class JTreeTable extends JAutoColumnTable {
 
 	private DefaultEventTableModel<TreeAsset> tableModel;
-	private Color color = new Color(240, 240, 240);
 
 	public JTreeTable(final Program program, final DefaultEventTableModel<TreeAsset> tableModel) {
 		super(program, tableModel);
@@ -48,9 +46,7 @@ public class JTreeTable extends JAutoColumnTable {
 		//setColumnSelectionAllowed(false);
 		//FIXME - - > TreeTable: Reordering columns does not work
 		getTableHeader().setReorderingAllowed(false);
-		setRowHeight(20);
-		//setRowMargin(0);
-		//setIntercellSpacing(new Dimension(1, 0));
+		setRowHeight(22);
 	}
 
 	@Override
