@@ -36,18 +36,6 @@ public class JTreeTable extends JAutoColumnTable {
 	public JTreeTable(final Program program, final DefaultEventTableModel<TreeAsset> tableModel) {
 		super(program, tableModel);
 		this.tableModel = tableModel;
-
-		//setShowHorizontalLines(false);
-		//setShowVerticalLines(true);
-		//setGridColor(new Color(200, 200, 200));
-		//setShowGrid(false);
-		setCellSelectionEnabled(true);
-		disableColumnResizeCache(0);
-		//setRowSelectionAllowed(true);
-		//setColumnSelectionAllowed(false);
-		//FIXME - - > TreeTable: Reordering columns does not work
-		getTableHeader().setReorderingAllowed(false);
-		setRowHeight(22);
 	}
 
 	@Override

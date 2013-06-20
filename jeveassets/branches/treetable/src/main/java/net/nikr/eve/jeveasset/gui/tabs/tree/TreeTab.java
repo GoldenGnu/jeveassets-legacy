@@ -63,6 +63,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset.TreeType;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat.HierarchyColumn;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
@@ -158,17 +159,23 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 		tableModel = EventModels.createTableModel(treeList, tableFormat);
 		//Table
 		jTable = new JTreeTable(program, tableModel);
+		jTable.setCellSelectionEnabled(true);
+		jTable.disableColumnResizeCache(HierarchyColumn.class);
+		jTable.setRowHeight(22);
 		jTable.addMouseListener(listener);
 		TreeTableSupport install = TreeTableSupport.install(jTable, treeList, 0);
-		install.setEditor(new AssetTreeTableCellEditor(install.getDelegateEditor(), treeList, tableModel, INDENT, 6));
-		install.setRenderer(new AssetTreeTableCellRenderer(install.getDelegateRenderer(), treeList, tableModel, INDENT, 6));
+		TreeTableCellEditor editor = new AssetTreeTableCellEditor(install.getDelegateEditor(), treeList, tableModel, INDENT, 6);
+		TreeTableCellRenderer renderer = new AssetTreeTableCellRenderer(install.getDelegateRenderer(), treeList, tableModel, INDENT, 6);
+		install.setEditor(editor);
+		install.setRenderer(renderer);
+		jTable.setDefaultRenderer(HierarchyColumn.class, renderer);
+		jTable.setDefaultEditor(HierarchyColumn.class, editor);
 		//Selection Model
 		selectionModel = EventModels.createSelectionModel(treeList);
 		selectionModel.setSelectionMode(ListSelection.MULTIPLE_INTERVAL_SELECTION_DEFENSIVE);
 		jTable.setSelectionModel(selectionModel);
 		//Listeners
-		//FIXME - - > TreeTable: installTable(...) fail
-		//installTable(jTable, NAME);
+		installTable(jTable, NAME);
 		//Scroll
 		JScrollPane jTableScroll = new JScrollPane(jTable);
 		//Table Filter
@@ -318,6 +325,7 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (ACTION_UPDATE.equals(e.getActionCommand())) {
+				expansionModel.setExpande(false);
 				updateTable();
 			} else if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
 				expansionModel.setExpande(false);
@@ -359,7 +367,6 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 			updateStatusbar();
 			program.getOverviewTab().updateTable();
 		}
-		
 	}
 
 	public static class AssetTreeExpansionModel implements TreeList.ExpansionModel<TreeAsset> {

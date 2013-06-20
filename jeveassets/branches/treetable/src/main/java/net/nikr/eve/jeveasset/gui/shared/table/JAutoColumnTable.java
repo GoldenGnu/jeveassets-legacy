@@ -61,7 +61,7 @@ public class JAutoColumnTable extends JTable {
 	private final Map<Integer, Integer> rowsWidth = new HashMap<Integer, Integer>();
 	protected Program program;
 	private boolean autoResizeLock = false;
-	private final Set<Integer> disableColumnResizeCache = new HashSet<Integer>();
+	private final Set<Class> disableColumnResizeCache = new HashSet<Class>();
 
 	public JAutoColumnTable(final Program program, final TableModel tableModel) {
 		super(tableModel);
@@ -167,12 +167,12 @@ public class JAutoColumnTable extends JTable {
 		return columnsWidth;
 	}
 
-	public void disableColumnResizeCache(int column) {
-		disableColumnResizeCache.add(column);
+	public void disableColumnResizeCache(Class columnClass) {
+		disableColumnResizeCache.add(columnClass);
 	}
 
-	public void enableColumnResizeCache(int column) {
-		disableColumnResizeCache.remove(column);
+	public void enableColumnResizeCache(Class columnClass) {
+		disableColumnResizeCache.remove(columnClass);
 	}
 
 	private JTable getTable() {
@@ -333,7 +333,7 @@ public class JAutoColumnTable extends JTable {
 			if (rowValue == null) { //Ignore null
 				continue;
 			}
-			boolean useCache = !disableColumnResizeCache.contains(columnIndex);
+			boolean useCache = !disableColumnResizeCache.contains(rowValue.getClass());
 			final int key = rowValue.toString().hashCode(); //value hash
 			if (rowsWidth.containsKey(key) && useCache) { //Load row width
 				maxWidth = Math.max(maxWidth, rowsWidth.get(key));

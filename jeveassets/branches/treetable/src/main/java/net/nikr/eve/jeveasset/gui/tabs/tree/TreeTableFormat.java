@@ -31,14 +31,14 @@ import net.nikr.eve.jeveasset.i18n.TabsAssets;
 
 
 public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
-	NAME(String.class, GlazedLists.comparableComparator()) {
+	NAME(HierarchyColumn.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return "Name";
+			return "Name"; //
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
-			return from.getTreeName();
+			return new HierarchyColumn(from.getTreeName());
 		}
 	},
 	GROUP(String.class, GlazedLists.comparableComparator()) {
@@ -389,4 +389,26 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 	}
 	//XXX - TableFormat.getColumnValue(...) Workaround
 	@Override public abstract Object getColumnValue(final TreeAsset from);
+
+	public class HierarchyColumn implements Comparable<HierarchyColumn>{
+		String name;
+
+		public HierarchyColumn(String name) {
+			this.name = name;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		@Override
+		public int compareTo(HierarchyColumn o) {
+			return this.getName().compareTo(o.getName());
+		}
+
+		@Override
+		public String toString() {
+			return getName();
+		}
+	}
 }
