@@ -101,8 +101,7 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 	public static final String NAME = "treeassets"; //Not to be changed!
 
 	public TreeTab(final Program program) {
-		//FIXME - - > TreeTable: need Its own icon?
-		super(program, TabsTree.get().title(), Images.TOOL_ASSETS.getIcon(), true);
+		super(program, TabsTree.get().title(), Images.TOOL_TREE.getIcon(), true);
 		layout.setAutoCreateGaps(true);
 
 		ListenerClass listener = new ListenerClass();

@@ -83,6 +83,13 @@ public class MainMenu extends JMenuBar {
 		menu = new JMenu(GuiFrame.get().tools());
 		this.add(menu);
 
+		menuItem = new JMenuItem(GuiFrame.get().tree());
+		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.setIcon(Images.TOOL_TREE.getIcon());
+		menuItem.setActionCommand(ACTION_OPEN_TREE);
+		menuItem.addActionListener(program);
+		menu.add(menuItem);
+
 		menuItem = new JMenuItem(GuiFrame.get().values());
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_VALUES.getIcon());
@@ -181,15 +188,6 @@ public class MainMenu extends JMenuBar {
 		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
 		menuItem.setIcon(Images.TOOL_OVERVIEW.getIcon());
 		menuItem.setActionCommand(ACTION_OPEN_OVERVIEW);
-		menuItem.addActionListener(program);
-		menu.add(menuItem);
-
-		
-		menuItem = new JMenuItem(GuiFrame.get().tree());
-		//menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		//FIXME - - > TreeTable: need Its own icon?
-		menuItem.setIcon(Images.TOOL_ASSETS.getIcon());
-		menuItem.setActionCommand(ACTION_OPEN_TREE);
 		menuItem.addActionListener(program);
 		menu.add(menuItem);
 
