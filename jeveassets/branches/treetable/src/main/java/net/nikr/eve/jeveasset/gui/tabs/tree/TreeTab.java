@@ -65,6 +65,7 @@ import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset.TreeType;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat.HierarchyColumn;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
+import net.nikr.eve.jeveasset.i18n.TabsTree;
 
 
 public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
@@ -100,9 +101,8 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 	public static final String NAME = "treeassets"; //Not to be changed!
 
 	public TreeTab(final Program program) {
-		//FIXME - - > TreeTable: i18n
 		//FIXME - - > TreeTable: need Its own icon?
-		super(program, "Tree Assets", Images.TOOL_ASSETS.getIcon(), true);
+		super(program, TabsTree.get().title(), Images.TOOL_ASSETS.getIcon(), true);
 		layout.setAutoCreateGaps(true);
 
 		ListenerClass listener = new ListenerClass();
@@ -113,15 +113,13 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 
 		ButtonGroup buttonGroup = new ButtonGroup();
 
-		//FIXME - - > TreeTable: i18n
-		jCategories = new JToggleButton("Categories", Images.LOC_GROUPS.getIcon());
+		jCategories = new JToggleButton(TabsTree.get().categories(), Images.LOC_GROUPS.getIcon());
 		jCategories.setActionCommand(ACTION_UPDATE);
 		jCategories.addActionListener(listener);
 		buttonGroup.add(jCategories);
 		addToolButton(jToolBarLeft, jCategories);
 
-		//FIXME - - > TreeTable: i18n
-		jLocation = new JToggleButton("Locations", Images.LOC_LOCATIONS.getIcon());
+		jLocation = new JToggleButton(TabsTree.get().locations(), Images.LOC_LOCATIONS.getIcon());
 		jLocation.setActionCommand(ACTION_UPDATE);
 		jLocation.addActionListener(listener);
 		jLocation.setSelected(true);
@@ -132,14 +130,12 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 		jToolBarRight.setFloatable(false);
 		jToolBarRight.setRollover(true);
 
-		//FIXME - - > TreeTable: i18n
-		JButton jCollapse = new JButton("Collapse", Images.MISC_COLLAPSED.getIcon());
+		JButton jCollapse = new JButton(TabsTree.get().collapse(), Images.MISC_COLLAPSED.getIcon());
 		jCollapse.setActionCommand(ACTION_COLLAPSE);
 		jCollapse.addActionListener(listener);
 		addToolButton(jToolBarRight, jCollapse);
 
-		//FIXME - - > TreeTable: i18n
-		JButton jExpand = new JButton("Expand", Images.MISC_EXPANDED.getIcon());
+		JButton jExpand = new JButton(TabsTree.get().expand(), Images.MISC_EXPANDED.getIcon());
 		jExpand.setActionCommand(ACTION_EXPAND);
 		jExpand.addActionListener(listener);
 		addToolButton(jToolBarRight, jExpand);
@@ -191,23 +187,18 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 		//Menu
 		installMenu(program, this, jTable, TreeAsset.class);
 
-		//FIXME - - > TreeTable: i18n
 		jVolume = StatusPanel.createLabel(TabsAssets.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);
 
-		//FIXME - - > TreeTable: i18n
 		jCount = StatusPanel.createLabel(TabsAssets.get().totalCount(), Images.EDIT_ADD.getIcon()); //Add
 		this.addStatusbarLabel(jCount);
 
-		//FIXME - - > TreeTable: i18n
 		jAverage = StatusPanel.createLabel(TabsAssets.get().average(), Images.ASSETS_AVERAGE.getIcon());
 		this.addStatusbarLabel(jAverage);
 
-		//FIXME - - > TreeTable: i18n
 		jReprocessed = StatusPanel.createLabel(TabsAssets.get().totalReprocessed(), Images.SETTINGS_REPROCESSING.getIcon());
 		this.addStatusbarLabel(jReprocessed);
 
-		//FIXME - - > TreeTable: i18n
 		jValue = StatusPanel.createLabel(TabsAssets.get().totalValue(), Images.TOOL_VALUES.getIcon());
 		this.addStatusbarLabel(jValue);
 

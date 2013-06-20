@@ -34,7 +34,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 	NAME(HierarchyColumn.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
-			return "Name"; //
+			return TabsAssets.get().columnName();
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
