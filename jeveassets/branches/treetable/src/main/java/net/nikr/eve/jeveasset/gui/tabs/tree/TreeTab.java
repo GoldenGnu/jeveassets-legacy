@@ -258,8 +258,7 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 
 	@Override
 	public JMenu getColumnMenu() {
-		//FIXME - - > TreeTable: Column Menu
-		return tableFormat.getMenu(program, tableModel, jTable, NAME, false);
+		return tableFormat.getMenu(program, tableModel, jTable, NAME);
 	}
 
 	@Override
