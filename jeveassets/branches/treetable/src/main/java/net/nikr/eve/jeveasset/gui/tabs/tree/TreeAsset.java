@@ -47,12 +47,7 @@ public class TreeAsset extends Asset {
 	public TreeAsset(Asset asset, TreeType treeType) {
 		super(asset);
 		this.ownerName = asset.getOwner();
-		if (asset.getAssets().isEmpty() || treeType == TreeType.CATEGORY) {
-			this.treeName = asset.getName();
-		} else {
-			this.treeName = asset.getName() + " #" + asset.getItemID();
-		}
-		
+		this.treeName = asset.getName();
 		if (asset.getItem().getGroup().equals("Audit Log Secure Container") && !asset.getAssets().isEmpty() && treeType == TreeType.LOCATION) {
 			this.icon = Images.LOC_CONTAINER.getIcon();
 		} else if (asset.getItem().getCategory().equals("Ship") && !asset.getAssets().isEmpty() && treeType == TreeType.LOCATION) {
@@ -90,7 +85,7 @@ public class TreeAsset extends Asset {
 					this.levels.add(new TreeAsset(parentAsset, parentAsset.getName() + " #" + parentAsset.getItemID(), depth, fullLocation+fullParent, parentIcon));
 				}
 			}
-			this.compare = fullLocation + fullParent + treeName;
+			this.compare = fullLocation + fullParent + asset.getName() + " #" + asset.getItemID();
 		} else { //Never happens
 			this.trueAsset = true;
 			this.compare = treeName;
@@ -147,13 +142,10 @@ public class TreeAsset extends Asset {
 		}
 	}
 
-	
-
 	@Override
 	public int hashCode() {
-		int hash = 7;
-		hash = 43 * hash + (this.treeName != null ? this.treeName.hashCode() : 0);
-		hash = 43 * hash + (this.compare != null ? this.compare.hashCode() : 0);
+		int hash = 5;
+		hash = 47 * hash + (this.compare != null ? this.compare.hashCode() : 0);
 		return hash;
 	}
 
@@ -166,9 +158,6 @@ public class TreeAsset extends Asset {
 			return false;
 		}
 		final TreeAsset other = (TreeAsset) obj;
-		if ((this.treeName == null) ? (other.treeName != null) : !this.treeName.equals(other.treeName)) {
-			return false;
-		}
 		if ((this.compare == null) ? (other.compare != null) : !this.compare.equals(other.compare)) {
 			return false;
 		}

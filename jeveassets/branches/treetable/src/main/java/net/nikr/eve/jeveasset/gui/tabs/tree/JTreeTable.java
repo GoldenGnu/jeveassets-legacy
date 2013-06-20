@@ -42,6 +42,7 @@ public class JTreeTable extends JAutoColumnTable {
 		//setGridColor(new Color(200, 200, 200));
 		//setShowGrid(false);
 		setCellSelectionEnabled(true);
+		disableColumnResizeCache(0);
 		//setRowSelectionAllowed(true);
 		//setColumnSelectionAllowed(false);
 		//FIXME - - > TreeTable: Reordering columns does not work

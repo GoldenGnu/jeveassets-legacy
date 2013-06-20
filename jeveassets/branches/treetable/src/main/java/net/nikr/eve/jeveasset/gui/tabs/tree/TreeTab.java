@@ -158,9 +158,6 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 		tableModel = EventModels.createTableModel(treeList, tableFormat);
 		//Table
 		jTable = new JTreeTable(program, tableModel);
-		//jTable.setCellSelectionEnabled(true);
-		//jTable.setRowSelectionAllowed(true);
-		//jTable.setColumnSelectionAllowed(true);
 		jTable.addMouseListener(listener);
 		TreeTableSupport install = TreeTableSupport.install(jTable, treeList, 0);
 		install.setEditor(new AssetTreeTableCellEditor(install.getDelegateEditor(), treeList, tableModel, INDENT, 6));
