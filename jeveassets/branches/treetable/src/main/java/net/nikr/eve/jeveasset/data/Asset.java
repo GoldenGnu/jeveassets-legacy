@@ -80,7 +80,7 @@ public class Asset implements Comparable<Asset>, InfoItem, LocationType, ItemTyp
 				asset.itemID,
 				asset.singleton,
 				asset.rawQuantity);
-		this.assets = asset.assets;
+		//this.assets = asset.assets;
 		this.added = asset.added;
 		this.container = asset.container;
 		this.price = asset.price;

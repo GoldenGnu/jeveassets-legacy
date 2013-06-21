@@ -36,100 +36,249 @@ public class TreeAsset extends Asset {
 		CATEGORY,
 		LOCATION,
 	}
+
+	private final String SPACE = "    ";
+
 	private final String treeName;
-	private final List<TreeAsset> levels = new ArrayList<TreeAsset>();
+	private final List<TreeAsset> tree;
 	private final String compare;
 	private final String ownerName;
+	private final boolean parent;
+	private final boolean item;
+	private final int depthOffset;
 	private final Icon icon;
-	private final boolean trueAsset;
-	private int depth = 0;
 
-	public TreeAsset(Asset asset, TreeType treeType) {
+	private boolean expanded;
+
+	private long count = 0;
+	private double value = 0;
+	private double valueBase = 0;
+	private double valueBuyMax = 0;
+	private double valueReprocessed = 0;
+	private double valueSellMin = 0;
+	private double volumnTotal = 0;
+	
+
+	public TreeAsset(Asset asset, TreeType treeType, List<TreeAsset> tree, String compare, boolean parent) {
 		super(asset);
+		this.treeName = createSpace(tree.size()) + asset.getName();
+		this.tree = tree;
+		this.compare = compare + asset.getName() + " #" + asset.getItemID();
 		this.ownerName = asset.getOwner();
-		this.treeName = asset.getName();
-		if (asset.getItem().getGroup().equals("Audit Log Secure Container") && !asset.getAssets().isEmpty() && treeType == TreeType.LOCATION) {
-			this.icon = Images.LOC_CONTAINER.getIcon();
-		} else if (asset.getItem().getCategory().equals("Ship") && !asset.getAssets().isEmpty() && treeType == TreeType.LOCATION) {
-			this.icon = Images.TOOL_SHIP_LOADOUTS.getIcon();
-		} else {
-			this.icon = null;
-		}
-		if (treeType == TreeType.CATEGORY) {
-			this.trueAsset = true;
-			String category = asset.getItem().getCategory();
-			String group = asset.getItem().getGroup();
-			depth = 2; //Max 2 level, so we start higher
-			this.levels.add(new TreeAsset(asset, category, depth, category, null));
-			depth++;
-			this.levels.add(new TreeAsset(asset, group, depth, category+group, null));
-			this.compare = category+group+asset.getName();
-		} else if (treeType == TreeType.LOCATION) {
-			this.trueAsset = asset.getAssets().isEmpty();
-			Location location = asset.getLocation();
-			depth++;
-			this.levels.add(new TreeAsset(asset, location.getRegion(), depth, location.getRegion(), Images.LOC_REGION.getIcon()));
-			depth++;
-			this.levels.add(new TreeAsset(asset, location.getSystem(), depth, location.getRegion()+location.getSystem(), Images.LOC_SYSTEM.getIcon()));
-			if (location.isStation()) {
-				depth++;
-				this.levels.add(new TreeAsset(asset, location.getLocation(), depth, location.getRegion()+location.getSystem()+location.getLocation(), Images.LOC_STATION.getIcon()));
+		this.parent = parent;
+		this.item = true;
+		this.depthOffset = 0;
+		if (treeType == TreeType.LOCATION && parent) {
+			if (asset.getItem().getGroup().equals("Audit Log Secure Container")) {
+				this.icon = Images.LOC_CONTAINER.getIcon();
+			} else if (asset.getItem().getCategory().equals("Ship")) {
+				this.icon = Images.TOOL_SHIP_LOADOUTS.getIcon();
+			} else {
+				this.icon = null;
 			}
-			String fullLocation = location.getRegion()+location.getSystem()+location.getLocation();
-			String fullParent = "";
-			if (!asset.getParents().isEmpty()) {
-				for (Asset parentAsset : asset.getParents()) {
-					fullParent = fullParent + parentAsset.getName() + " #" + parentAsset.getItemID();
-					Icon parentIcon = null;
-					depth++;
-					this.levels.add(new TreeAsset(parentAsset, parentAsset.getName() + " #" + parentAsset.getItemID(), depth, fullLocation+fullParent, parentIcon));
-				}
-			}
-			this.compare = fullLocation + fullParent + asset.getName() + " #" + asset.getItemID();
 		} else { //Never happens
-			this.trueAsset = true;
-			this.compare = treeName;
+			this.icon = null;
 		}
 	}
 
-	public TreeAsset(final Asset asset, final String treeName, final int depth, final String compare, final Icon icon) {
-		super(new Item(0), new Location(0), null, 0, new ArrayList<Asset>(), "", 0, 0L, false, 0);
-		//FIXME - - > TreeTable: Need make totals...
-		this.treeName = treeName;
-		this.trueAsset = false;
-		this.depth = depth;
+	public TreeAsset(final Location location, final String treeName, final String compare, final Icon icon, List<TreeAsset> tree) {
+		this(location, treeName, compare, icon, tree, 0);
+	}
+
+	public TreeAsset(final Location location, final String treeName, final String compare, final Icon icon, List<TreeAsset> tree, final int depthOffset) {
+		super(new Item(0), location, null, 0, new ArrayList<Asset>(), "", 0, 0L, false, 0);
+		this.treeName = createSpace(tree.size()) + treeName;
+		this.tree = new ArrayList<TreeAsset>(tree); //Copy
 		this.compare = compare;
 		this.ownerName = "";
 		this.icon = icon;
+		this.depthOffset = depthOffset;
+		this.parent = true;
+		this.item = false;
 	}
 
-	public boolean isTrueAsset() {
-		return trueAsset;
-	}
-
-	public int getDepth() {
-		return depth;
-	}
-
-	public String getTreeName() {
-		return treeName;
-	}
-
-	public List<TreeAsset> getLevels() {
-		return levels;
+	private String createSpace(int size) {
+		String space = "";
+		for (int i = 0; i < size; i++) {
+			space = space + SPACE;
+		}
+		return space;
 	}
 
 	public String getCompare() {
 		return compare;
 	}
 
+	public int getDepth() {
+		return tree.size() + depthOffset;
+	}
+
 	public Icon getIcon() {
 		return icon;
+	}
+
+	public List<TreeAsset> getTree() {
+		return tree;
+	}
+
+	public String getTreeName() {
+		return treeName;
+	}
+
+	//FIXME - - > TreeTable: Save/Load expanded state between restarts?
+	public boolean isExpanded() {
+		return expanded;
+	}
+
+	public boolean isItem() {
+		return item;
+	}
+
+	public boolean isParent() {
+		return parent;
+	}
+
+	public void setExpanded(boolean expanded) {
+		this.expanded = expanded;
+	}
+
+	@Override
+	public long getCount() {
+		if (isItem()) {
+			return super.getCount();
+		} else {
+			return count;
+		}
+	}
+
+	@Override
+	public Double getDynamicPrice() {
+		if (isItem()) {
+			return super.getDynamicPrice();
+		} else {
+			return value / count;
+		}
+	}
+
+	public Integer getMeta() {
+		if (isItem()) {
+			return super.getItem().getMeta();
+		} else {
+			return null;
+		}
 	}
 
 	@Override
 	public String getOwner() {
 		return ownerName;
+	}
+
+	public double getPriceBase() {
+		if (isItem()) {
+			return super.getItem().getPriceBase();
+		} else {
+			return valueBase / count;
+		}
+	}
+
+	@Override
+	public double getPriceBuyMax() {
+		if (isItem()) {
+			return super.getPriceBuyMax();
+		} else {
+			return valueBuyMax / count;
+		}
+	}
+
+	@Override
+	public double getPriceReprocessed() {
+		if (isItem()) {
+			return super.getPriceReprocessed();
+		} else {
+			return valueReprocessed / count;
+		}
+	}
+
+	//FIXME - - > TreeTable: getPriceReprocessedDifference for price (not for value)
+	@Override
+	public double getPriceReprocessedDifference() {
+		if (isItem()) {
+			return super.getPriceReprocessedDifference();
+		} else {
+			return valueReprocessed - value;
+		}
+	}
+
+	@Override
+	public double getPriceSellMin() {
+		if (isItem()) {
+			return super.getPriceSellMin();
+		} else {
+			return valueSellMin / count;
+		}
+	}
+
+	@Override
+	public double getValue() {
+		if (isItem()) {
+			return super.getValue();
+		} else {
+			return value;
+		}
+	}
+
+	public String getSecurity() {
+		if (isItem() && !getLocation().isEmpty() && !getLocation().isRegion()) {
+			return getLocation().getSecurity();
+		} else {
+			return "";
+		}
+	}
+
+	@Override
+	public String getSingleton() {
+		if (isItem()) {
+			return super.getSingleton();
+		} else {
+			return "";
+		}
+	}
+
+	@Override
+	public double getValueReprocessed() {
+		if (isItem()) {
+			return super.getValueReprocessed();
+		} else {
+			return valueReprocessed;
+		}
+	}
+
+	@Override
+	public float getVolume() {
+		if (isItem()) {
+			return super.getVolume();
+		} else {
+			return (float) (volumnTotal / count);
+		}
+	}
+
+	@Override
+	public double getVolumeTotal() {
+		if (isItem()) {
+			return super.getVolumeTotal();
+		} else {
+			return volumnTotal;
+		}
+	}
+
+	public void add(Asset asset) {
+		this.count = this.count + asset.getCount();
+		this.value = this.value + asset.getValue();
+		this.valueBase = this.valueBase + (asset.getItem().getPriceBase() * asset.getCount());
+		this.valueBuyMax = this.valueBuyMax + (asset.getPriceBuyMax() * asset.getCount());
+		this.valueReprocessed = this.valueReprocessed + asset.getValueReprocessed();
+		this.valueSellMin = this.valueSellMin + (asset.getPriceSellMin() * asset.getCount());
+		this.volumnTotal = this.volumnTotal + asset.getVolumeTotal();
 	}
 
 	@Override

@@ -88,7 +88,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
-			return from.getLocation().getSecurity();
+			return from.getSecurity();
 		}
 	},
 	REGION(String.class, GlazedLists.comparableComparator()) {
@@ -208,7 +208,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
-			return from.getItem().getPriceBase();
+			return from.getPriceBase();
 		}
 	},
 	VALUE_REPROCESSED(Double.class, GlazedLists.comparableComparator()) {
@@ -278,7 +278,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
-			return from.getItem().getMeta();
+			return from.getMeta();
 		}
 	},
 	TECH(String.class, GlazedLists.comparableComparator()) {
@@ -301,7 +301,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 			return from.getVolume();
 		}
 	},
-	VOLUME_TOTAL(Float.class, GlazedLists.comparableComparator()) {
+	VOLUME_TOTAL(Double.class, GlazedLists.comparableComparator()) {
 		@Override
 		public String getColumnName() {
 			return TabsAssets.get().columnVolumeTotal();

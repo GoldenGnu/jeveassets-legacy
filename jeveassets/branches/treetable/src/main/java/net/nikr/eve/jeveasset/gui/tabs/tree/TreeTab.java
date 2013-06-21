@@ -43,13 +43,17 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 import net.nikr.eve.jeveasset.Program;
 import net.nikr.eve.jeveasset.data.Asset;
+import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.gui.frame.StatusPanel;
 import net.nikr.eve.jeveasset.gui.images.Images;
@@ -63,9 +67,11 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset.TreeType;
+import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab.AssetTreeExpansionModel.ExpandeState;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat.HierarchyColumn;
 import net.nikr.eve.jeveasset.i18n.TabsAssets;
 import net.nikr.eve.jeveasset.i18n.TabsTree;
+import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
 public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
@@ -95,8 +101,8 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 	private EnumTableFormatAdaptor<TreeTableFormat, TreeAsset> tableFormat;
 	private DefaultEventSelectionModel<TreeAsset> selectionModel;
 	private AssetTreeExpansionModel expansionModel;
-	private List<TreeAsset> locations = new ArrayList<TreeAsset>();
-	private List<TreeAsset> categories = new ArrayList<TreeAsset>();
+	private Set<TreeAsset> locations = new TreeSet<TreeAsset>(new AssetTreeComparator());
+	private Set<TreeAsset> categories = new TreeSet<TreeAsset>(new AssetTreeComparator());
 
 	public static final String NAME = "treeassets"; //Not to be changed!
 
@@ -146,10 +152,10 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 		eventList = new BasicEventList<TreeAsset>();
 		//Filter
 		filterList = new FilterList<TreeAsset>(eventList);
+		filterList.addListEventListener(listener);
 		//Tree
 		expansionModel = new AssetTreeExpansionModel();
 		treeList = new TreeList<TreeAsset>(filterList, new AssetTreeFormat(), expansionModel);
-		treeList.addListEventListener(listener);
 		//Table Model
 		tableModel = EventModels.createTableModel(treeList, tableFormat);
 		//Table
@@ -158,6 +164,7 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 		jTable.disableColumnResizeCache(HierarchyColumn.class);
 		jTable.setRowHeight(22);
 		jTable.addMouseListener(listener);
+		//Tree
 		TreeTableSupport install = TreeTableSupport.install(jTable, treeList, 0);
 		TreeTableCellEditor editor = new AssetTreeTableCellEditor(install.getDelegateEditor(), treeList, tableModel, INDENT, 6);
 		TreeTableCellRenderer renderer = new AssetTreeTableCellRenderer(install.getDelegateRenderer(), treeList, tableModel, INDENT, 6);
@@ -264,15 +271,107 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 		//FIXME - - > TreeTable: creating data is very expensive!
 		locations.clear();
 		categories.clear();
+		Map<String, TreeAsset> categoryCache = new HashMap<String, TreeAsset>();
+		Map<String, TreeAsset> locationCache = new HashMap<String, TreeAsset>();
 		for (Asset asset : program.getAssetEventList()) {
-			locations.add(new TreeAsset(asset, TreeType.LOCATION));
-			categories.add(new TreeAsset(asset, TreeType.CATEGORY));
+		//LOCATION
+			List<TreeAsset> locationTree = new ArrayList<TreeAsset>();
+			Location location = asset.getLocation();
+
+			//Region
+			TreeAsset regionAsset = locationCache.get(location.getRegion());
+			if (regionAsset == null) {
+				regionAsset = new TreeAsset(ApiIdConverter.getLocation(location.getRegionID()), location.getRegion(), location.getRegion(), Images.LOC_REGION.getIcon(), locationTree);
+				locationCache.put(location.getRegion(), regionAsset);
+			}
+			locationTree.add(regionAsset);
+			locations.add(regionAsset);
+			//Update region total
+			regionAsset.add(asset);
+
+			//System
+			String systemKey = location.getRegion() + location.getSystem();
+			TreeAsset systemAsset = locationCache.get(systemKey);
+			if (systemAsset == null) {
+				systemAsset = new TreeAsset(ApiIdConverter.getLocation(location.getSystemID()), location.getSystem(), systemKey, Images.LOC_SYSTEM.getIcon(), locationTree);
+				locationCache.put(systemKey, systemAsset);
+			}
+			locationTree.add(systemAsset);
+			locations.add(systemAsset);
+			//Update system total
+			systemAsset.add(asset);
+			
+			String fullLocation = location.getRegion()+location.getSystem();
+			//Station
+			if (location.isStation()) {
+				String stationKey = location.getRegion() + location.getSystem() + location.getLocation();
+				TreeAsset stationAsset = locationCache.get(stationKey);
+				if (stationAsset == null) {
+					stationAsset = new TreeAsset(asset.getLocation(), location.getLocation(), stationKey, Images.LOC_SYSTEM.getIcon(), locationTree);
+					locationCache.put(stationKey, stationAsset);
+				}
+				locationTree.add(stationAsset);
+				locations.add(stationAsset);
+				//Update station total
+				stationAsset.add(asset);
+				fullLocation = location.getRegion()+location.getSystem()+location.getLocation();
+			}
+
+			//FIXME - - > TreeTable: Containers totals are wrong
+			//Parent
+			String parentKey = fullLocation;
+			if (!asset.getParents().isEmpty()) {
+				for (Asset parentAsset : asset.getParents()) {
+					parentKey = parentKey + parentAsset.getName() + " #" + parentAsset.getItemID();
+					TreeAsset parentTreeAsset = locationCache.get(parentKey);
+					if (parentTreeAsset == null) {
+						parentTreeAsset = new TreeAsset(asset.getLocation(), parentAsset.getName(), parentKey, Images.LOC_SYSTEM.getIcon(), locationTree);
+						locationCache.put(parentKey, parentTreeAsset);
+					}
+					locationTree.add(parentTreeAsset);
+					locations.add(parentTreeAsset);
+					//Update parent total
+					parentTreeAsset.add(asset);
+				}
+			}
+			TreeAsset locationAsset = new TreeAsset(asset, TreeType.LOCATION, locationTree, parentKey, !asset.getAssets().isEmpty());
+			locations.add(locationAsset);
+			
+		//CATEGORY
+			List<TreeAsset> categoryTree = new ArrayList<TreeAsset>();
+
+			//Category
+			String categoryKey = asset.getItem().getCategory();
+			TreeAsset categoryAsset = categoryCache.get(categoryKey);
+			if (categoryAsset == null) {
+				categoryAsset = new TreeAsset(new Location(0), asset.getItem().getCategory(), categoryKey, null, categoryTree, 1);
+				categoryCache.put(categoryKey, categoryAsset);
+			}
+			categoryTree.add(categoryAsset);
+			categories.add(categoryAsset);
+			//Update category total
+			categoryAsset.add(asset);
+
+			//Group
+			String groupKey = categoryKey + asset.getItem().getGroup();
+			TreeAsset groupAsset = categoryCache.get(groupKey);
+			if (groupAsset == null) {
+				groupAsset = new TreeAsset(new Location(0), asset.getItem().getGroup(), groupKey, null, categoryTree, 1);
+				categoryCache.put(groupKey, groupAsset);
+			}
+			categoryTree.add(groupAsset);
+			categories.add(groupAsset);
+			//Update group total
+			groupAsset.add(asset);
+
+			TreeAsset category = new TreeAsset(asset, TreeType.CATEGORY, categoryTree, groupKey, false);
+			categories.add(category);
 		}
 		updateTable();
 	}
 
 	public void updateTable() {
-		List<TreeAsset> treeAssets = locations;
+		Set<TreeAsset> treeAssets = locations;
 		if (jCategories.isSelected()) {
 			treeAssets = categories;
 		}
@@ -291,7 +390,10 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 		long totalCount = 0;
 		double totalVolume = 0;
 		double totalReprocessed = 0;
-		for (Asset asset : filterList) {
+		for (TreeAsset asset : filterList) {
+			if (!asset.isItem()) {
+				continue;
+			}
 			totalValue = totalValue + (asset.getDynamicPrice() * asset.getCount()) ;
 			totalCount = totalCount + asset.getCount();
 			totalVolume = totalVolume + asset.getVolumeTotal();
@@ -314,14 +416,16 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			if (ACTION_UPDATE.equals(e.getActionCommand())) {
-				expansionModel.setExpande(false);
+				expansionModel.setState(ExpandeState.LOAD);
 				updateTable();
 			} else if (ACTION_COLLAPSE.equals(e.getActionCommand())) {
-				expansionModel.setExpande(false);
+				expansionModel.setState(ExpandeState.COLLAPSE);
 				updateTable();
+				expansionModel.setState(ExpandeState.LOAD);
 			} else if (ACTION_EXPAND.equals(e.getActionCommand())) {
-				expansionModel.setExpande(true);
+				expansionModel.setState(ExpandeState.EXPANDE);
 				updateTable();
+				expansionModel.setState(ExpandeState.LOAD);
 			}
 		}
 
@@ -360,20 +464,38 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 
 	public static class AssetTreeExpansionModel implements TreeList.ExpansionModel<TreeAsset> {
 
-		private boolean expande = false;
+		public enum ExpandeState {
+			EXPANDE,
+			COLLAPSE,
+			LOAD
+		}
+
+		private ExpandeState expandeState = ExpandeState.COLLAPSE;
 		
 		@Override
 		public boolean isExpanded(TreeAsset element, List<TreeAsset> path) {
-			return expande;
+			if (expandeState == ExpandeState.EXPANDE) {
+				element.setExpanded(true);  //Save changes made by ExpandeState
+				return true;
+			} else if (expandeState == ExpandeState.COLLAPSE) {
+				element.setExpanded(false);  //Save changes made by ExpandeState
+				return false;
+			} else {
+				return element.isExpanded();
+			}
 		}
 
 		@Override
 		public void setExpanded(TreeAsset element, List<TreeAsset> path, boolean expanded) {
-			//FIXME - - > TreeTable: Save Tree expanded state
+			element.setExpanded(expanded); //Save GUI changes
 		}
 
-		public void setExpande(boolean expande) {
-			this.expande = expande;
+		public ExpandeState getState() {
+			return expandeState;
+		}
+
+		public void setState(ExpandeState expandeState) {
+			this.expandeState = expandeState;
 		}
 	}
 
@@ -390,7 +512,7 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 
 		@Override
 		public void getPath(List<TreeAsset> path, TreeAsset element) {
-			path.addAll(element.getLevels());
+			path.addAll(element.getTree());
 			path.add(element);
 		}
 
@@ -540,9 +662,10 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 			TreeAsset treeAsset = tableModel.getElementAt(row);
 			JLabel jLabel = (JLabel) jPanel.getComponent(3);
 			jLabel.setIcon(treeAsset.getIcon());
+			if (value instanceof HierarchyColumn) {
+				jLabel.setText(jLabel.getText().trim());
+			}
 			return jPanel;
 		}
-
-		
 	}
 }
