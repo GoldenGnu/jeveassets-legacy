@@ -268,7 +268,6 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 
 	@Override
 	public void updateData() {
-		//FIXME - - > TreeTable: creating data is very expensive!
 		locations.clear();
 		categories.clear();
 		Map<String, TreeAsset> categoryCache = new HashMap<String, TreeAsset>();
@@ -317,7 +316,6 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 				fullLocation = location.getRegion()+location.getSystem()+location.getLocation();
 			}
 
-			//FIXME - - > TreeTable: Containers totals are wrong
 			//Parent
 			String parentKey = fullLocation;
 			if (!asset.getParents().isEmpty()) {
@@ -432,7 +430,6 @@ public class TreeTab extends JMainTab implements TableMenu<TreeAsset> {
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() % 2 == 0) {
-				Component c = jTable.findComponentAt(e.getPoint());
 				int row = jTable.rowAtPoint(e.getPoint());
 				int depth = treeList.depth(row);
 				final int min = INDENT + (depth * WIDTH);

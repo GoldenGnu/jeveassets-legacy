@@ -125,7 +125,6 @@ public class TreeAsset extends Asset {
 		return treeName;
 	}
 
-	//FIXME - - > TreeTable: Save/Load expanded state between restarts?
 	public boolean isExpanded() {
 		return expanded;
 	}
@@ -190,22 +189,44 @@ public class TreeAsset extends Asset {
 		}
 	}
 
+	public Double getPriceMarketLatest() {
+		if (isItem()) {
+			return super.getMarketPriceData().getLatest();
+		} else {
+			return null;
+		}
+	}
+
+	public Double getPriceMarketAverage() {
+		if (isItem()) {
+			return super.getMarketPriceData().getAverage();
+		} else {
+			return null;
+		}
+	}
+
+	public Double getPriceMarketMaximum() {
+		if (isItem()) {
+			return super.getMarketPriceData().getMaximum();
+		} else {
+			return null;
+		}
+	}
+
+	public Double getPriceMarketMinimum() {
+		if (isItem()) {
+			return super.getMarketPriceData().getMinimum();
+		} else {
+			return null;
+		}
+	}
+
 	@Override
 	public double getPriceReprocessed() {
 		if (isItem()) {
 			return super.getPriceReprocessed();
 		} else {
 			return valueReprocessed / count;
-		}
-	}
-
-	//FIXME - - > TreeTable: getPriceReprocessedDifference for price (not for value)
-	@Override
-	public double getPriceReprocessedDifference() {
-		if (isItem()) {
-			return super.getPriceReprocessedDifference();
-		} else {
-			return valueReprocessed - value;
 		}
 	}
 
@@ -228,7 +249,7 @@ public class TreeAsset extends Asset {
 	}
 
 	public String getSecurity() {
-		if (isItem() && !getLocation().isEmpty() && !getLocation().isRegion()) {
+		if (!getLocation().isEmpty() && !getLocation().isRegion()) {
 			return getLocation().getSecurity();
 		} else {
 			return "";

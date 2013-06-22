@@ -168,7 +168,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
-			return from.getMarketPriceData().getLatest();
+			return from.getPriceMarketLatest();
 		}
 	},
 	MARKET_ORDER_AVERAGE(Double.class, GlazedLists.comparableComparator()) {
@@ -178,7 +178,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
-			return from.getMarketPriceData().getAverage();
+			return from.getPriceMarketAverage();
 		}
 	},
 	MARKET_ORDER_MAXIMUM(Double.class, GlazedLists.comparableComparator()) {
@@ -188,7 +188,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
-			return from.getMarketPriceData().getMaximum();
+			return from.getPriceMarketMaximum();
 		}
 	},
 	MARKET_ORDER_MINIMUM(Double.class, GlazedLists.comparableComparator()) {
@@ -198,7 +198,7 @@ public enum TreeTableFormat implements EnumTableColumn<TreeAsset> {
 		}
 		@Override
 		public Object getColumnValue(final TreeAsset from) {
-			return from.getMarketPriceData().getMinimum();
+			return from.getPriceMarketMinimum();
 		}
 	},
 	PRICE_BASE(Double.class, GlazedLists.comparableComparator()) {

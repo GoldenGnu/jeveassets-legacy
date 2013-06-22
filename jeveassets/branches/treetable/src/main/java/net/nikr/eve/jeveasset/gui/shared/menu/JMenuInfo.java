@@ -53,7 +53,20 @@ public class JMenuInfo {
 	private JMenuInfo() {}
 
 	public static void treeAsset(final JComponent jComponent, final List<TreeAsset> list) {
-		infoItem(jComponent, new ArrayList<InfoItem>(list));
+		List<InfoItem> items = new ArrayList<InfoItem>();
+		for (TreeAsset asset : list) {
+			boolean add = true;
+			for (TreeAsset tree : asset.getTree()) {
+				if (list.contains(tree)) {
+					add = false;
+					break;
+				}
+			}
+			if (add) {
+				items.add(asset);
+			}
+		}
+		infoItem(jComponent, items);
 	}
 
 	public static void asset(final JComponent jComponent, final List<Asset> list) {

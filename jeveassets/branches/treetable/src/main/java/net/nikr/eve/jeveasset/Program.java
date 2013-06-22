@@ -173,28 +173,28 @@ public class Program implements ActionListener {
 		LOG.info("Loading: Assets Tab");
 		assetsTab = new AssetsTab(this);
 		mainWindow.addTab(assetsTab);
-		LOG.info("Loading: Tree Assets Tab");
+		SplashUpdater.setProgress(52);
+		LOG.info("Loading: Tree Tab");
 		treeTab = new TreeTab(this);
-		mainWindow.addTab(treeTab); //FIXME - - > TreeTable: do not open by defailt
-		SplashUpdater.setProgress(55);
+		SplashUpdater.setProgress(54);
 		LOG.info("Loading: Industry Jobs Tab");
 		industryJobsTab = new IndustryJobsTab(this);
 		LOG.info("Loading: Industry Plot Tab");
 		//FIXME - - > IndustryPlotTab
 		//industryPlotTab = new IndustryPlotTab(this);
-		SplashUpdater.setProgress(60);
+		SplashUpdater.setProgress(56);
 		LOG.info("Loading: Market Orders Tab");
 		marketOrdersTab = new MarketOrdersTab(this);
-		SplashUpdater.setProgress(62);
+		SplashUpdater.setProgress(58);
 		LOG.info("Loading: Journal Tab");
 		journalTab = new JournalTab(this);
-		SplashUpdater.setProgress(63);
+		SplashUpdater.setProgress(60);
 		LOG.info("Loading: Transactions Tab");
 		transactionsTab = new TransactionTab(this);
-		SplashUpdater.setProgress(64);
+		SplashUpdater.setProgress(62);
 		LOG.info("Loading: Materials Tab");
 		materialsTab = new MaterialsTab(this);
-		SplashUpdater.setProgress(65);
+		SplashUpdater.setProgress(64);
 		LOG.info("Loading: Ship Loadouts Tab");
 		loadoutsTab = new LoadoutsTab(this);
 		SplashUpdater.setProgress(66);
