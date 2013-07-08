@@ -39,12 +39,12 @@ import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
 public class Stockpile implements Comparable<Stockpile>, LocationType {
 	private String name;
-	private long ownerID;
-	private String owner;
-	private Location location;
-	private int flagID;
-	private String flag;
-	private String container;
+	private String ownerNames;
+	private String flagNames;
+	private List<Long> ownerIDs = new ArrayList<Long>();
+	private List<Location> locations = new ArrayList<Location>();
+	private List<Integer> flagIDs = new ArrayList<Integer>();
+	private List<String> containers = new ArrayList<String>();
 	private boolean inventory;
 	private boolean sellOrders;
 	private boolean buyOrders;
@@ -64,14 +64,12 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		items.add(totalItem);
 	}
 
-	public Stockpile(final String name, final long ownerID, final String owner, final Location location, final int flagID, final String flag, final String container, final boolean inventory, final boolean sellOrders, final boolean buyOrders, final boolean jobs, double multiplier) {
+	public Stockpile(final String name, final List<Long> ownerIDs, final List<Location> locations, final List<Integer> flagIDs, final List<String> containers, final boolean inventory, final boolean sellOrders, final boolean buyOrders, final boolean jobs, double multiplier) {
 		this.name = name;
-		this.ownerID = ownerID;
-		setOwner(owner);
-		this.location = location;
-		this.flagID = flagID;
-		setFlag(flag);
-		this.container = container;
+		this.ownerIDs = ownerIDs;
+		this.locations = locations;
+		this.flagIDs = flagIDs;
+		this.containers = containers;
 		this.inventory = inventory;
 		this.sellOrders = sellOrders;
 		this.buyOrders = buyOrders;
@@ -82,12 +80,12 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 
 	final void update(final Stockpile stockpile) {
 		this.name = stockpile.getName();
-		this.ownerID = stockpile.getOwnerID();
-		this.owner = stockpile.getOwner();
-		this.location = stockpile.getLocation();
-		this.flagID = stockpile.getFlagID();
-		this.flag = stockpile.getFlag();
-		this.container = stockpile.getContainer();
+		this.ownerIDs = stockpile.getOwnerIDs();
+		this.ownerNames = stockpile.getOwnerNames();
+		this.locations = stockpile.getLocations();
+		this.flagIDs = stockpile.getFlagIDs();
+		this.flagNames = stockpile.getFlagNames();
+		this.containers = stockpile.getContainers();
 		this.inventory = stockpile.isInventory();
 		this.sellOrders = stockpile.isSellOrders();
 		this.buyOrders = stockpile.isBuyOrders();
@@ -153,54 +151,94 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		return sellOrders;
 	}
 
-	public long getOwnerID() {
-		return ownerID;
+	public List<Long> getOwnerIDs() {
+		return ownerIDs;
 	}
 
-	public String getOwner() {
-		return owner;
+	public String getOwnerNames() {
+		return ownerNames;
 	}
 
 	public void setMultiplier(double multiplier) {
 		this.multiplier = multiplier;
 	}
 
-	public final void setOwner(final String owner) {
-		if (owner == null) {
-			this.owner = General.get().all();
+	public final void setOwners(final List<String> ownerNames) {
+		if (ownerNames.isEmpty()) {
+			this.ownerNames = General.get().all();
+		} else if (ownerNames.size() == 1) {
+			this.ownerNames = ownerNames.get(0);
 		} else {
-			this.owner = owner;
+			this.ownerNames = TabsStockpile.get().multiple();
 		}
 	}
 
-	public String getContainer() {
-		return container;
+	public final void setOwners(final String ownerNames) {
+		this.ownerNames = ownerNames;
 	}
 
-	public String getFlag() {
-		return flag;
+	public List<String> getContainers() {
+		return containers;
 	}
 
-	public final void setFlag(final String flag) {
-		if (flag == null) {
-			this.flag = General.get().all();
+	public String getContainerNames() {
+		if (containers.isEmpty()) {
+			return General.get().all();
+		} else if (containers.size() == 1) {
+			return containers.get(0);
 		} else {
-			this.flag = flag;
+			return TabsStockpile.get().multiple();
 		}
 	}
 
-	public int getFlagID() {
-		return flagID;
+	public String getFlagNames() {
+		return flagNames;
+	}
+
+	public final void setFlags(final List<String> flagNames) {
+		if (flagNames.isEmpty()) {
+			this.flagNames = General.get().all();
+		} else if (flagNames.size() == 1) {
+			this.flagNames = flagNames.get(0);
+		} else {
+			this.flagNames = TabsStockpile.get().multiple();
+		}
+	}
+
+	public final void setFlags(final String flagNames) {
+		this.flagNames = flagNames;
+	}
+
+	public List<Integer> getFlagIDs() {
+		return flagIDs;
 	}
 
 	public List<StockpileItem> getItems() {
 		return items;
 	}
 
-	
+	//FIXME - - - > Stockpile: getLocation is useless
 	@Override
 	public Location getLocation() {
-		return location;
+		if (locations.isEmpty()) {
+			return null;
+		} else {
+			return locations.get(0);
+		}
+	}
+
+	public List<Location> getLocations() {
+		return locations;
+	}
+
+	public String getLocationNames() {
+		if (locations.isEmpty()) {
+			return General.get().all();
+		} else if (locations.size() == 1) {
+			return locations.get(0).getLocation();
+		} else {
+			return TabsStockpile.get().multiple();
+		}
 	}
 
 	public double getPercentFull() {
@@ -329,19 +367,74 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 			this.price = updatePrice;
 			this.volume = updateVolume;
 		}
+
+		private boolean matchOwner(final long ownerID) {
+			if (stockpile.getOwnerIDs().isEmpty()) {
+				return true; //All
+			}
+			for (long stockpileOwnerID : stockpile.getOwnerIDs()) {
+				if (stockpileOwnerID == ownerID) { //Match
+					return true;
+				}
+			}
+			return false; //No match
+		}
+
+		private boolean matchContainer(final String container) {
+			if (stockpile.getContainers().isEmpty()) {
+				return true; //All
+			}
+			for (String stockpileContainer : stockpile.getContainers()) {
+				if (container.contains(stockpileContainer)) { //Match
+					return true;
+				}
+			}
+			return false; //No match
+		}
+
+		private boolean matchFlag(final int flagID) {
+			if (stockpile.getFlagIDs().isEmpty()) {
+				return true; //All
+			}
+			for (int stockpileFlagID : stockpile.getFlagIDs()) {
+				if (flagID == stockpileFlagID) { //Match self
+					return true;
+				}
+			}
+			return false; //No match
+		}
+
+		private boolean matchFlag(final Asset asset) {
+			if (stockpile.getFlagIDs().isEmpty()) {
+				return true; //All
+			}
+			for (int flagID : stockpile.getFlagIDs()) {
+				if (asset.getFlagID() == flagID) { //Match self
+					return true;
+				}
+				for (Asset parentAsset : asset.getParents()) { //Test parents
+					if (parentAsset.getFlagID() == flagID) { //Parent match
+						return true;
+					}
+				}
+			}
+			return false; //No match
+		}
 	
-		private boolean match(Location location) {
-			if (stockpile.getLocation().equals(StockpileDialog.LOCATION_ALL)) {
-				return true;
+		private boolean matchLocation(Location location) {
+			if (stockpile.getLocations().isEmpty()) {
+				return true; //Nothing selected - always match
 			}
-			if (stockpile.getLocation().getLocation().equals(location.getStation())) {
-				return true;
-			}
-			if (stockpile.getLocation().getLocation().equals(location.getSystem())) {
-				return true;
-			}
-			if (stockpile.getLocation().getLocation().equals(location.getRegion())) {
-				return true;
+			for (Location stockpileLocation : stockpile.getLocations()) {
+				if (stockpileLocation.getLocation().equals(location.getStation())) {
+					return true;
+				}
+				if (stockpileLocation.getLocation().equals(location.getSystem())) {
+					return true;
+				}
+				if (stockpileLocation.getLocation().equals(location.getRegion())) {
+					return true;
+				}
 			}
 			return false;
 		}
@@ -352,36 +445,21 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 						(typeID == asset.getItem().getTypeID() && (!asset.getItem().isBlueprint() || asset.isBPO()))
 						|| (typeID == -asset.getItem().getTypeID() && asset.getItem().isBlueprint() && !asset.isBPO()) //BPC
 						)
-					&& (stockpile.getOwnerID() == asset.getOwnerID() || stockpile.getOwnerID() < 0)
-					&& (asset.getContainer().contains(stockpile.getContainer()) || stockpile.getContainer().equals(General.get().all()))
-					&& matchFlag(asset, stockpile.getFlagID())
-					&& match(asset.getLocation())
+					&& matchOwner(asset.getOwnerID())
+					&& matchContainer(asset.getContainer())
+					&& matchFlag(asset)
+					&& matchLocation(asset.getLocation())
 					) {
 				inventoryCountNow = inventoryCountNow + asset.getCount();
 			}
 		}
 
-		private boolean matchFlag(final Asset asset, final int flagID) {
-			if (flagID < 0) { //Ignore flag
-				return true;
-			}
-			if (asset.getFlagID() == flagID) { //Match self
-				return true;
-			}
-			for (Asset parentAsset : asset.getParents()) { //Test parents
-				if (parentAsset.getFlagID() == flagID) { //Parent match
-					return true;
-				}
-			}
-			return false; //No match
-		}
-
 		void updateMarketOrder(final MarketOrder marketOrder) {
 			if (marketOrder != null //better safe then sorry
 					&& typeID == marketOrder.getTypeID()
-					&& (stockpile.getOwnerID() == marketOrder.getOwnerID() || stockpile.getOwnerID() < 0)
+					&& matchOwner(marketOrder.getOwnerID())
 					&& marketOrder.getOrderState() == 0 //Open/Active
-					&& match(marketOrder.getLocation())
+					&& matchLocation(marketOrder.getLocation())
 					) {
 				if (marketOrder.getBid() < 1) { //Sell
 					if (stockpile.isSellOrders()) {
@@ -398,9 +476,9 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		void updateIndustryJob(final IndustryJob industryJob, final Item itemType) {
 			if (industryJob != null && itemType != null //better safe then sorry
 					&& typeID == industryJob.getOutputTypeID() //Produced only
-					&& (stockpile.getOwnerID() == industryJob.getOwnerID() || stockpile.getOwnerID() < 0)
-					&& (stockpile.getFlagID() == industryJob.getOutputFlag() || stockpile.getFlagID() < 0)
-					&& match(industryJob.getLocation())
+					&& matchOwner(industryJob.getOwnerID())
+					&& matchFlag(industryJob.getOutputFlag())
+					&& matchLocation(industryJob.getLocation())
 					&& industryJob.getActivityID() == 1 //Manufacturing
 					&& industryJob.getCompletedStatus() == 0 //Inprogress AKA not delivered
 					) {
@@ -544,9 +622,9 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 			StringBuilder builder = new StringBuilder();
 			builder.append(getStockpile().getName());
 			builder.append("\t");
-			builder.append(getStockpile().getOwner());
+			builder.append(getStockpile().getOwnerNames());
 			builder.append("\t");
-			builder.append(getStockpile().getLocation());
+			builder.append(getStockpile().getLocationNames());
 			return builder.toString();
 		}
 

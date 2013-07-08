@@ -21,6 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
+import java.util.Collections;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileItem;
@@ -56,7 +57,11 @@ public class StockpileTest {
 
 	@Test
 	public void testSomeMethod() {
-		Stockpile stockpile = new Stockpile("Name", 0, "Owner", new Location(0), 0, "Flag", "Container", true, true, true, true, 1);
+		Stockpile stockpile = new Stockpile("Name", Collections.singletonList(0L),
+				Collections.singletonList(new Location(0)),
+				Collections.singletonList(0),
+				Collections.singletonList("Container"),
+				true, true, true, true, 1);
 		StockpileItem item1 = new Stockpile.StockpileItem(stockpile, new Item(0), 0, 0);
 		StockpileItem item2 = new Stockpile.StockpileItem(stockpile, new Item(0), 0, 0);
 		StockpileTotal total1 = new StockpileTotal(stockpile);

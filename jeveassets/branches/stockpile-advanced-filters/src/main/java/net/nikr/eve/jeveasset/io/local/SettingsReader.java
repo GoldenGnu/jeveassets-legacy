@@ -73,6 +73,7 @@ import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.values.ValueTableTab;
+import net.nikr.eve.jeveasset.i18n.General;
 import net.nikr.eve.jeveasset.io.local.update.Update;
 import net.nikr.eve.jeveasset.io.shared.AbstractXmlReader;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
@@ -336,25 +337,88 @@ public final class SettingsReader extends AbstractXmlReader {
 			Element stockpileNode = (Element) stockpileNodes.item(a);
 			String name = AttributeGetters.getString(stockpileNode, "name");
 
-			long ownerID = AttributeGetters.getLong(stockpileNode, "characterid");
-			String container = AttributeGetters.getString(stockpileNode, "container");
-			int flagID = AttributeGetters.getInt(stockpileNode, "flagid");
-			long locationID = AttributeGetters.getLong(stockpileNode, "locationid");
+		//OWNERS
+			//Legacy
+			List<Long> ownerIDs = new ArrayList<Long>();
+			if (AttributeGetters.haveAttribute(stockpileNode, "characterid")) {
+				long ownerID = AttributeGetters.getLong(stockpileNode, "characterid");
+				if (ownerID >= 0) {
+					ownerIDs.add(ownerID);
+				}
+			}
+			//New
+			NodeList ownerNodes = stockpileNode.getElementsByTagName("owner");
+			for (int b = 0; b < ownerNodes.getLength(); b++) {
+				Element ownerNode = (Element) ownerNodes.item(b);
+				long ownerID = AttributeGetters.getLong(ownerNode, "ownerid");
+				ownerIDs.add(ownerID);
+			}
+		//CONTAINERS
+			//Legacy
+			List<String> containers = new ArrayList<String>();
+			if (AttributeGetters.haveAttribute(stockpileNode, "container")) {
+				String container = AttributeGetters.getString(stockpileNode, "container");
+				if (!container.equals(General.get().all())) {
+					containers.add(container);
+				}
+			}
+			//New
+			NodeList containerNodes = stockpileNode.getElementsByTagName("container");
+			for (int b = 0; b < containerNodes.getLength(); b++) {
+				Element containerNode = (Element) containerNodes.item(b);
+				String container = AttributeGetters.getString(containerNode, "container");
+				containers.add(container);
+			}
+		//FLAGS
+			//Legacy
+			List<Integer> flagIDs = new ArrayList<Integer>();
+			if (AttributeGetters.haveAttribute(stockpileNode, "flagid")) {
+				int flagID = AttributeGetters.getInt(stockpileNode, "flagid");
+				if (flagID >= 0) {
+					flagIDs.add(flagID);
+				}
+			}
+			//New
+			NodeList flagNodes = stockpileNode.getElementsByTagName("flag");
+			for (int b = 0; b < flagNodes.getLength(); b++) {
+				Element flagNode = (Element) flagNodes.item(b);
+				int flagID = AttributeGetters.getInt(flagNode, "flagid");
+				flagIDs.add(flagID);
+			}
+		//LOCATIONS
+			//Legacy
+			List<Location> locations = new ArrayList<Location>();
+			if (AttributeGetters.haveAttribute(stockpileNode, "locationid")) {
+				long locationID = AttributeGetters.getLong(stockpileNode, "locationid");
+				Location location = ApiIdConverter.getLocation(locationID);
+				if (location != null && !location.isEmpty()) {
+					locations.add(location);
+				}
+			}
+			//New
+			NodeList locationNodes = stockpileNode.getElementsByTagName("location");
+			for (int b = 0; b < locationNodes.getLength(); b++) {
+				Element locationNode = (Element) locationNodes.item(b);
+				long locationID = AttributeGetters.getLong(locationNode, "locationid");
+				Location location = ApiIdConverter.getLocation(locationID);
+				if (location != null && !location.isEmpty()) {
+					locations.add(location);
+				}
+			}
+		//MULTIPLIER
 			double multiplier = 1;
 			if (AttributeGetters.haveAttribute(stockpileNode, "multiplier")){
 				multiplier = AttributeGetters.getDouble(stockpileNode, "multiplier");
 			}
-			Location location = ApiIdConverter.getLocation(locationID);
-			if (location == null || location.isEmpty()) {
-				location = StockpileDialog.LOCATION_ALL;
-			}
+		//INCLUDE
 			boolean inventory = AttributeGetters.getBoolean(stockpileNode, "inventory");
 			boolean sellOrders = AttributeGetters.getBoolean(stockpileNode, "sellorders");
 			boolean buyOrders = AttributeGetters.getBoolean(stockpileNode, "buyorders");
 			boolean jobs = AttributeGetters.getBoolean(stockpileNode, "jobs");
 
-			Stockpile stockpile = new Stockpile(name, ownerID, "", location, flagID, "", container, inventory, sellOrders, buyOrders, jobs, multiplier);
+			Stockpile stockpile = new Stockpile(name, ownerIDs, locations, flagIDs, containers, inventory, sellOrders, buyOrders, jobs, multiplier);
 			settings.getStockpiles().add(stockpile);
+		//ITEMS
 			NodeList itemNodes = stockpileNode.getElementsByTagName("item");
 			for (int b = 0; b < itemNodes.getLength(); b++) {
 				Element itemNode = (Element) itemNodes.item(b);

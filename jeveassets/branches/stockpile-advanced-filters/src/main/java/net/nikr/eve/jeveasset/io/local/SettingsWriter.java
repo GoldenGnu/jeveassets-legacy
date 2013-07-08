@@ -230,10 +230,6 @@ public class SettingsWriter extends AbstractXmlWriter {
 		for (Stockpile strockpile : stockpiles) {
 			Element strockpileNode = xmldoc.createElementNS(null, "stockpile");
 			strockpileNode.setAttributeNS(null, "name", strockpile.getName());
-			strockpileNode.setAttributeNS(null, "characterid", String.valueOf(strockpile.getOwnerID()));
-			strockpileNode.setAttributeNS(null, "container", strockpile.getContainer());
-			strockpileNode.setAttributeNS(null, "flagid", String.valueOf(strockpile.getFlagID()));
-			strockpileNode.setAttributeNS(null, "locationid", String.valueOf(strockpile.getLocation().getLocationID()));
 			strockpileNode.setAttributeNS(null, "inventory", String.valueOf(strockpile.isInventory()));
 			strockpileNode.setAttributeNS(null, "sellorders", String.valueOf(strockpile.isSellOrders()));
 			strockpileNode.setAttributeNS(null, "buyorders", String.valueOf(strockpile.isBuyOrders()));
@@ -246,6 +242,26 @@ public class SettingsWriter extends AbstractXmlWriter {
 					itemNode.setAttributeNS(null, "minimum", String.valueOf(item.getCountMinimum()));
 					strockpileNode.appendChild(itemNode);
 				}
+			}
+			for (Long ownerID : strockpile.getOwnerIDs()) {
+				Element ownerNode = xmldoc.createElementNS(null, "owner");
+				ownerNode.setAttributeNS(null, "ownerid", String.valueOf(ownerID));
+				strockpileNode.appendChild(ownerNode);
+			}
+			for (String container : strockpile.getContainers()) {
+				Element containerNode = xmldoc.createElementNS(null, "container");
+				containerNode.setAttributeNS(null, "container", container);
+				strockpileNode.appendChild(containerNode);
+			}
+			for (Integer flagID : strockpile.getFlagIDs()) {
+				Element flagNode = xmldoc.createElementNS(null, "flag");
+				flagNode.setAttributeNS(null, "flagid", String.valueOf(flagID));
+				strockpileNode.appendChild(flagNode);
+			}
+			for (Location location : strockpile.getLocations()) {
+				Element locationNode = xmldoc.createElementNS(null, "location");
+				locationNode.setAttributeNS(null, "locationid", String.valueOf(location.getLocationID()));
+				strockpileNode.appendChild(locationNode);
 			}
 			parentNode.appendChild(strockpileNode);
 		}

@@ -47,8 +47,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -438,14 +440,23 @@ public class StockpileTab extends JMainTab {
 
 	private void updateStockpile(Stockpile stockpile) {
 		//Update owner name
-		stockpile.setOwner(ownersName.get(stockpile.getOwnerID()));
-		//Update Item flag name
-		ItemFlag flag = StaticData.get().getItemFlags().get(stockpile.getFlagID());
-		if (flag != null) {
-			stockpile.setFlag(flag.getFlagName());
-		} else {
-			stockpile.setFlag(null);
+		Set<String> owners = new HashSet<String>();
+		for (Long ownerID : stockpile.getOwnerIDs()) {
+			String owner = ownersName.get(ownerID);
+			if (owner != null) {
+				owners.add(owner);
+			}
 		}
+		stockpile.setOwners(new ArrayList<String>(owners));
+		//Update Item flag name
+		Set<String> flags = new HashSet<String>();
+		for (Integer flagID : stockpile.getFlagIDs()) {
+			ItemFlag flag = StaticData.get().getItemFlags().get(flagID);
+			if (flag != null) {
+				flags.add(flag.getFlagName());
+			}
+		}
+		stockpile.setFlags(new ArrayList<String>(flags));
 		stockpile.reset();
 		if (!stockpile.isEmpty()) {
 			for (StockpileItem item : stockpile.getItems()) {

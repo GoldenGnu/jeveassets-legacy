@@ -97,7 +97,10 @@ public enum Images {
 	LOC_SYSTEM ("loc_system.png"),
 	LOC_REGION ("loc_region.png"),
 	LOC_CONTAINER ("loc_container.png"),
+	LOC_CONTAINER_WHITE ("loc_container_white.png"),
 	LOC_LOCATIONS ("loc_locations.png"),
+	LOC_FLAG ("loc_flag.png"),
+	LOC_OWNER ("loc_owner.png"),
 
 	MISC_EVE ("misc_eve.png"),
 	MISC_EXIT ("misc_exit.png"),
