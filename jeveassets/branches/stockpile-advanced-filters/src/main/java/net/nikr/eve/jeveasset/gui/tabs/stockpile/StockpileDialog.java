@@ -51,6 +51,7 @@ import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDoubleField;
+import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
 import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
@@ -252,8 +253,10 @@ public class StockpileDialog extends JDialogCentered {
 		layout.setHorizontalGroup(
 			layout.createParallelGroup(GroupLayout.Alignment.TRAILING)
 				.addComponent(jNamePanel.getPanel(), FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
-				.addComponent(jIncludePanel.getPanel(), FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
-				.addComponent(jMultiplierPanel.getPanel(), FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
+				.addGroup(layout.createSequentialGroup()
+					.addComponent(jIncludePanel.getPanel())
+					.addComponent(jMultiplierPanel.getPanel())
+				)
 				.addComponent(jToolBar, FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
 				.addComponent(jFilterPanel.getPanel(), FIELD_WIDTH, FIELD_WIDTH, FIELD_WIDTH)
 				.addGroup(layout.createSequentialGroup()
@@ -265,8 +268,10 @@ public class StockpileDialog extends JDialogCentered {
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addComponent(jNamePanel.getPanel())
-				.addComponent(jMultiplierPanel.getPanel())
-				.addComponent(jIncludePanel.getPanel())
+				.addGroup(layout.createParallelGroup()
+					.addComponent(jIncludePanel.getPanel())
+					.addComponent(jMultiplierPanel.getPanel())
+				)
 				.addComponent(jToolBar, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
 				.addComponent(jFilterPanel.getPanel())
 				.addGap(15)
@@ -671,7 +676,8 @@ public class StockpileDialog extends JDialogCentered {
 		private final JLabel jType;
 		private final JLabel jWarning;
 		//Location
-		private JCheckBox jMyLocations;
+		private JDropDownButton jOptions;
+		private JCheckBoxMenuItem jMyLocations;
 		private JComboBox jLocation;
 		//Owner
 		private JComboBox jOwner;
@@ -772,10 +778,12 @@ public class StockpileDialog extends JDialogCentered {
 		}
 
 		private void showLocation() {
-			jMyLocations = new JCheckBox();
-			jMyLocations.setToolTipText(TabsStockpile.get().myLocations());
+			jOptions = new JDropDownButton(Images.DIALOG_SETTINGS.getIcon());
+
+			jMyLocations = new JCheckBoxMenuItem(TabsStockpile.get().myLocations());
 			jMyLocations.setActionCommand(StockpileDialogAction.FILTER_LOCATIONS.name());
 			jMyLocations.addActionListener(listener);
+			jOptions.add(jMyLocations);
 
 			if (panelType == PanelType.LOCATION_STATION) {
 				jType.setIcon(Images.LOC_STATION.getIcon());
@@ -806,7 +814,7 @@ public class StockpileDialog extends JDialogCentered {
 					.addComponent(jType)
 					.addComponent(jWarning)
 					.addComponent(jLocation, 0, 0, FIELD_WIDTH)
-					.addComponent(jMyLocations)
+					.addComponent(jOptions, 30, 30, 30)
 					.addComponent(jRemove, 30, 30, 30)
 			);
 			layout.setVerticalGroup(
@@ -814,7 +822,7 @@ public class StockpileDialog extends JDialogCentered {
 					.addComponent(jType, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jWarning, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jLocation, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-					.addComponent(jMyLocations, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jOptions, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					.addComponent(jRemove, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 			);
 		}
@@ -1052,9 +1060,6 @@ public class StockpileDialog extends JDialogCentered {
 				} else {
 					verticalGroup.addComponent(component);
 				}
-			}
-			if (components.size() > 1) {
-				horizontalGroup.addGap(0, 0, Integer.MAX_VALUE);
 			}
 			layout.setHorizontalGroup(horizontalGroup);
 			layout.setVerticalGroup(verticalGroup);

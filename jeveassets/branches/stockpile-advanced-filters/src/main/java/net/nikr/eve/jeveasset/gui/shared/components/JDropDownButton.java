@@ -53,6 +53,10 @@ public class JDropDownButton extends JButton {
 		this(GuiShared.get().emptyString(), null, LEFT, BOTTOM);
 	}
 
+	public JDropDownButton(final Icon icon) {
+		this("", icon, LEFT, BOTTOM);
+	}
+
 	public JDropDownButton(final String text) {
 		this(text, null, LEFT, BOTTOM);
 	}
