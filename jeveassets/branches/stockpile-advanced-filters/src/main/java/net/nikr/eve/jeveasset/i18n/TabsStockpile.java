@@ -62,7 +62,6 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String editStockpileTitle();
 	public abstract String estimatedMarketValue();
 	public abstract String expand();
-	public abstract String filters();
 	public abstract String flag();
 	public abstract String getShoppingList();
 	public abstract String importButton();
@@ -94,6 +93,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String percent();
 	public abstract String percentFull();
 	public abstract String region();
+	public abstract String remove();
 	public abstract String selectStockpiles();
 	public abstract String sellOrders();
 	public abstract String shoppingList();
@@ -109,6 +109,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String system();
 	public abstract String totalStockpile();
 	public abstract String totalToHaul();
+	public abstract String universe();
 	public abstract String columnName();
 	public abstract String columnGroup();
 	public abstract String columnCountNow();

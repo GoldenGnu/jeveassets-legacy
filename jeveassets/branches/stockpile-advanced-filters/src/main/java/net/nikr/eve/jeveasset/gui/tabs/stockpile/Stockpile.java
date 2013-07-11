@@ -22,7 +22,9 @@ package net.nikr.eve.jeveasset.gui.tabs.stockpile;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.types.BlueprintType;
@@ -41,14 +43,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 	private String name;
 	private String ownerNames;
 	private String flagNames;
-	private List<Long> ownerIDs = new ArrayList<Long>();
-	private List<Location> locations = new ArrayList<Location>();
-	private List<Integer> flagIDs = new ArrayList<Integer>();
-	private List<String> containers = new ArrayList<String>();
-	private boolean inventory;
-	private boolean sellOrders;
-	private boolean buyOrders;
-	private boolean jobs;
+	private List<StockpileFilter> filters = new ArrayList<StockpileFilter>();
 	private final List<StockpileItem> items = new ArrayList<StockpileItem>();
 	private final StockpileTotal totalItem = new StockpileTotal(this);
 	private double percentFull;
@@ -64,33 +59,19 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		items.add(totalItem);
 	}
 
-	public Stockpile(final String name, final List<Long> ownerIDs, final List<Location> locations, final List<Integer> flagIDs, final List<String> containers, final boolean inventory, final boolean sellOrders, final boolean buyOrders, final boolean jobs, double multiplier) {
+	public Stockpile(final String name, final List<StockpileFilter> filters, double multiplier) {
 		this.name = name;
-		this.ownerIDs = ownerIDs;
-		this.locations = locations;
-		this.flagIDs = flagIDs;
-		this.containers = containers;
-		this.inventory = inventory;
-		this.sellOrders = sellOrders;
-		this.buyOrders = buyOrders;
-		this.jobs = jobs;
+		this.filters = filters;
 		this.multiplier = multiplier;
 		items.add(totalItem);
 	}
 
 	final void update(final Stockpile stockpile) {
 		this.name = stockpile.getName();
-		this.ownerIDs = stockpile.getOwnerIDs();
 		this.ownerNames = stockpile.getOwnerNames();
-		this.locations = stockpile.getLocations();
-		this.flagIDs = stockpile.getFlagIDs();
+		this.filters = stockpile.getFilters();
 		this.flagNames = stockpile.getFlagNames();
-		this.containers = stockpile.getContainers();
-		this.inventory = stockpile.isInventory();
-		this.sellOrders = stockpile.isSellOrders();
-		this.buyOrders = stockpile.isBuyOrders();
 		this.multiplier = stockpile.getMultiplier();
-		this.jobs = stockpile.isJobs();
 	}
 
 	public boolean isOK() {
@@ -136,23 +117,51 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 	}
 
 	public boolean isBuyOrders() {
-		return buyOrders;
+		if (getFilters().isEmpty()) {
+			return true;
+		}
+		for (StockpileFilter filter : getFilters()) {
+			if (filter.isBuyOrders()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean isInventory() {
-		return inventory;
+		if (getFilters().isEmpty()) {
+			return true;
+		}
+		for (StockpileFilter filter : getFilters()) {
+			if (filter.isInventory()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean isJobs() {
-		return jobs;
+		if (getFilters().isEmpty()) {
+			return true;
+		}
+		for (StockpileFilter filter : getFilters()) {
+			if (filter.isJobs()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public boolean isSellOrders() {
-		return sellOrders;
-	}
-
-	public List<Long> getOwnerIDs() {
-		return ownerIDs;
+		if (getFilters().isEmpty()) {
+			return true;
+		}
+		for (StockpileFilter filter : getFilters()) {
+			if (filter.isSellOrders()) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public String getOwnerNames() {
@@ -177,20 +186,24 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		this.ownerNames = ownerNames;
 	}
 
-	public List<String> getContainers() {
-		return containers;
-	}
-
 	public String getContainerNames() {
+		Set<String> containers = new HashSet<String>();
+		for (StockpileFilter filter : getFilters()) {
+			for (String container : filter.getContainers()) {
+				containers.add(container);
+			}
+		}
 		if (containers.isEmpty()) {
 			return General.get().all();
 		} else if (containers.size() == 1) {
-			return containers.get(0);
+			for (String container : containers) {
+				return container; //Return first
+			}
+			return ""; //Never happens...
 		} else {
 			return TabsStockpile.get().multiple();
 		}
 	}
-
 	public String getFlagNames() {
 		return flagNames;
 	}
@@ -209,10 +222,6 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		this.flagNames = flagNames;
 	}
 
-	public List<Integer> getFlagIDs() {
-		return flagIDs;
-	}
-
 	public List<StockpileItem> getItems() {
 		return items;
 	}
@@ -220,22 +229,22 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 	//FIXME - - - > Stockpile: getLocation is useless
 	@Override
 	public Location getLocation() {
-		if (locations.isEmpty()) {
+		if (filters.isEmpty()) {
 			return null;
 		} else {
-			return locations.get(0);
+			return filters.get(0).getLocation();
 		}
 	}
 
-	public List<Location> getLocations() {
-		return locations;
+	public List<StockpileFilter> getFilters() {
+		return filters;
 	}
 
 	public String getLocationNames() {
-		if (locations.isEmpty()) {
+		if (filters.isEmpty()) {
 			return General.get().all();
-		} else if (locations.size() == 1) {
-			return locations.get(0).getLocation();
+		} else if (filters.size() == 1) {
+			return filters.get(0).getLocation().getLocation();
 		} else {
 			return TabsStockpile.get().multiple();
 		}
@@ -368,23 +377,72 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 			this.volume = updateVolume;
 		}
 
-		private boolean matchOwner(final long ownerID) {
-			if (stockpile.getOwnerIDs().isEmpty()) {
+		private boolean matches(final Long ownerID, final String container, final Integer flagID, final Location location, final Asset asset, final Integer bid) {
+			if (stockpile.getFilters().isEmpty()) {
 				return true; //All
 			}
-			for (long stockpileOwnerID : stockpile.getOwnerIDs()) {
-				if (stockpileOwnerID == ownerID) { //Match
+			for (StockpileFilter filter : stockpile.getFilters()) {
+				if (!matchOwner(filter, ownerID)) {
+					continue;
+				}
+				if (!matchContainer(filter, container)) {
+					continue;
+				}
+				if (asset != null) {
+					if (!matchFlag(filter, asset)) {
+						continue;
+					}
+				} else {
+					if (!matchFlag(filter, flagID)) {
+						continue;
+					}
+				}
+				if (!matchLocation(filter, location)) {
+					continue;
+				}
+				if (bid != null) { //Orders include
+					if (!(bid < 1 && filter.isSellOrders()) || (bid > 0 && stockpile.isBuyOrders())) {
+						continue;
+					}
+				}
+				if (asset != null) { //Asset include
+					if (!filter.isInventory()) {
+						continue;
+					}
+				}
+				if (asset == null && bid == null) { //Jobs include
+					if (!filter.isJobs()) {
+						continue;
+					}
+				}
+				return true;
+			}
+			return false;
+		}
+
+		private boolean matchOwner(final StockpileFilter filter, final Long ownerID) {
+			if (ownerID == null) {
+				return true;
+			}
+			if (filter.getOwnerIDs().isEmpty()) {
+				return true; //All
+			}
+			for (Long stockpileOwnerID : filter.getOwnerIDs()) {
+				if (stockpileOwnerID.equals(ownerID)) { //Match
 					return true;
 				}
 			}
 			return false; //No match
 		}
 
-		private boolean matchContainer(final String container) {
-			if (stockpile.getContainers().isEmpty()) {
+		private boolean matchContainer(final StockpileFilter filter, final String container) {
+			if (container == null) {
+				return true;
+			}
+			if (filter.getContainers().isEmpty()) {
 				return true; //All
 			}
-			for (String stockpileContainer : stockpile.getContainers()) {
+			for (String stockpileContainer : filter.getContainers()) {
 				if (container.contains(stockpileContainer)) { //Match
 					return true;
 				}
@@ -392,28 +450,34 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 			return false; //No match
 		}
 
-		private boolean matchFlag(final int flagID) {
-			if (stockpile.getFlagIDs().isEmpty()) {
+		private boolean matchFlag(final StockpileFilter filter, final Integer flagID) {
+			if (flagID == null) {
+				return true;
+			}
+			if (filter.getFlagIDs().isEmpty()) {
 				return true; //All
 			}
-			for (int stockpileFlagID : stockpile.getFlagIDs()) {
-				if (flagID == stockpileFlagID) { //Match self
+			for (Integer stockpileFlagID : filter.getFlagIDs()) {
+				if (flagID.equals(stockpileFlagID)) { //Match
 					return true;
 				}
 			}
 			return false; //No match
 		}
 
-		private boolean matchFlag(final Asset asset) {
-			if (stockpile.getFlagIDs().isEmpty()) {
+		private boolean matchFlag(final StockpileFilter filter, final Asset asset) {
+			if (asset == null) {
+				return true;
+			}
+			if (filter.getFlagIDs().isEmpty()) {
 				return true; //All
 			}
-			for (int flagID : stockpile.getFlagIDs()) {
+			for (int flagID : filter.getFlagIDs()) {
 				if (asset.getFlagID() == flagID) { //Match self
 					return true;
 				}
 				for (Asset parentAsset : asset.getParents()) { //Test parents
-					if (parentAsset.getFlagID() == flagID) { //Parent match
+					if (parentAsset.getFlagID() == flagID) { //Match parent
 						return true;
 					}
 				}
@@ -421,20 +485,19 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 			return false; //No match
 		}
 	
-		private boolean matchLocation(Location location) {
-			if (stockpile.getLocations().isEmpty()) {
+		private boolean matchLocation(final StockpileFilter filter, final Location location) {
+			Location stockpileLocation = filter.getLocation();
+			if (filter.getLocation().isEmpty()) {
 				return true; //Nothing selected - always match
 			}
-			for (Location stockpileLocation : stockpile.getLocations()) {
-				if (stockpileLocation.getLocation().equals(location.getStation())) {
-					return true;
-				}
-				if (stockpileLocation.getLocation().equals(location.getSystem())) {
-					return true;
-				}
-				if (stockpileLocation.getLocation().equals(location.getRegion())) {
-					return true;
-				}
+			if (stockpileLocation.getLocation().equals(location.getStation())) {
+				return true;
+			}
+			if (stockpileLocation.getLocation().equals(location.getSystem())) {
+				return true;
+			}
+			if (stockpileLocation.getLocation().equals(location.getRegion())) {
+				return true;
 			}
 			return false;
 		}
@@ -445,10 +508,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 						(typeID == asset.getItem().getTypeID() && (!asset.getItem().isBlueprint() || asset.isBPO()))
 						|| (typeID == -asset.getItem().getTypeID() && asset.getItem().isBlueprint() && !asset.isBPO()) //BPC
 						)
-					&& matchOwner(asset.getOwnerID())
-					&& matchContainer(asset.getContainer())
-					&& matchFlag(asset)
-					&& matchLocation(asset.getLocation())
+					&& matches(asset.getOwnerID(), asset.getContainer(), null, asset.getLocation(), asset, null)
 					) {
 				inventoryCountNow = inventoryCountNow + asset.getCount();
 			}
@@ -457,18 +517,13 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		void updateMarketOrder(final MarketOrder marketOrder) {
 			if (marketOrder != null //better safe then sorry
 					&& typeID == marketOrder.getTypeID()
-					&& matchOwner(marketOrder.getOwnerID())
+					&& matches(marketOrder.getOwnerID(), null, null, marketOrder.getLocation(), null, marketOrder.getBid())
 					&& marketOrder.getOrderState() == 0 //Open/Active
-					&& matchLocation(marketOrder.getLocation())
 					) {
 				if (marketOrder.getBid() < 1) { //Sell
-					if (stockpile.isSellOrders()) {
-						sellOrdersCountNow = sellOrdersCountNow + marketOrder.getVolRemaining();
-					}
+					sellOrdersCountNow = sellOrdersCountNow + marketOrder.getVolRemaining();
 				} else { //Buy
-					if (stockpile.isBuyOrders()) {
-						buyOrdersCountNow = buyOrdersCountNow + marketOrder.getVolRemaining();
-					}
+					buyOrdersCountNow = buyOrdersCountNow + marketOrder.getVolRemaining();
 				}
 			}
 		}
@@ -476,9 +531,7 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		void updateIndustryJob(final IndustryJob industryJob, final Item itemType) {
 			if (industryJob != null && itemType != null //better safe then sorry
 					&& typeID == industryJob.getOutputTypeID() //Produced only
-					&& matchOwner(industryJob.getOwnerID())
-					&& matchFlag(industryJob.getOutputFlag())
-					&& matchLocation(industryJob.getLocation())
+					&& matches(industryJob.getOwnerID(), null, industryJob.getOutputFlag(), industryJob.getLocation(), null, null)
 					&& industryJob.getActivityID() == 1 //Manufacturing
 					&& industryJob.getCompletedStatus() == 0 //Inprogress AKA not delivered
 					) {
@@ -836,6 +889,60 @@ public class Stockpile implements Comparable<Stockpile>, LocationType {
 		@Override
 		public double getPercentNeeded() {
 			return getStockpile().getPercentFull();
+		}
+	}
+
+	public static class StockpileFilter {
+		private Location location;
+		private List<Integer> flagIDs;
+		private List<String> containers;
+		private List<Long> ownerIDs;
+		private boolean inventory;
+		private boolean sellOrders;
+		private boolean buyOrders;
+		private boolean jobs;
+
+		public StockpileFilter(Location location, List<Integer> flagIDs, List<String> containers, List<Long> ownerIDs, boolean inventory, boolean sellOrders, boolean buyOrders, boolean jobs) {
+			this.location = location;
+			this.flagIDs = flagIDs;
+			this.containers = containers;
+			this.ownerIDs = ownerIDs;
+			this.inventory = inventory;
+			this.sellOrders = sellOrders;
+			this.buyOrders = buyOrders;
+			this.jobs = jobs;
+		}
+
+		public Location getLocation() {
+			return location;
+		}
+
+		public List<Integer> getFlagIDs() {
+			return flagIDs;
+		}
+
+		public List<String> getContainers() {
+			return containers;
+		}
+
+		public List<Long> getOwnerIDs() {
+			return ownerIDs;
+		}
+
+		public boolean isInventory() {
+			return inventory;
+		}
+
+		public boolean isSellOrders() {
+			return sellOrders;
+		}
+
+		public boolean isBuyOrders() {
+			return buyOrders;
+		}
+
+		public boolean isJobs() {
+			return jobs;
 		}
 	}
 }

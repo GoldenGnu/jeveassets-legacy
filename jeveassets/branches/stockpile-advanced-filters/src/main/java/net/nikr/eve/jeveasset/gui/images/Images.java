@@ -102,6 +102,9 @@ public enum Images {
 	LOC_FLAG ("loc_flag.png"),
 	LOC_OWNER ("loc_owner.png"),
 
+	INCLUDE_SELL ("include_sell.png"),
+	INCLUDE_JOBS ("include_jobs.png"),
+
 	MISC_EVE ("misc_eve.png"),
 	MISC_EXIT ("misc_exit.png"),
 	MISC_HELP ("misc_help.png"),

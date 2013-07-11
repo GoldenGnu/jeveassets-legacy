@@ -117,7 +117,7 @@ public class JDropDownButton extends JButton {
 		return super.add(component);
 	}
 
-	public JMenuItem add(final JMenuItem jMenuItem) {
+	public JMenuItem add(final JMenuItem jMenuItem) {	
 		jPopupMenu.add(jMenuItem);
 		return jMenuItem;
 	}
@@ -229,17 +229,13 @@ public class JDropDownButton extends JButton {
 
 		@Override
 		public void mouseEntered(final MouseEvent e) {
-			if (e.getSource().equals(this)) {
-				mouseOverThis = true;
-			}
+			mouseOverThis = true;
 
 		}
 
 		@Override
 		public void mouseExited(final MouseEvent e) {
-			if (e.getSource().equals(this)) {
-				mouseOverThis = false;
-			}
+			mouseOverThis = false;
 			if (jPopupMenu.isShowing()) {
 				getModel().setRollover(true);
 			}
