@@ -25,6 +25,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import javax.swing.Icon;
@@ -117,7 +118,29 @@ public class JDropDownButton extends JButton {
 		return super.add(component);
 	}
 
-	public JMenuItem add(final JMenuItem jMenuItem) {	
+	public JMenuItem add(final JMenuItem jMenuItem, boolean keepOpen) {
+		if (keepOpen) {
+			//jPopupMenu.setLightWeightPopupEnabled(true);
+			jMenuItem.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					showPopupMenu();
+					jMenuItem.setArmed(true);
+				}
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					jMenuItem.setArmed(true);
+				}
+				@Override
+				public void mouseExited(MouseEvent e) {
+					jMenuItem.setArmed(false);
+				}
+			});
+		}
+		return add(jMenuItem);
+	}
+
+	public JMenuItem add(final JMenuItem jMenuItem) {
 		jPopupMenu.add(jMenuItem);
 		return jMenuItem;
 	}

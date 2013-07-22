@@ -37,6 +37,7 @@ public abstract class TabsStockpile extends Bundle {
 
 	public abstract String addFilter();
 	public abstract String addItem();
+	public abstract String addLocation();
 	public abstract String addStockpileItem();
 	public abstract String addStockpileTitle();
 	public abstract String addToNewStockpile();
@@ -45,6 +46,7 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String cancel();
 	public abstract String clipboardStockpile();
 	public abstract String cloneStockpile();
+	public abstract String cloneStockpileFilter();
 	public abstract String cloneStockpileTitle();
 	public abstract String close();
 	public abstract String collapse();
@@ -56,8 +58,10 @@ public abstract class TabsStockpile extends Bundle {
 	public abstract String deleteItems(int size);
 	public abstract String deleteStockpile();
 	public abstract String deleteStockpileTitle();
+	public abstract String duplicate();
 	public abstract String editItem();
 	public abstract String editStockpile();
+	public abstract String editStockpileFilter();
 	public abstract String editStockpileItem();
 	public abstract String editStockpileTitle();
 	public abstract String estimatedMarketValue();

@@ -28,8 +28,14 @@ import ca.odell.glazedlists.TextFilterator;
 import ca.odell.glazedlists.matchers.Matcher;
 import ca.odell.glazedlists.swing.AutoCompleteSupport;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,10 +44,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Group;
 import javax.swing.GroupLayout.ParallelGroup;
 import javax.swing.GroupLayout.SequentialGroup;
+import javax.swing.Icon;
+import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.JToolBar;
+import javax.swing.ToolTipManager;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import net.nikr.eve.jeveasset.Program;
@@ -51,7 +69,6 @@ import net.nikr.eve.jeveasset.gui.shared.CaseInsensitiveComparator;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
-import static net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered.WORDS_ONLY;
 import net.nikr.eve.jeveasset.gui.shared.components.JDoubleField;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
 import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
@@ -75,10 +92,12 @@ public class StockpileDialog extends JDialogCentered {
 		ADD_OWNER,
 		ADD_FLAG,
 		ADD_CONTAINER,
-		REMOVE
+		REMOVE,
+		CLONE
 	}
 
-	private static final int FIELD_WIDTH = 470;
+	private static final int FIELD_WIDTH = 480;
+	private static final int TOOL_BUTTON_WIDTH = 90;
 
 	private final JTextField jName;
 	private final JDoubleField jMultiplier;
@@ -141,28 +160,49 @@ public class StockpileDialog extends JDialogCentered {
 		jToolBar.setRollover(true);
 		jToolBar.setBorder(BorderFactory.createTitledBorder(TabsStockpile.get().addFilter()));
 
+		GroupLayout locationLayout = new GroupLayout(jToolBar);
+		jToolBar.setLayout(locationLayout);
+		locationLayout.setAutoCreateGaps(false);
+		locationLayout.setAutoCreateContainerGaps(false);
+
 		JButton jStation = new JButton(TabsStockpile.get().station(), Images.LOC_STATION.getIcon());
+		jStation.setHorizontalAlignment(JButton.LEFT);
 		jStation.setActionCommand(StockpileDialogAction.ADD_STATION.name());
 		jStation.addActionListener(listener);
-		addToolButton(jToolBar, jStation);
 
 		JButton jSystem = new JButton(TabsStockpile.get().system(), Images.LOC_SYSTEM.getIcon());
+		jSystem.setHorizontalAlignment(JButton.LEFT);
 		jSystem.setActionCommand(StockpileDialogAction.ADD_SYSTEM.name());
 		jSystem.addActionListener(listener);
-		addToolButton(jToolBar, jSystem);
 
 		JButton jRegion = new JButton(TabsStockpile.get().region(), Images.LOC_REGION.getIcon());
+		jRegion.setHorizontalAlignment(JButton.LEFT);
 		jRegion.setActionCommand(StockpileDialogAction.ADD_REGION.name());
 		jRegion.addActionListener(listener);
-		addToolButton(jToolBar, jRegion);
 
 		JButton jUniverse = new JButton(TabsStockpile.get().universe(), Images.LOC_LOCATIONS.getIcon());
+		jUniverse.setHorizontalAlignment(JButton.LEFT);
 		jUniverse.setActionCommand(StockpileDialogAction.ADD_UNIVERSE.name());
 		jUniverse.addActionListener(listener);
-		addToolButton(jToolBar, jUniverse);
 
-		jWarning = createToolTipLabel(Images.UPDATE_DONE_ERROR.getIcon(), "Add Location"); //FIXME - - - > Stockpile: i18n
-		jToolBar.add(jWarning);
+		jWarning = createToolTipLabel(Images.UPDATE_DONE_ERROR.getIcon(), TabsStockpile.get().addLocation());
+
+		locationLayout.setHorizontalGroup(
+			locationLayout.createSequentialGroup()
+				.addComponent(jStation, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+				.addComponent(jSystem, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+				.addComponent(jRegion, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+				.addComponent(jUniverse, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+				.addComponent(jWarning)
+		);						 
+		locationLayout.setVerticalGroup(
+			locationLayout.createParallelGroup()
+				.addComponent(jStation, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jSystem, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jRegion, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jUniverse, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+				.addComponent(jWarning, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+		);
 	//Filters
 		jFiltersPanel = new JPanel();
 	//OK
@@ -188,14 +228,13 @@ public class StockpileDialog extends JDialogCentered {
 					.addComponent(jCancel, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH, Program.BUTTONS_WIDTH)
 				)
 		);
-		final int TOOLBAR_HEIGHT = jToolBar.getInsets().top + jToolBar.getInsets().bottom + Program.BUTTONS_HEIGHT;
 		layout.setVerticalGroup(
 			layout.createSequentialGroup()
 				.addGroup(layout.createParallelGroup()
 					.addComponent(jNamePanel.getPanel())
 					.addComponent(jMultiplierPanel.getPanel())
 				)
-				.addComponent(jToolBar, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
+				.addComponent(jToolBar)
 				.addComponent(jFiltersPanel)
 				.addGap(15)
 				.addGroup(layout.createParallelGroup()
@@ -203,19 +242,6 @@ public class StockpileDialog extends JDialogCentered {
 					.addComponent(jCancel, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 				)
 		);
-	}
-
-	private void addToolButton(final JToolBar jToolBar, final AbstractButton jButton) {
-		addToolButton(jToolBar, jButton, 100, SwingConstants.LEFT);
-	}
-
-	private void addToolButton(final JToolBar jToolBar, final AbstractButton jButton, final int width, final int alignment) {
-		if (width > 0) {
-			jButton.setMinimumSize(new Dimension(width, Program.BUTTONS_HEIGHT));
-			jButton.setMaximumSize(new Dimension(width, Program.BUTTONS_HEIGHT));
-		}
-		jButton.setHorizontalAlignment(alignment);
-		jToolBar.add(jButton);
 	}
 
 	private Stockpile getStockpile() {
@@ -609,7 +635,7 @@ public class StockpileDialog extends JDialogCentered {
 			jRemove.setActionCommand(StockpileDialogAction.REMOVE.name());
 			jRemove.addActionListener(listener);
 
-			jWarning = createToolTipLabel(Images.UPDATE_DONE_ERROR.getIcon(), "Duplicate"); //FIXME - - - > Stockpile: i18n
+			jWarning = createToolTipLabel(Images.UPDATE_DONE_ERROR.getIcon(), TabsStockpile.get().duplicate());
 
 			jType = new JLabel();
 
@@ -750,11 +776,11 @@ public class StockpileDialog extends JDialogCentered {
 		private final FilterList<Location> locationsFilter;
 		private final JCheckBoxMenuItem jMyLocations;
 		//Include
-		private final JLabel jIncludeWarning;
-		private final JToggleButton jInventory;
-		private final JToggleButton jBuyOrders;
-		private final JToggleButton jSellOrders;
-		private final JToggleButton jJobs;
+		private final JDropDownButton jInclude;
+		private final JCheckBoxMenuItem jInventory;
+		private final JCheckBoxMenuItem jBuyOrders;
+		private final JCheckBoxMenuItem jSellOrders;
+		private final JCheckBoxMenuItem jJobs;
 		//
 		private final LocationType locationType;
 
@@ -820,59 +846,92 @@ public class StockpileDialog extends JDialogCentered {
 			groupLayout.setAutoCreateGaps(true);
 			groupLayout.setAutoCreateContainerGaps(false);
 
-			JToolBar jFilterToolBar = new JToolBar();
-			jFilterToolBar.setFloatable(false);
-			jFilterToolBar.setRollover(true);
+			JToolBar jToolBar = new JToolBar();
+			jToolBar.setFloatable(false);
+			jToolBar.setRollover(true);
+
+			GroupLayout filterLayout = new GroupLayout(jToolBar);
+			jToolBar.setLayout(filterLayout);
+			filterLayout.setAutoCreateGaps(false);
+			filterLayout.setAutoCreateContainerGaps(false);
 
 			JButton jOwner = new JButton(TabsStockpile.get().owner(), Images.LOC_OWNER.getIcon());
+			jOwner.setHorizontalAlignment(JButton.LEFT);
 			jOwner.setActionCommand(StockpileDialogAction.ADD_OWNER.name());
 			jOwner.addActionListener(listener);
 			jOwner.setEnabled(!owners.isEmpty());
-			addToolButton(jFilterToolBar, jOwner);
 
 			JButton jFlag = new JButton(TabsStockpile.get().flag(), Images.LOC_FLAG.getIcon());
+			jFlag.setHorizontalAlignment(JButton.LEFT);
 			jFlag.setActionCommand(StockpileDialogAction.ADD_FLAG.name());
 			jFlag.addActionListener(listener);
-			addToolButton(jFilterToolBar, jFlag);
 
 			JButton jContainer = new JButton(TabsStockpile.get().container(), Images.LOC_CONTAINER_WHITE.getIcon());
+			jContainer.setHorizontalAlignment(JButton.LEFT);
 			jContainer.setActionCommand(StockpileDialogAction.ADD_CONTAINER.name());
 			jContainer.addActionListener(listener);
 			jContainer.setEnabled(!containers.isEmpty());
-			addToolButton(jFilterToolBar, jContainer);
 
-			JButton jRemove = new JButton(TabsStockpile.get().remove(), Images.EDIT_DELETE.getIcon());
+			JDropDownButton jEdit = new JDropDownButton(TabsStockpile.get().editStockpileFilter(), Images.EDIT_EDIT_WHITE.getIcon());
+			jEdit.setHorizontalAlignment(JButton.LEFT);
+
+			JMenuItem jRemove = new JMenuItem(TabsStockpile.get().remove(), Images.EDIT_DELETE.getIcon());
+			jRemove.setHorizontalAlignment(JButton.LEFT);
 			jRemove.setActionCommand(StockpileDialogAction.REMOVE.name());
 			jRemove.addActionListener(listener);
-			addToolButton(jFilterToolBar, jRemove);
+			jEdit.add(jRemove);
 
-			JToolBar jIncludeToolBar = new JToolBar();
-			jIncludeToolBar.setFloatable(false);
-			jIncludeToolBar.setRollover(true);
+			JMenuItem jClone = new JMenuItem(TabsStockpile.get().cloneStockpileFilter(), Images.EDIT_COPY.getIcon());
+			jClone.setHorizontalAlignment(JButton.LEFT);
+			jClone.setActionCommand(StockpileDialogAction.CLONE.name());
+			jClone.addActionListener(listener);
+			jEdit.add(jClone);
 
-			jInventory = new JToggleButton(TabsStockpile.get().inventory(), Images.TOOL_ASSETS.getIcon());
+			jInclude = new JDropDownButton(TabsStockpile.get().include(), Images.LOC_INCLUDE.getIcon());
+			jInclude.setHorizontalAlignment(JButton.LEFT);
+			jInclude.setToolTipText(TabsStockpile.get().include());
+
+			filterLayout.setHorizontalGroup(
+				filterLayout.createSequentialGroup()
+					.addComponent(jOwner, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+					.addComponent(jFlag, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+					.addComponent(jContainer, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+					.addComponent(jInclude, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+					.addComponent(jEdit, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH, TOOL_BUTTON_WIDTH)
+			);						 
+			filterLayout.setVerticalGroup(
+				filterLayout.createParallelGroup()
+					.addComponent(jOwner, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jFlag, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jContainer, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jInclude, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+					.addComponent(jEdit, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+			);
+
+			jInventory = new JCheckBoxMenuItem(TabsStockpile.get().inventory());
+			jInventory.setHorizontalAlignment(JButton.LEFT);
 			jInventory.setActionCommand(StockpileDialogAction.VALIDATE.name());
 			jInventory.addActionListener(listener);
 			jInventory.setSelected(true);
-			addToolButton(jIncludeToolBar, jInventory);
+			jInclude.add(jInventory, true);
 
-			jBuyOrders = new JToggleButton(TabsStockpile.get().buyOrders(), Images.ORDERS_BUY.getIcon());
+			jBuyOrders = new JCheckBoxMenuItem(TabsStockpile.get().buyOrders());
+			jBuyOrders.setHorizontalAlignment(JButton.LEFT);
 			jBuyOrders.setActionCommand(StockpileDialogAction.VALIDATE.name());
 			jBuyOrders.addActionListener(listener);
-			addToolButton(jIncludeToolBar, jBuyOrders);
+			jInclude.add(jBuyOrders, true);
 
-			jSellOrders = new JToggleButton(TabsStockpile.get().sellOrders(), Images.INCLUDE_SELL.getIcon());
+			jSellOrders = new JCheckBoxMenuItem(TabsStockpile.get().sellOrders());
+			jSellOrders.setHorizontalAlignment(JButton.LEFT);
 			jSellOrders.setActionCommand(StockpileDialogAction.VALIDATE.name());
 			jSellOrders.addActionListener(listener);
-			addToolButton(jIncludeToolBar, jSellOrders);
+			jInclude.add(jSellOrders, true);
 
-			jJobs = new JToggleButton(TabsStockpile.get().jobs(), Images.INCLUDE_JOBS.getIcon());
+			jJobs = new JCheckBoxMenuItem(TabsStockpile.get().jobs());
+			jJobs.setHorizontalAlignment(JButton.LEFT);
 			jJobs.setActionCommand(StockpileDialogAction.VALIDATE.name());
 			jJobs.addActionListener(listener);
-			addToolButton(jIncludeToolBar, jJobs, 100, SwingConstants.LEFT);
-
-			jIncludeWarning = createToolTipLabel(Images.UPDATE_DONE_ERROR.getIcon(), "Add Include"); //FIXME - - - > Stockpile: i18n
-			jIncludeToolBar.add(jIncludeWarning);
+			jInclude.add(jJobs, true);
 
 			JDropDownButton jOptions = new JDropDownButton(Images.DIALOG_SETTINGS.getIcon());
 			jOptions.setEnabled(locationType != LocationType.UNIVERSE);
@@ -919,11 +978,9 @@ public class StockpileDialog extends JDialogCentered {
 				jLocation.getModel().setSelectedItem(TabsStockpile.get().universe());
 			}
 
-			final int TOOLBAR_HEIGHT = jFilterToolBar.getInsets().top + jFilterToolBar.getInsets().bottom + Program.BUTTONS_HEIGHT;
 			groupLayout.setHorizontalGroup(
 				groupLayout.createParallelGroup()
-					.addComponent(jFilterToolBar)
-					.addComponent(jIncludeToolBar)
+					.addComponent(jToolBar, 0, 0, FIELD_WIDTH)
 					.addGroup(groupLayout.createSequentialGroup()
 						.addComponent(jLocationType)
 						.addComponent(jLocation, 0, 0, FIELD_WIDTH)
@@ -934,12 +991,10 @@ public class StockpileDialog extends JDialogCentered {
 											 
 			groupLayout.setVerticalGroup(
 				groupLayout.createSequentialGroup()
-					.addComponent(jFilterToolBar, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
-					.addComponent(jIncludeToolBar, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT, TOOLBAR_HEIGHT)
+					.addComponent(jToolBar)
 					.addGroup(groupLayout.createParallelGroup()
 						.addComponent(jLocationType, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-						.addComponent(jLocation, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
-						.addComponent(jOptions, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
+						.addComponent(jLocation, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)						.addComponent(jOptions, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT, Program.BUTTONS_HEIGHT)
 					)
 					.addComponent(jFilters)
 			);
@@ -1039,10 +1094,14 @@ public class StockpileDialog extends JDialogCentered {
 			}
 			if (!jInventory.isSelected() && !jSellOrders.isSelected() && !jBuyOrders.isSelected() && !jJobs.isSelected()) {
 				ok = false;
-				jIncludeWarning.setVisible(true);
+				jInclude.setIcon(Images.UPDATE_DONE_ERROR.getIcon());
 			} else {
-				jIncludeWarning.setVisible(false);
+				jInclude.setIcon(Images.LOC_INCLUDE.getIcon());
 			}
+			jInventory.setIcon(jInventory.isSelected() ? Images.INCLUDE_ASSET_SELECTED.getIcon() : Images.TOOL_ASSETS.getIcon());
+			jSellOrders.setIcon(jSellOrders.isSelected() ? Images.INCLUDE_SELL_SELECTED.getIcon() : Images.INCLUDE_SELL.getIcon());
+			jBuyOrders.setIcon(jBuyOrders.isSelected() ? Images.INCLUDE_BUY_SELECTED.getIcon() : Images.ORDERS_BUY.getIcon());
+			jJobs.setIcon(jJobs.isSelected() ? Images.INCLUDE_JOBS_SELECTED.getIcon() : Images.INCLUDE_JOBS.getIcon());
 			return ok;
 		}
 
@@ -1084,6 +1143,12 @@ public class StockpileDialog extends JDialogCentered {
 			updatePanels();
 		}
 
+		private void newClone() {
+			LocationPanel locationPanel = new LocationPanel(getFilter());
+			locationPanels.add(locationPanel);
+			updatePanels();
+		}
+
 		private void addOwner() {
 			ownerPanels.add(new FilterPanel(this, FilterType.OWNER));
 			doLayout();
@@ -1115,6 +1180,8 @@ public class StockpileDialog extends JDialogCentered {
 					autoValidate();
 				} else if (StockpileDialogAction.REMOVE.name().equals(e.getActionCommand())) {
 					remove();
+				} else if (StockpileDialogAction.CLONE.name().equals(e.getActionCommand())) {
+					newClone();
 				}
 			}
 			@Override
