@@ -147,6 +147,7 @@ This prevent jEveAssets from accessing the file.
 
 
 = Character API Key =
+*Note:* step 1 and 2 can be skipped if you run jEveAssets for the first time.
  # Go to Options > Accounts...
  # Click "Add"
  # Click on the "New API Key" link
@@ -156,10 +157,10 @@ This prevent jEveAssets from accessing the file.
  # Click "Next" and wait...
    * If you get an error see: [https://code.google.com/p/jeveassets/wiki/ReadMe#API_Key_Troubleshooting API Key Troubleshooting]
  # Click "OK"
-*Note:* step 1 and 2 can be skipped if you run jEveAssets for the first time.
 
 To have full use of jEveAssets you need:
  * `WalletTransactions`
+ * `WalletJournal`
  * `MarketOrders`
  * `AccountBalance`
  * `Contracts`
@@ -181,6 +182,7 @@ You need to create a Customizable API key for the corporation
  # in "Type" select Corporation
  # Now select:
    * `WalletTransactions`
+   * `WalletJournal`
    * `MarketOrders`
    * `AccountBalance`
    * `Contracts`
