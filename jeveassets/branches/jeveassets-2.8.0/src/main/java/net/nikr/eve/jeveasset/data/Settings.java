@@ -94,6 +94,8 @@ public class Settings {
 	private Map<Integer, UserItem<Integer, Double>> userPrices = new HashMap<Integer, UserItem<Integer, Double>>();; //TypeID : int
 	//Custom Item Name
 	private Map<Long, UserItem<Long, String>> userNames = new HashMap<Long, UserItem<Long, String>>(); //ItemID : long
+	//Eve Item Name
+	private Map<Long, String> eveNames = new HashMap<Long, String>();
 	//Assets
 	private final Map<Long, Date> assetAdded = new HashMap<Long, Date>();
 	//Stockpile
@@ -249,6 +251,14 @@ public class Settings {
 
 	public void setPriceData(final Map<Integer, PriceData> priceData) {
 		this.priceDatas = priceData;
+	}
+
+	public Map<Long, String> getEveNames() {
+		return eveNames;
+	}
+
+	public void setEveNames(Map<Long, String> eveNames) {
+		this.eveNames = eveNames;
 	}
 
 	public Map<Integer, PriceData> getPriceData() {
