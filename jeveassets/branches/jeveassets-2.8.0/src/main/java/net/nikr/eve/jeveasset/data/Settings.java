@@ -126,7 +126,9 @@ public class Settings {
 	//Overview
 	private Map<String, OverviewGroup> overviewGroups = new HashMap<String, OverviewGroup>();;
 	//Reprocess price
-	private ReprocessSettings reprocessSettings = new ReprocessSettings();;
+	private ReprocessSettings reprocessSettings = new ReprocessSettings();
+	//Routing
+	private RoutingSettings routingSettings = new RoutingSettings();
 	//Export
 	private ExportSettings exportSettings = new ExportSettings();
 	//Filter tools
@@ -282,6 +284,10 @@ public class Settings {
 
 	public void setReprocessSettings(final ReprocessSettings reprocessSettings) {
 		this.reprocessSettings = reprocessSettings;
+	}
+
+	public RoutingSettings getRoutingSettings() {
+		return routingSettings;
 	}
 
 	//@NotNull

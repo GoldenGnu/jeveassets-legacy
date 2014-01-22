@@ -478,4 +478,9 @@ public abstract class FakeSettings extends Settings {
 	public Map<Long, String> getEveNames() {
 		throw new UnsupportedOperationException("not implemented");
 	}
+
+	@Override
+	public RoutingSettings getRoutingSettings() {
+		throw new UnsupportedOperationException("not implemented");
+	}
 }
