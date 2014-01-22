@@ -63,16 +63,17 @@ import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 public class IndustryJobsTab extends JMainTab {
 
-	private JAutoColumnTable jTable;
-	private JLabel jInventionSuccess;
+	private final JAutoColumnTable jTable;
+	private final JLabel jInventionSuccess;
+	private final JLabel jManufactureOutputValue;
 
 	//Table
-	private EventList<IndustryJob> eventList;
-	private FilterList<IndustryJob> filterList;
-	private DefaultEventTableModel<IndustryJob> tableModel;
-	private DefaultEventSelectionModel<IndustryJob> selectionModel;
-	private IndustryJobsFilterControl filterControl;
-	private EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> tableFormat;
+	private final EventList<IndustryJob> eventList;
+	private final FilterList<IndustryJob> filterList;
+	private final DefaultEventTableModel<IndustryJob> tableModel;
+	private final DefaultEventSelectionModel<IndustryJob> selectionModel;
+	private final IndustryJobsFilterControl filterControl;
+	private final EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> tableFormat;
 
 	public static final String NAME = "industryjobs"; //Not to be changed!
 
@@ -133,6 +134,9 @@ public class IndustryJobsTab extends JMainTab {
 		jInventionSuccess = StatusPanel.createLabel(TabsJobs.get().inventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
 		this.addStatusbarLabel(jInventionSuccess);
 
+		jManufactureOutputValue = StatusPanel.createLabel(TabsJobs.get().manufactureJobsValue(), Images.TOOL_VALUES.getIcon());
+		this.addStatusbarLabel(jManufactureOutputValue);
+
 		layout.setHorizontalGroup(
 			layout.createParallelGroup()
 				.addComponent(filterControl.getPanel())
@@ -178,6 +182,7 @@ public class IndustryJobsTab extends JMainTab {
 		public void listChanged(final ListEvent<IndustryJob> listChanges) {
 			int count = 0;
 			double success = 0;
+			double outputValue = 0;
 			for (IndustryJob industryJob : filterList) {
 				if (industryJob.getActivity() == IndustryActivity.ACTIVITY_REVERSE_INVENTION && industryJob.isCompleted()) {
 					count++;
@@ -185,18 +190,20 @@ public class IndustryJobsTab extends JMainTab {
 						success++;
 					}
 				}
+				outputValue += industryJob.getOutputValue();
 			}
 			if (count <= 0) {
 				jInventionSuccess.setText(Formater.percentFormat(0.0));
 			} else {
 				jInventionSuccess.setText(Formater.percentFormat(success / count));
 			}
+			jManufactureOutputValue.setText(Formater.iskFormat(outputValue));
 		}
 	}
 
 	public static class IndustryJobsFilterControl extends FilterControl<IndustryJob> {
 
-		private EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> tableFormat;
+		private final EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> tableFormat;
 
 		public IndustryJobsFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> tableFormat, final EventList<IndustryJob> eventList, final FilterList<IndustryJob> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
 			super(jFrame, NAME, eventList, filterList, filters, defaultFilters);
