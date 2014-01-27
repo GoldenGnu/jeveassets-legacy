@@ -485,7 +485,7 @@ public class ProfileData {
 			//Price data
 			PriceData priceData = Settings.get().getPriceData().get(asset.getItem().getTypeID());
 			if (asset.getItem().isMarketGroup() && priceData != null && !priceData.isEmpty()) { //Market Price
-				asset.setPriceData(Settings.get().getPriceData().get(asset.getItem().getTypeID()));
+				asset.setPriceData(priceData);
 			} else { //No Price :(
 				asset.setPriceData(null);
 			}
