@@ -340,15 +340,15 @@ public class UpdateDialog extends JDialogCentered {
 			jCheckBox.setSelected(true);
 			jCheckBox.setEnabled(true);
 		} else {
+			String timeLeft;
 			long time = nextUpdate.getTime() - Settings.getNow().getTime();
-			long minutes = time / (60 * 1000) % 60;
-			long hours = time / (60 * 60 * 1000) % 24;
-			long days = time / (24 * 60 * 60 * 1000);
-			if (days == 0 && hours == 0 && minutes == 0) {
-				minutes = -1;
+			if (time < (60 * 1000)) { //less than 1 minute
+				timeLeft = "<1m";
+			} else {
+				timeLeft = Formater.milliseconds(time, false);
 			}
 			jUpdate.setText(Formater.weekdayAndTime(nextUpdate));
-			jLeft.setText(DialoguesUpdate.get().timeLeft(days, hours, minutes));
+			jLeft.setText(timeLeft);
 			jCheckBox.setSelected(false);
 			jCheckBox.setEnabled(false);
 		}

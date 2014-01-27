@@ -57,7 +57,7 @@ public abstract class TabsRouting extends Bundle {
 	public abstract String resultTabFull();
 	public abstract String resultTabInfo();
 	public abstract String resultTabShort();
-	public abstract String resultText(String name, int jumps, int waypoints, int time);
+	public abstract String resultText(String name, int jumps, int waypoints, String time);
 	public abstract String routingThread();
 	public abstract String routingTitle();
 	public abstract String total(Object arg0, Object arg1);

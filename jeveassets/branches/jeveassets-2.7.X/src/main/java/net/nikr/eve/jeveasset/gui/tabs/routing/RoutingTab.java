@@ -58,6 +58,7 @@ import net.nikr.eve.jeveasset.data.Settings;
 import net.nikr.eve.jeveasset.data.SolarSystem;
 import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
+import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
 import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
@@ -573,7 +574,7 @@ public class RoutingTab extends JMainTab  {
 			//Info
 			final StringBuilder infoString = new StringBuilder();
 			String name = algorithm.getName();
-			int time = (int) Math.floor(algorithm.getLastTimeTaken() / 1000);
+			String time = Formater.milliseconds(algorithm.getLastTimeTaken());
 			int jumps = algorithm.getLastDistance();
 			infoString.append(TabsRouting.get().resultText(name, jumps, inputWaypoints.size(), time));
 			//Full Route
