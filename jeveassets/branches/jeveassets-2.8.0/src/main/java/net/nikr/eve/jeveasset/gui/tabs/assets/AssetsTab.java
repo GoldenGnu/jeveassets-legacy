@@ -63,12 +63,12 @@ public class AssetsTab extends JMainTab {
 	private JLabel jVolume;
 
 	//Table
-	private DefaultEventTableModel<Asset> tableModel;
-	private EventList<Asset> eventList;
-	private FilterList<Asset> filterList;
+	private DefaultEventTableModel<MyAsset> tableModel;
+	private EventList<MyAsset> eventList;
+	private FilterList<MyAsset> filterList;
 	private AssetFilterControl filterControl;
-	private EnumTableFormatAdaptor<AssetTableFormat, Asset> tableFormat;
-	private DefaultEventSelectionModel<Asset> selectionModel;
+	private EnumTableFormatAdaptor<AssetTableFormat, MyAsset> tableFormat;
+	private DefaultEventSelectionModel<MyAsset> selectionModel;
 
 	public static final String NAME = "assets"; //Not to be changed!
 
@@ -79,13 +79,13 @@ public class AssetsTab extends JMainTab {
 		ListenerClass listener = new ListenerClass();
 
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<AssetTableFormat, Asset>(AssetTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<AssetTableFormat, MyAsset>(AssetTableFormat.class);
 		//Backend
 		eventList = program.getAssetEventList();
 		//Sorting (per column)
-		SortedList<Asset> sortedList = new SortedList<Asset>(eventList);
+		SortedList<MyAsset> sortedList = new SortedList<MyAsset>(eventList);
 		//Filter
-		filterList = new FilterList<Asset>(sortedList);
+		filterList = new FilterList<MyAsset>(sortedList);
 		filterList.addListEventListener(listener);
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
@@ -115,7 +115,7 @@ public class AssetsTab extends JMainTab {
 				);
 
 		//Menu
-		installMenu(program, new AssetTableMenu(), jTable, Asset.class);
+		installMenu(program, new AssetTableMenu(), jTable, MyAsset.class);
 
 		jVolume = StatusPanel.createLabel(TabsAssets.get().totalVolume(), Images.ASSETS_VOLUME.getIcon());
 		this.addStatusbarLabel(jVolume);
@@ -171,11 +171,11 @@ public class AssetsTab extends JMainTab {
 	public String getCurrentFilterName() {
 		return filterControl.getCurrentFilterName();
 	}
-	public FilterLogicalMatcher<Asset> getFilterLogicalMatcher(final List<Filter> filters) {
-		return new FilterLogicalMatcher<Asset>(filterControl, filters);
+	public FilterLogicalMatcher<MyAsset> getFilterLogicalMatcher(final List<Filter> filters) {
+		return new FilterLogicalMatcher<MyAsset>(filterControl, filters);
 	}
-	public FilterLogicalMatcher<Asset> getFilterLogicalMatcher() {
-		return new FilterLogicalMatcher<Asset>(filterControl, getFilters());
+	public FilterLogicalMatcher<MyAsset> getFilterLogicalMatcher() {
+		return new FilterLogicalMatcher<MyAsset>(filterControl, getFilters());
 	}
 
 	private void updateStatusbar() {
@@ -184,7 +184,7 @@ public class AssetsTab extends JMainTab {
 		long totalCount = 0;
 		double totalVolume = 0;
 		double totalReprocessed = 0;
-		for (Asset asset : filterList) {
+		for (MyAsset asset : filterList) {
 			totalValue = totalValue + (asset.getDynamicPrice() * asset.getCount()) ;
 			totalCount = totalCount + asset.getCount();
 			totalVolume = totalVolume + asset.getVolumeTotal();
@@ -200,7 +200,7 @@ public class AssetsTab extends JMainTab {
 		jValue.setText(Formater.iskFormat(totalValue));
 	}
 
-	public Asset getSelectedAsset() {
+	public MyAsset getSelectedAsset() {
 		return tableModel.getElementAt(jTable.getSelectedRow());
 	}
 
@@ -208,16 +208,16 @@ public class AssetsTab extends JMainTab {
 	 * returns a new list of the filtered assets, thus the list is modifiable.
 	 * @return a list of the filtered assets.
 	 */
-	public List<Asset> getFilteredAssets() {
+	public List<MyAsset> getFilteredAssets() {
 		eventList.getReadWriteLock().writeLock().lock();
-		List<Asset> ret = new ArrayList<Asset>(filterList);
+		List<MyAsset> ret = new ArrayList<MyAsset>(filterList);
 		eventList.getReadWriteLock().writeLock().unlock();
 		return ret;
 	}
 
-	private class AssetTableMenu implements TableMenu<Asset> {
+	private class AssetTableMenu implements TableMenu<MyAsset> {
 		@Override
-		public MenuData<Asset> getMenuData() {
+		public MenuData<MyAsset> getMenuData() {
 			return new AssetMenuData(selectionModel.getSelected());
 		}
 
@@ -241,27 +241,27 @@ public class AssetsTab extends JMainTab {
 	}
 
 
-	private class ListenerClass implements ListEventListener<Asset> {
+	private class ListenerClass implements ListEventListener<MyAsset> {
 		@Override
-		public void listChanged(final ListEvent<Asset> listChanges) {
+		public void listChanged(final ListEvent<MyAsset> listChanges) {
 			updateStatusbar();
 			program.getOverviewTab().updateTable();
 		}
 	}
 
-	public static class AssetFilterControl extends FilterControl<Asset> {
+	public static class AssetFilterControl extends FilterControl<MyAsset> {
 
-		private EnumTableFormatAdaptor<AssetTableFormat, Asset> tableFormat;
+		private EnumTableFormatAdaptor<AssetTableFormat, MyAsset> tableFormat;
 		private Program program;
 
-		public AssetFilterControl(final Program program, final JFrame jFrame, final EnumTableFormatAdaptor<AssetTableFormat, Asset> tableFormat, final EventList<Asset> eventList, final FilterList<Asset> filterList, final Map<String, List<Filter>> filters) {
+		public AssetFilterControl(final Program program, final JFrame jFrame, final EnumTableFormatAdaptor<AssetTableFormat, MyAsset> tableFormat, final EventList<MyAsset> eventList, final FilterList<MyAsset> filterList, final Map<String, List<Filter>> filters) {
 			super(jFrame, NAME, eventList, filterList, filters);
 			this.tableFormat = tableFormat;
 			this.program = program;
 		}
 
 		@Override
-		protected Object getColumnValue(final Asset item, final String column) {
+		protected Object getColumnValue(final MyAsset item, final String column) {
 			AssetTableFormat format = AssetTableFormat.valueOf(column);
 			return format.getColumnValue(item);
 		}
@@ -272,13 +272,13 @@ public class AssetsTab extends JMainTab {
 		}
 
 		@Override
-		protected List<EnumTableColumn<Asset>> getColumns() {
+		protected List<EnumTableColumn<MyAsset>> getColumns() {
 			return columnsAsList(AssetTableFormat.values());
 		}
 
 		@Override
-		protected List<EnumTableColumn<Asset>> getShownColumns() {
-			return new ArrayList<EnumTableColumn<Asset>>(tableFormat.getShownColumns());
+		protected List<EnumTableColumn<MyAsset>> getShownColumns() {
+			return new ArrayList<EnumTableColumn<MyAsset>>(tableFormat.getShownColumns());
 		}
 
 		@Override

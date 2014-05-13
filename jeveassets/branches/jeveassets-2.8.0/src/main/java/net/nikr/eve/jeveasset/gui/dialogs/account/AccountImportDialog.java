@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.dialogs.account;
 
-import com.beimin.eveapi.core.ApiError;
+import com.beimin.eveapi.handler.ApiError;
 import java.awt.CardLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -30,10 +30,19 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowFocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.GroupLayout;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 import javax.swing.text.html.HTMLDocument;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.gui.shared.DocumentFactory;
 import net.nikr.eve.jeveasset.gui.shared.components.JCopyPopup;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
@@ -62,8 +71,6 @@ public class AccountImportDialog extends JDialogCentered {
 		DONE
 	}
 
-	private AccountManagerDialog apiManager;
-
 	private enum Result {
 		FAIL_EXIST,
 		FAIL_API_EXCEPTION,
@@ -75,19 +82,20 @@ public class AccountImportDialog extends JDialogCentered {
 		OK_ACCOUNT_VALID
 	}
 
+	private final JButton jNext;
+	private final JButton jPrevious;
+	private final JButton jCancel;
+	private final CardLayout cardLayout;
+	private final JPanel jContent;
+	private final AccountManagerDialog apiManager;
+	private final ListenerClass listener = new ListenerClass();
+	private final DonePanel donePanel;
+
 	private JTextField jKeyID;
 	private JTextField jVCode;
-	private JButton jNext;
-	private JButton jPrevious;
-	private JButton jCancel;
-	private CardLayout cardLayout;
-	private JPanel jContent;
-	private Account account;
-	private Account editAccount;
-	private ListenerClass listener = new ListenerClass();
 
-	private DonePanel donePanel;
-
+	private MyAccount account;
+	private MyAccount editAccount;
 	private int nTabIndex;
 
 	public AccountImportDialog(final AccountManagerDialog apiManager, final Program program) {
@@ -171,7 +179,7 @@ public class AccountImportDialog extends JDialogCentered {
 	@Override
 	protected void save() { }
 
-	public void show(final Account editAccount) {
+	public void show(final MyAccount editAccount) {
 		this.editAccount = editAccount;
 		if (editAccount != null) { //Edit
 			jKeyID.setText(String.valueOf(editAccount.getKeyID()));
@@ -212,9 +220,9 @@ public class AccountImportDialog extends JDialogCentered {
 		jNext.setEnabled(false);
 		jNext.setText(DialoguesAccount.get().nextArrow());
 		if (editAccount == null) { //Add
-			account = new Account(getKeyID(), getVCode());
+			account = new MyAccount(getKeyID(), getVCode());
 		} else { //Edit
-			account = new Account(editAccount);
+			account = new MyAccount(editAccount);
 			account.setKeyID(getKeyID());
 			account.setvCode(getVCode());
 		}
@@ -425,9 +433,8 @@ public class AccountImportDialog extends JDialogCentered {
 
 	private class DonePanel extends JCardPanel {
 
-		private JLabel jResult;
-
-		private JEditorPane jHelp;
+		private final JLabel jResult;
+		private final JEditorPane jHelp;
 
 		public DonePanel() {
 			jResult = new JLabel();
@@ -490,10 +497,10 @@ public class AccountImportDialog extends JDialogCentered {
 
 	class ValidateApiKeyTask extends SwingWorker<Void, Void> {
 
+		private final AccountGetter accountGetter = new AccountGetter();
 		private Result result = null;
 		private boolean done = false;
 		private String error = "";
-		private AccountGetter accountGetter = new AccountGetter();
 
 		@Override
 		public Void doInBackground() {
