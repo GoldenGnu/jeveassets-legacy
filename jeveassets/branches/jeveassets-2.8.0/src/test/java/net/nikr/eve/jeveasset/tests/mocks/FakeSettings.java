@@ -100,11 +100,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public boolean isAutoUpdate() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public boolean isForceUpdate() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -135,11 +130,6 @@ public abstract class FakeSettings extends Settings {
 	}
 
 	@Override
-	public boolean isUpdateDev() {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
 	public boolean isWindowAutoSave() {
 		throw new UnsupportedOperationException("not implemented");
 	}
@@ -156,11 +146,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public void setApiProxy(final String apiProxy) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setAutoUpdate(final boolean updateStable) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
@@ -211,11 +196,6 @@ public abstract class FakeSettings extends Settings {
 
 	@Override
 	public void setReprocessSettings(final ReprocessSettings reprocessSettings) {
-		throw new UnsupportedOperationException("not implemented");
-	}
-
-	@Override
-	public void setUpdateDev(final boolean updateDev) {
 		throw new UnsupportedOperationException("not implemented");
 	}
 
