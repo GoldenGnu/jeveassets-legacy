@@ -21,14 +21,27 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.contracts;
 
-import com.beimin.eveapi.shared.contract.ContractType;
-import com.beimin.eveapi.shared.contract.EveContract;
+import com.beimin.eveapi.model.shared.Contract;
+import static com.beimin.eveapi.model.shared.ContractStatus.COMPLETED;
+import static com.beimin.eveapi.model.shared.ContractStatus.COMPLETEDBYCONTRACTOR;
+import static com.beimin.eveapi.model.shared.ContractStatus.COMPLETEDBYISSUER;
+import static com.beimin.eveapi.model.shared.ContractStatus.DELETED;
+import static com.beimin.eveapi.model.shared.ContractStatus.FAILED;
+import static com.beimin.eveapi.model.shared.ContractStatus.INPROGRESS;
+import static com.beimin.eveapi.model.shared.ContractStatus.OUTSTANDING;
+import static com.beimin.eveapi.model.shared.ContractStatus.REJECTED;
+import static com.beimin.eveapi.model.shared.ContractStatus.REVERSED;
+import com.beimin.eveapi.model.shared.ContractType;
+import static com.beimin.eveapi.model.shared.ContractType.AUCTION;
+import static com.beimin.eveapi.model.shared.ContractType.COURIER;
+import static com.beimin.eveapi.model.shared.ContractType.ITEMEXCHANGE;
+import static com.beimin.eveapi.model.shared.ContractType.LOAN;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
-public class Contract extends EveContract implements LocationType {
+public class MyContract extends Contract implements LocationType {
 
 	private final String acceptor;
 	private final String assignee;
@@ -37,7 +50,7 @@ public class Contract extends EveContract implements LocationType {
 	private final Location endStation;
 	private final Location startStation;
 
-	public Contract(EveContract contract, String acceptor, String assignee, String issuerCorp, String issuer, Location startStation, Location endStation) {
+	public MyContract(Contract contract, String acceptor, String assignee, String issuerCorp, String issuer, Location startStation, Location endStation) {
 		this.acceptor = acceptor;
 		this.assignee = assignee;
 		this.issuerCorp = issuerCorp;
@@ -151,7 +164,7 @@ public class Contract extends EveContract implements LocationType {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final Contract other = (Contract) obj;
+		final MyContract other = (MyContract) obj;
 		if (this.getContractID() != other.getContractID()) {
 			return false;
 		}

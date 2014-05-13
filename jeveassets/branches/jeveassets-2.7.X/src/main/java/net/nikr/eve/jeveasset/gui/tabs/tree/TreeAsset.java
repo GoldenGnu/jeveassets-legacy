@@ -28,11 +28,11 @@ import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.Security;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat.HierarchyColumn;
 
 
-public class TreeAsset extends Asset {
+public class TreeAsset extends MyAsset {
 
 	public enum TreeType {
 		CATEGORY,
@@ -63,7 +63,7 @@ public class TreeAsset extends Asset {
 	private double volumnTotal = 0;
 	
 
-	public TreeAsset(Asset asset, TreeType treeType, List<TreeAsset> tree, String compare, boolean parent) {
+	public TreeAsset(MyAsset asset, TreeType treeType, List<TreeAsset> tree, String compare, boolean parent) {
 		super(asset);
 		this.treeName = createSpace(tree.size()) + asset.getName();
 		this.tree = new ArrayList<TreeAsset>(tree); //Copy
@@ -91,7 +91,7 @@ public class TreeAsset extends Asset {
 	}
 
 	public TreeAsset(final Location location, final String treeName, final String compare, final Icon icon, List<TreeAsset> tree, final int depthOffset) {
-		super(new Item(0), location, null, 0, new ArrayList<Asset>(), "", 0, 0L, false, 0);
+		super(new Item(0), location, null, 0, new ArrayList<MyAsset>(), "", 0, 0L, false, 0);
 		this.treeName = createSpace(tree.size()) + treeName;
 		this.tree = new ArrayList<TreeAsset>(tree); //Copy
 		this.compare = compare;
@@ -302,7 +302,7 @@ public class TreeAsset extends Asset {
 		}
 	}
 
-	private void add(Asset asset) {
+	private void add(MyAsset asset) {
 		this.count = this.count + asset.getCount();
 		this.value = this.value + asset.getValue();
 		this.valueBase = this.valueBase + (asset.getItem().getPriceBase() * asset.getCount());
@@ -329,7 +329,7 @@ public class TreeAsset extends Asset {
 	}
 
 	@Override
-	public int compareTo(Asset o) {
+	public int compareTo(MyAsset o) {
 		if (o instanceof TreeAsset) {
 			TreeAsset treeAsset = (TreeAsset) o;
 			return this.getCompare().compareTo(treeAsset.getCompare());

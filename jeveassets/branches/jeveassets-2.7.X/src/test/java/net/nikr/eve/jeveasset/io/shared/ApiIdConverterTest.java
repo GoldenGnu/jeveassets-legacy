@@ -21,11 +21,17 @@
 
 package net.nikr.eve.jeveasset.io.shared;
 
-import com.beimin.eveapi.eve.conquerablestationlist.ApiStation;
+import com.beimin.eveapi.model.eve.Station;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.StaticData;
-import org.junit.*;
-import static org.junit.Assert.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 
 public class ApiIdConverterTest {
@@ -99,7 +105,7 @@ public class ApiIdConverterTest {
 				assertFalse(o1.getRegionID() == 0);
 			}
 		}
-		for (ApiStation apiStation : StaticData.get().getConquerableStations().values()) {
+		for (Station apiStation : StaticData.get().getConquerableStations().values()) {
 			String system = ApiIdConverter.getLocation(apiStation.getSolarSystemID()).getSystem();
 			assertTrue("Station name: " + apiStation.getStationName() + " System name: " + system,  apiStation.getStationName().contains(system) || apiStation.getStationName().equals("C C P S U C K S"));
 		}

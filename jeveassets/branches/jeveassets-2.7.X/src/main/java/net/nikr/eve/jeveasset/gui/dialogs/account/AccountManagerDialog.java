@@ -33,9 +33,14 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.GroupLayout.Alignment;
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 import net.nikr.eve.jeveasset.Program;
-import net.nikr.eve.jeveasset.data.Account;
+import net.nikr.eve.jeveasset.data.MyAccount;
 import net.nikr.eve.jeveasset.data.Owner;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountSeparatorTableCell.AccountCellAction;
 import net.nikr.eve.jeveasset.gui.dialogs.account.AccountTableFormat.ExpirerDate;
@@ -187,7 +192,7 @@ public class AccountManagerDialog extends JDialogCentered {
 		//Update rows (Add all rows)
 		eventList.getReadWriteLock().writeLock().lock();
 		eventList.clear();
-		for (Account account : program.getAccounts()) {
+		for (MyAccount account : program.getAccounts()) {
 			if (account.getOwners().isEmpty()) {
 				eventList.add(new Owner(account, DialoguesAccount.get().noOwners(), 0));
 			} else {
@@ -222,7 +227,7 @@ public class AccountManagerDialog extends JDialogCentered {
 				}
 			}
 		} else { //Set all the check value
-			for (Account account : program.getAccounts()) {
+			for (MyAccount account : program.getAccounts()) {
 				for (Owner owner : account.getOwners()) {
 					if (!owner.getName().equals(DialoguesAccount.get().noOwners())) {
 						owner.setShowOwner(check);
@@ -255,7 +260,7 @@ public class AccountManagerDialog extends JDialogCentered {
 	@Override
 	protected void save() {
 		boolean changed = false;
-		for (Account account : program.getAccounts()) {
+		for (MyAccount account : program.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				if (!shownAssets.containsKey(owner)) { //New account
 					if (owner.isShowOwner()) { //if shown: Updated
@@ -278,7 +283,7 @@ public class AccountManagerDialog extends JDialogCentered {
 			forceUpdate = false;
 			updateTable();
 			shownAssets = new HashMap<Owner, Boolean>();
-			for (Account account : program.getAccounts()) {
+			for (MyAccount account : program.getAccounts()) {
 				for (Owner owner : account.getOwners()) {
 					shownAssets.put(owner, owner.isShowOwner());
 				}
@@ -307,7 +312,7 @@ public class AccountManagerDialog extends JDialogCentered {
 				if (o instanceof SeparatorList.Separator<?>) {
 					SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 					Owner owner = (Owner) separator.first();
-					Account account = owner.getParentAccount();
+					MyAccount account = owner.getParentAccount();
 					accountImportDialog.show(account);
 				}
 			}
@@ -323,7 +328,7 @@ public class AccountManagerDialog extends JDialogCentered {
 					if (nReturn == JOptionPane.YES_OPTION) {
 						SeparatorList.Separator<?> separator = (SeparatorList.Separator<?>) o;
 						Owner owner = (Owner) separator.first();
-						Account account = owner.getParentAccount();
+						MyAccount account = owner.getParentAccount();
 						program.getAccounts().remove(account);
 						forceUpdate();
 						updateTable();

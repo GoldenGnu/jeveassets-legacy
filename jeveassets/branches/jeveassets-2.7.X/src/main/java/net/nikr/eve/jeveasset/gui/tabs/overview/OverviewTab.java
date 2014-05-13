@@ -77,7 +77,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetTableFormat;
 import net.nikr.eve.jeveasset.gui.tabs.assets.AssetsTab;
 import net.nikr.eve.jeveasset.i18n.General;
@@ -358,7 +358,7 @@ public class OverviewTab extends JMainTab {
 		return "";
 	}
 
-	private List<Overview> getList(final List<Asset> input, final String owner, final String view) {
+	private List<Overview> getList(final List<MyAsset> input, final String owner, final String view) {
 		List<Overview> locations = new ArrayList<Overview>();
 		Map<String, Overview> locationsMap = new HashMap<String, Overview>();
 		List<String> groupedLocations = new ArrayList<String>();
@@ -382,7 +382,7 @@ public class OverviewTab extends JMainTab {
 				}
 			}
 		}
-		for (Asset asset : input) {
+		for (MyAsset asset : input) {
 			if (asset.getItem().getGroup().equals("Audit Log Secure Container") && Settings.get().isIgnoreSecureContainers()) {
 				continue;
 			}

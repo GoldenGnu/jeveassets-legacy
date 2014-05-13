@@ -29,7 +29,7 @@ import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 
 
 public class Material implements Comparable<Material>, LocationType, ItemType, PriceType, CopySeparator {
@@ -76,7 +76,7 @@ public class Material implements Comparable<Material>, LocationType, ItemType, P
 	private final Double price;
 	private final MaterialType type;
 
-	public Material(final MaterialType type, final Asset asset, final String header, final String group, final String name) {
+	public Material(final MaterialType type, final MyAsset asset, final String header, final String group, final String name) {
 		this.type = type;
 		this.header = header;
 		this.group = group;

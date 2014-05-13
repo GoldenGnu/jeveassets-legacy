@@ -77,7 +77,7 @@ import net.nikr.eve.jeveasset.gui.shared.menu.MenuManager.TableMenu;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset.TreeType;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTab.AssetTreeExpansionModel.ExpandeState;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat.HierarchyColumn;
@@ -276,7 +276,7 @@ public class TreeTab extends JMainTab {
 		categoriesExport.clear();
 		Map<String, TreeAsset> categoryCache = new HashMap<String, TreeAsset>();
 		Map<String, TreeAsset> locationCache = new HashMap<String, TreeAsset>();
-		for (Asset asset : program.getAssetEventList()) {
+		for (MyAsset asset : program.getAssetEventList()) {
 		//LOCATION
 			List<TreeAsset> locationTree = new ArrayList<TreeAsset>();
 			Location location = asset.getLocation();
@@ -317,7 +317,7 @@ public class TreeTab extends JMainTab {
 			//Add Parent(s)
 			String parentKey = fullLocation;
 			if (!asset.getParents().isEmpty()) {
-				for (Asset parentAsset : asset.getParents()) {
+				for (MyAsset parentAsset : asset.getParents()) {
 					parentKey = parentKey + parentAsset.getName() + " #" + parentAsset.getItemID();
 					TreeAsset parentTreeAsset = locationCache.get(parentKey);
 					if (parentTreeAsset == null) {

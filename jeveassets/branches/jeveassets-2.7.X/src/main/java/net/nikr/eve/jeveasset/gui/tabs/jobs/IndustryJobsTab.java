@@ -56,8 +56,8 @@ import net.nikr.eve.jeveasset.gui.shared.table.EnumTableFormatAdaptor;
 import net.nikr.eve.jeveasset.gui.shared.table.EventModels;
 import net.nikr.eve.jeveasset.gui.shared.table.JAutoColumnTable;
 import net.nikr.eve.jeveasset.gui.shared.table.PaddingTableCellRenderer;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob.IndustryActivity;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob.IndustryJobState;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob.IndustryActivity;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob.IndustryJobState;
 import net.nikr.eve.jeveasset.i18n.TabsJobs;
 
 
@@ -67,12 +67,12 @@ public class IndustryJobsTab extends JMainTab {
 	private JLabel jInventionSuccess;
 
 	//Table
-	private EventList<IndustryJob> eventList;
-	private FilterList<IndustryJob> filterList;
-	private DefaultEventTableModel<IndustryJob> tableModel;
-	private DefaultEventSelectionModel<IndustryJob> selectionModel;
+	private EventList<MyIndustryJob> eventList;
+	private FilterList<MyIndustryJob> filterList;
+	private DefaultEventTableModel<MyIndustryJob> tableModel;
+	private DefaultEventSelectionModel<MyIndustryJob> selectionModel;
 	private IndustryJobsFilterControl filterControl;
-	private EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> tableFormat;
+	private EnumTableFormatAdaptor<IndustryJobTableFormat, MyIndustryJob> tableFormat;
 
 	public static final String NAME = "industryjobs"; //Not to be changed!
 
@@ -81,13 +81,13 @@ public class IndustryJobsTab extends JMainTab {
 
 		ListenerClass listener = new ListenerClass();
 		//Table Format
-		tableFormat = new EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob>(IndustryJobTableFormat.class);
+		tableFormat = new EnumTableFormatAdaptor<IndustryJobTableFormat, MyIndustryJob>(IndustryJobTableFormat.class);
 		//Backend
 		eventList = program.getIndustryJobsEventList();
 		//Sorting (per column)
-		SortedList<IndustryJob> sortedList = new SortedList<IndustryJob>(eventList);
+		SortedList<MyIndustryJob> sortedList = new SortedList<MyIndustryJob>(eventList);
 		//Filter
-		filterList = new FilterList<IndustryJob>(sortedList);
+		filterList = new FilterList<MyIndustryJob>(sortedList);
 		filterList.addListEventListener(listener);
 		//Table Model
 		tableModel = EventModels.createTableModel(filterList, tableFormat);
@@ -128,7 +128,7 @@ public class IndustryJobsTab extends JMainTab {
 				);
 
 		//Menu
-		installMenu(program, new JobsTableMenu(), jTable, IndustryJob.class);
+		installMenu(program, new JobsTableMenu(), jTable, MyIndustryJob.class);
 
 		jInventionSuccess = StatusPanel.createLabel(TabsJobs.get().inventionSuccess(), Images.JOBS_INVENTION_SUCCESS.getIcon());
 		this.addStatusbarLabel(jInventionSuccess);
@@ -148,10 +148,10 @@ public class IndustryJobsTab extends JMainTab {
 	@Override
 	public void updateData() { }
 
-	private class JobsTableMenu implements TableMenu<IndustryJob> {
+	private class JobsTableMenu implements TableMenu<MyIndustryJob> {
 		@Override
-		public MenuData<IndustryJob> getMenuData() {
-			return new MenuData<IndustryJob>(selectionModel.getSelected());
+		public MenuData<MyIndustryJob> getMenuData() {
+			return new MenuData<MyIndustryJob>(selectionModel.getSelected());
 		}
 
 		@Override
@@ -173,12 +173,12 @@ public class IndustryJobsTab extends JMainTab {
 		public void addToolMenu(JComponent jComponent) { }
 	}
 
-	private class ListenerClass implements ListEventListener<IndustryJob> {
+	private class ListenerClass implements ListEventListener<MyIndustryJob> {
 		@Override
-		public void listChanged(final ListEvent<IndustryJob> listChanges) {
+		public void listChanged(final ListEvent<MyIndustryJob> listChanges) {
 			int count = 0;
 			double success = 0;
-			for (IndustryJob industryJob : filterList) {
+			for (MyIndustryJob industryJob : filterList) {
 				if (industryJob.getActivity() == IndustryActivity.ACTIVITY_REVERSE_INVENTION && industryJob.isCompleted()) {
 					count++;
 					if (industryJob.getState() == IndustryJobState.STATE_DELIVERED) {
@@ -194,17 +194,17 @@ public class IndustryJobsTab extends JMainTab {
 		}
 	}
 
-	public static class IndustryJobsFilterControl extends FilterControl<IndustryJob> {
+	public static class IndustryJobsFilterControl extends FilterControl<MyIndustryJob> {
 
-		private EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> tableFormat;
+		private EnumTableFormatAdaptor<IndustryJobTableFormat, MyIndustryJob> tableFormat;
 
-		public IndustryJobsFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<IndustryJobTableFormat, IndustryJob> tableFormat, final EventList<IndustryJob> eventList, final FilterList<IndustryJob> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
+		public IndustryJobsFilterControl(final JFrame jFrame, final EnumTableFormatAdaptor<IndustryJobTableFormat, MyIndustryJob> tableFormat, final EventList<MyIndustryJob> eventList, final FilterList<MyIndustryJob> filterList, final Map<String, List<Filter>> filters, final Map<String, List<Filter>> defaultFilters) {
 			super(jFrame, NAME, eventList, filterList, filters, defaultFilters);
 			this.tableFormat = tableFormat;
 		}
 
 		@Override
-		protected Object getColumnValue(final IndustryJob item, final String column) {
+		protected Object getColumnValue(final MyIndustryJob item, final String column) {
 			IndustryJobTableFormat format = IndustryJobTableFormat.valueOf(column);
 			return format.getColumnValue(item);
 		}
@@ -215,13 +215,13 @@ public class IndustryJobsTab extends JMainTab {
 		}
 
 		@Override
-		protected List<EnumTableColumn<IndustryJob>> getColumns() {
+		protected List<EnumTableColumn<MyIndustryJob>> getColumns() {
 			return columnsAsList(IndustryJobTableFormat.values());
 		}
 
 		@Override
-		protected List<EnumTableColumn<IndustryJob>> getShownColumns() {
-			return new ArrayList<EnumTableColumn<IndustryJob>>(tableFormat.getShownColumns());
+		protected List<EnumTableColumn<MyIndustryJob>> getShownColumns() {
+			return new ArrayList<EnumTableColumn<MyIndustryJob>>(tableFormat.getShownColumns());
 		}
 	}
 }

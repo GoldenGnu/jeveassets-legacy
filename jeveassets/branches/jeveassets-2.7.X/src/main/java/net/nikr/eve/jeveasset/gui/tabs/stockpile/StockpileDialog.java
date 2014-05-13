@@ -74,9 +74,9 @@ import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JDialogCentered;
 import net.nikr.eve.jeveasset.gui.shared.components.JDoubleField;
 import net.nikr.eve.jeveasset.gui.shared.components.JDropDownButton;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
-import net.nikr.eve.jeveasset.gui.tabs.jobs.IndustryJob;
-import net.nikr.eve.jeveasset.gui.tabs.orders.MarketOrder;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
+import net.nikr.eve.jeveasset.gui.tabs.jobs.MyIndustryJob;
+import net.nikr.eve.jeveasset.gui.tabs.orders.MyMarketOrder;
 import net.nikr.eve.jeveasset.gui.tabs.stockpile.Stockpile.StockpileFilter;
 import net.nikr.eve.jeveasset.i18n.TabsStockpile;
 
@@ -435,7 +435,7 @@ public class StockpileDialog extends JDialogCentered {
 
 		//Owners
 		Map<Long, Owner> ownersById = new HashMap<Long, Owner>();
-		for (Account account : program.getAccounts()) {
+		for (MyAccount account : program.getAccounts()) {
 			for (Owner owner : account.getOwners()) {
 				ownersById.put(owner.getOwnerID(), owner);
 			}
@@ -447,7 +447,7 @@ public class StockpileDialog extends JDialogCentered {
 		//Containers & MyLocations Loop
 		Set<String> containerSet = new HashSet<String>();
 		myLocations.clear();
-		for (Asset asset : program.getAssetEventList()) {
+		for (MyAsset asset : program.getAssetEventList()) {
 			if (!asset.getContainer().isEmpty()) {
 				containerSet.add(asset.getContainer());
 			}
@@ -455,12 +455,12 @@ public class StockpileDialog extends JDialogCentered {
 			myLocations.add(asset.getLocation().getSystem());
 			myLocations.add(asset.getLocation().getRegion());
 		}
-		for (IndustryJob industryJob : program.getIndustryJobsEventList()) {
+		for (MyIndustryJob industryJob : program.getIndustryJobsEventList()) {
 			myLocations.add(industryJob.getLocation().getLocation());
 			myLocations.add(industryJob.getLocation().getSystem());
 			myLocations.add(industryJob.getLocation().getRegion());
 		}
-		for (MarketOrder marketOrder : program.getMarketOrdersEventList()) {
+		for (MyMarketOrder marketOrder : program.getMarketOrdersEventList()) {
 			myLocations.add(marketOrder.getLocation().getLocation());
 			myLocations.add(marketOrder.getLocation().getSystem());
 			myLocations.add(marketOrder.getLocation().getRegion());

@@ -20,7 +20,7 @@
  */
 package net.nikr.eve.jeveasset.gui.tabs.jobs;
 
-import com.beimin.eveapi.shared.industryjobs.ApiIndustryJob;
+import com.beimin.eveapi.model.shared.IndustryJob;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Location;
@@ -33,7 +33,7 @@ import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.i18n.DataModelIndustryJob;
 
 
-public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJob>, LocationType, ItemType, BlueprintType, PriceType {
+public class MyIndustryJob extends IndustryJob implements Comparable<MyIndustryJob>, LocationType, ItemType, BlueprintType, PriceType {
 
 	public enum IndustryJobState {
 		STATE_ALL() {
@@ -152,7 +152,7 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 				return DataModelIndustryJob.get().activityCopying();
 			}
 			@Override
-			public String getDescriptionOf(final IndustryJob job) {
+			public String getDescriptionOf(final MyIndustryJob job) {
 				// "Copying: Xyz Blueprint making 5 copies with 1500 runs each."
 				return DataModelIndustryJob.get().descriptionCopying(
 						String.valueOf(job.getInstalledItemTypeID()),
@@ -189,7 +189,7 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		 * @param job
 		 * @return a single line, human readable description of the job.
 		 */
-		public String getDescriptionOf(final IndustryJob job) {
+		public String getDescriptionOf(final MyIndustryJob job) {
 			return toString();
 		}
 	}
@@ -202,7 +202,7 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 	private final int portion;
 	private double price;
 
-	public IndustryJob(final ApiIndustryJob apiIndustryJob, final Item item, final Location location, final Owner owner, final int portion) {
+	public MyIndustryJob(final IndustryJob apiIndustryJob, final Item item, final Location location, final Owner owner, final int portion) {
 		this.setJobID(apiIndustryJob.getJobID());
 		this.setContainerID(apiIndustryJob.getContainerID());
 		this.setInstalledItemID(apiIndustryJob.getInstalledItemID());
@@ -305,7 +305,7 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 	}
 
 	@Override
-	public int compareTo(final IndustryJob o) {
+	public int compareTo(final MyIndustryJob o) {
 		return 0;
 	}
 
@@ -374,7 +374,7 @@ public class IndustryJob extends ApiIndustryJob implements Comparable<IndustryJo
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final IndustryJob other = (IndustryJob) obj;
+		final MyIndustryJob other = (MyIndustryJob) obj;
 		if (this.owner != other.owner && (this.owner == null || !this.owner.equals(other.owner))) {
 			return false;
 		}

@@ -34,7 +34,7 @@ import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.data.types.PriceType;
 import net.nikr.eve.jeveasset.data.types.TagsType;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.io.shared.ApiIdConverter;
 
 
@@ -50,7 +50,7 @@ public class MenuData<T> {
 	private final Set<Integer> blueprintTypeIDs = new HashSet<Integer>();
 	private final Map<Tag, Integer> tagCount = new HashMap<Tag, Integer>();
 	private final List<TagsType> tags = new ArrayList<TagsType>();
-	private final List<Asset> assets = new ArrayList<Asset>();
+	private final List<MyAsset> assets = new ArrayList<MyAsset>();
 
 	public MenuData() { }
 
@@ -198,12 +198,12 @@ public class MenuData<T> {
 		return blueprintTypeIDs;
 	}
 
-	public void setAssets(List<Asset> assets) {
+	public void setAssets(List<MyAsset> assets) {
 		this.assets.clear();
 		this.assets.addAll(assets);
 	}
 
-	public List<Asset> getAssets() {
+	public List<MyAsset> getAssets() {
 		return assets;
 	}
 }

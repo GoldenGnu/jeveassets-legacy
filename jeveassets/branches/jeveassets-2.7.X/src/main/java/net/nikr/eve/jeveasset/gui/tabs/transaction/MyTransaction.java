@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.transaction;
 
-import com.beimin.eveapi.shared.wallet.transactions.ApiWalletTransaction;
+import com.beimin.eveapi.model.shared.WalletTransaction;
 import java.util.Date;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Location;
@@ -30,7 +30,7 @@ import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.i18n.TabsTransaction;
 
-public class Transaction extends ApiWalletTransaction implements LocationType, ItemType {
+public class MyTransaction extends WalletTransaction implements LocationType, ItemType {
 
 	private final Item item;
 	private final Location location;
@@ -38,7 +38,7 @@ public class Transaction extends ApiWalletTransaction implements LocationType, I
 	private final int accountKey;
 	private String ownerCharacter;
 
-	public Transaction(final ApiWalletTransaction apiTransaction, final Item item, final Location location, final Owner owner, final int accountKey) {		
+	public MyTransaction(final WalletTransaction apiTransaction, final Item item, final Location location, final Owner owner, final int accountKey) {		
 		this.setTransactionDateTime(apiTransaction.getTransactionDateTime());
 		this.setTransactionID(apiTransaction.getTransactionID());
 		this.setQuantity(apiTransaction.getQuantity());
@@ -54,8 +54,8 @@ public class Transaction extends ApiWalletTransaction implements LocationType, I
 		this.setTransactionType(apiTransaction.getTransactionType());
 		this.setTransactionFor(apiTransaction.getTransactionFor());
 		//FIXME - EVEAPI Does not support Transaction.JournalTransactionID
-		this.setJournalTransactionID(apiTransaction.getJournalTransactionID());
-		this.setClientTypeID(apiTransaction.getClientTypeID());
+		this.setTransactionID(apiTransaction.getTransactionID());
+		this.setClientID(apiTransaction.getClientID());
 		
 		this.item = item;
 		this.location = location;
@@ -64,7 +64,7 @@ public class Transaction extends ApiWalletTransaction implements LocationType, I
 		this.ownerCharacter = "";
 	}
 
-	public int compareTo(final Transaction o) {
+	public int compareTo(final MyTransaction o) {
 		Long thisID = this.getTransactionID();
 		Long thatID = o.getTransactionID();
 		return thisID.compareTo(thatID);
@@ -170,7 +170,7 @@ public class Transaction extends ApiWalletTransaction implements LocationType, I
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final Transaction other = (Transaction) obj;
+		final MyTransaction other = (MyTransaction) obj;
 		if (this.getTransactionID() != other.getTransactionID()) {
 			return false;
 		}

@@ -60,7 +60,7 @@ import net.nikr.eve.jeveasset.data.StaticData;
 import net.nikr.eve.jeveasset.gui.images.Images;
 import net.nikr.eve.jeveasset.gui.shared.Formater;
 import net.nikr.eve.jeveasset.gui.shared.components.JMainTab;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewGroup;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation;
 import net.nikr.eve.jeveasset.gui.tabs.overview.OverviewLocation.LocationType;
@@ -445,17 +445,17 @@ public class RoutingTab extends JMainTab  {
 			}
 		});
 		jAvailable.getEditableModel().addAll(allLocs);
-		List<Asset> assets;
+		List<MyAsset> assets;
 		SourceItem source = (SourceItem) jSource.getSelectedItem();
 		if (source.getName().equals(General.get().all())) { //ALL
-			 assets = new ArrayList<Asset>(program.getAssetEventList());
+			 assets = new ArrayList<MyAsset>(program.getAssetEventList());
 		} else if (source.getName().equals(TabsRouting.get().filteredAssets())) { //FILTERS
 			assets = program.getAssetsTab().getFilteredAssets();
 		} else { //OVERVIEW GROUP
-			assets = new ArrayList<Asset>();
+			assets = new ArrayList<MyAsset>();
 			OverviewGroup group = Settings.get().getOverviewGroups().get(source.getName());
 			for (OverviewLocation location : group.getLocations()) {
-				for (Asset asset : program.getAssetEventList()) {
+				for (MyAsset asset : program.getAssetEventList()) {
 					if ((location.getName().equals(asset.getLocation().getLocation()))
 						|| (location.getType() == LocationType.TYPE_SYSTEM && location.getName().equals(asset.getLocation().getSystem()))
 						|| (location.getType() == LocationType.TYPE_REGION && location.getName().equals(asset.getLocation().getRegion()))
@@ -465,7 +465,7 @@ public class RoutingTab extends JMainTab  {
 				}
 			}
 		}
-		for (Asset ea : assets) {
+		for (MyAsset ea : assets) {
 			SolarSystem loc = findNodeForLocation(filteredGraph, ea.getLocation().getSystemID());
 			if (loc != null) {
 				allLocs.add(loc);

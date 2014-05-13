@@ -70,7 +70,7 @@ public class ProfileTest {
 		boolean industryJobs = false;
 		boolean contracts = false;
 		boolean transactions = false;
-		for (Account account : profileManager.getAccounts()) {
+		for (MyAccount account : profileManager.getAccounts()) {
 			if (!account.getName().equals("") && !account.getName().equals("-1")) {
 				fail(name+" Name: "+account.getName()+" is not safe");
 			}

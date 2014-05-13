@@ -21,7 +21,7 @@
 
 package net.nikr.eve.jeveasset.gui.tabs.contracts;
 
-import com.beimin.eveapi.shared.contract.items.EveContractItem;
+import com.beimin.eveapi.model.shared.ContractItem;
 import net.nikr.eve.jeveasset.data.Item;
 import net.nikr.eve.jeveasset.data.Location;
 import net.nikr.eve.jeveasset.data.types.BlueprintType;
@@ -32,13 +32,13 @@ import net.nikr.eve.jeveasset.gui.shared.CopyHandler.CopySeparator;
 import net.nikr.eve.jeveasset.i18n.TabsContracts;
 
 
-public class ContractItem extends EveContractItem implements Comparable<ContractItem>, LocationType, ItemType, BlueprintType, PriceType, CopySeparator {
+public class MyContractItem extends ContractItem implements Comparable<MyContractItem>, LocationType, ItemType, BlueprintType, PriceType, CopySeparator {
 
-	private Contract contract;
-	private Item item;
+	private final MyContract contract;
+	private final Item item;
 	private double price;
 
-	public ContractItem(Contract contract) {
+	public MyContractItem(MyContract contract) {
 		this.contract = contract;
 		this.item = new Item(0);
 		this.setIncluded(true);
@@ -49,7 +49,7 @@ public class ContractItem extends EveContractItem implements Comparable<Contract
 		this.setRawQuantity(0L);
 	}
 
-	public ContractItem(EveContractItem contractItem, Contract contract, Item item) {
+	public MyContractItem(ContractItem contractItem, MyContract contract, Item item) {
 		this.contract = contract;
 		this.item = item;
 		this.setIncluded(contractItem.isIncluded());
@@ -60,7 +60,7 @@ public class ContractItem extends EveContractItem implements Comparable<Contract
 		this.setRawQuantity(contractItem.getRawQuantity());
 	}
 
-	public Contract getContract() {
+	public MyContract getContract() {
 		return contract;
 	}
 
@@ -132,7 +132,7 @@ public class ContractItem extends EveContractItem implements Comparable<Contract
 	}
 
 	@Override
-	public int compareTo(ContractItem o) {
+	public int compareTo(MyContractItem o) {
 		return 0;
 	}
 
@@ -152,7 +152,7 @@ public class ContractItem extends EveContractItem implements Comparable<Contract
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final ContractItem other = (ContractItem) obj;
+		final MyContractItem other = (MyContractItem) obj;
 		if (this.contract != other.contract && (this.contract == null || !this.contract.equals(other.contract))) {
 			return false;
 		}

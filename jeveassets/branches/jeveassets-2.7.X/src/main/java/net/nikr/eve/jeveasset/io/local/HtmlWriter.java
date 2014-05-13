@@ -33,7 +33,7 @@ import net.nikr.eve.jeveasset.data.types.ItemType;
 import net.nikr.eve.jeveasset.data.types.LocationType;
 import net.nikr.eve.jeveasset.gui.shared.table.EnumTableColumn;
 import net.nikr.eve.jeveasset.gui.shared.table.containers.NumberValue;
-import net.nikr.eve.jeveasset.gui.tabs.assets.Asset;
+import net.nikr.eve.jeveasset.gui.tabs.assets.MyAsset;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeAsset;
 import net.nikr.eve.jeveasset.gui.tabs.tree.TreeTableFormat.HierarchyColumn;
 import org.slf4j.Logger;
@@ -247,8 +247,8 @@ public final class HtmlWriter {
 						}
 					}
 				}
-				if (object instanceof Asset) {
-					Asset asset = (Asset) object;
+				if (object instanceof MyAsset) {
+					MyAsset asset = (MyAsset) object;
 					Item item = asset.getItem();
 					if (item != null && !item.isEmpty()) {
 						writer.write("\t\tItem:\r\n");
