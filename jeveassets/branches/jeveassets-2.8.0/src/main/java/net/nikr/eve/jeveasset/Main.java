@@ -135,8 +135,7 @@ public final class Main {
 		Program.setForceUpdate(forceUpdate && debug);
 
 		// fix the uncaught exception handlers
-		System.setProperty("sun.awt.exception.handler", "net.nikr.eve.jeveasset.NikrUncaughtExceptionHandler");
-		Thread.setDefaultUncaughtExceptionHandler(new NikrUncaughtExceptionHandler());
+		NikrUncaughtExceptionHandler.install();
 
 		//XXX - Workaround for IPv6 fail (force IPv4)
 		//eveonline.com is not IPv6 ready...

@@ -109,6 +109,9 @@
 									<fileset dir="data" includes="*.xml"/>
 								</copy>
 								<copy todir="${project.build.directory}">
+									<fileset dir="tools" includes="jmemory.jar"/>
+								</copy>
+								<copy todir="${project.build.directory}">
 									<fileset dir="" includes="*.txt"/>
 								</copy>
 							</target>
