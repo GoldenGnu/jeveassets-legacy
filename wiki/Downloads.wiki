@@ -1,6 +1,6 @@
 #summary Downloads
 
-All downloads here are deprecated.<br>
-Please, download from the [http://eve.nikr.net/jeveasset web page]
+Only old version are for download here.<br>
+Please, download the latest version from the [http://eve.nikr.net/jeveasset web page]
 
 If you insist, you can still see the [https://code.google.com/p/jeveassets/downloads/list?can=1 old downloads]
