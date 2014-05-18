@@ -1,0 +1,8 @@
+#summary Feedback
+
+
+  * Feature suggestions: [http://jeveassets.uservoice.com/ UserVoice]
+  * Ask for help: [https://forums.eveonline.com/default.aspx?g=posts&t=6419 forum thread] (check the [https://code.google.com/p/jeveassets/wiki/ReadMe FAQ] first)
+  * Bug reports: [https://code.google.com/p/jeveassets/wiki/ReadMe#Bugs Instructions]
+  * User Survey: [http://www.surveymonkey.com/s/YQTWB7F SurveyMonkey]
+  * Future Survey: [http://www.surveymonkey.com/s/X8F2F6K SurveyMonkey]
