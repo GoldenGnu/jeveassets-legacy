@@ -51,7 +51,8 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 			error = true;
 			JOptionPane.showMessageDialog(null
 					, "Automatic update failed.\r\n"
-							+ "Please, download the update manually.\r\n"
+							+ "Restart jEveAssets and try again,\r\n"
+							+ "or download the update manually.\r\n"
 							+ "\r\n"
 							+ e.getMessage()
 					, "Update Failed"
