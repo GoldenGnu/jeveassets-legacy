@@ -22,47 +22,33 @@
 package net.nikr.update.io;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.MalformedInputException;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 
-public class DataGetter {
+public class HashGetter {
 
-	public void get(String link, File out, String checksum) {
-		get(link, out, checksum, 0);
-	}
-
-	public void get(String link, File out, String checksum, int tries) {
-		System.out.println("Downloading: " + link + " to: " + out.getAbsolutePath());
+	public boolean get(File in, String checksum) {
+		if (!in.exists()) {
+			return false;
+		}
 		InputStream input = null;
-		OutputStream output = null;
 		int n;
 		try {
 			MessageDigest md = MessageDigest.getInstance("MD5");
-			URL url = new URL(link);
-			URLConnection con = url.openConnection();
 
 			byte[] buffer = new byte[4096];
-			input = new DigestInputStream(con.getInputStream(), md);
-			output = new FileOutputStream(out);
+			input = new DigestInputStream(new FileInputStream(in), md);
 			while ((n = input.read(buffer)) != -1) {
-				output.write(buffer, 0, n);
+				//Digest
 			}
-			output.flush();
 			String sum = getToHex(md.digest());
-			if (checksum.equals(sum)) {
-				return; //OK
-			} else {
-				System.out.println(checksum + " is no match for " + sum);
-			}
+			return checksum.equals(sum);
 		} catch (MalformedInputException ex) {
 			ex.printStackTrace();
 		} catch (IOException ex) {
@@ -77,21 +63,8 @@ public class DataGetter {
 					ex.printStackTrace();
 				}
 			}
-			if (output != null) {
-				try {
-					output.close();
-				} catch (IOException ex) {
-					ex.printStackTrace();
-				}
-			}
 		}
-		if (tries < 10){ //Retry 10 times
-			out.delete();
-			tries++;
-			get(link, out, checksum, tries);
-		} else { //Failed 10 times, I give up...
-			throw new RuntimeException("Failed to download: " + out.getName());
-		}
+		throw new RuntimeException("Failed to hash: " + in.getName());
 	}
 
 	private String getToHex(byte[] b) {

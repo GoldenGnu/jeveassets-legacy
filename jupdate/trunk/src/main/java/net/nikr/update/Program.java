@@ -24,8 +24,10 @@ package net.nikr.update;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 import net.nikr.update.io.DataGetter;
+import net.nikr.update.io.HashGetter;
 import net.nikr.update.io.ListGetter;
 
 
@@ -38,15 +40,25 @@ public class Program {
 		System.exit(0);
 	}
 
-	private void downloadFile(final String link, final String filename) {
+	private boolean downloadFile(final String link, final String filename) {
 		DataGetter getter = new DataGetter();
 		ListGetter listGetter = new ListGetter();
+		HashGetter hashGetter = new HashGetter();
 		File update = new File(getUpdateDir(filename));
+		File local = new File(getLocalDir(filename));
 		List<String> list = listGetter.get(link + filename + ".md5");
 		if (list.isEmpty()) {
 			throw new RuntimeException("Missing md5 file");
 		} else {
-			getter.get(link + filename, update, list.get(0));
+			String checksum = list.get(0);
+			boolean localAlreadyDone = hashGetter.get(local, checksum);
+			if (localAlreadyDone) {
+				System.out.println(filename + " already up-to-date");
+				return false;
+			} else {
+				getter.get(link + filename, update, checksum);
+				return true;
+			}
 		}
 	}
 
@@ -98,12 +110,16 @@ public class Program {
 		File updateDir = new File(getUpdateDir("never-used-filename")).getParentFile();
 		deleteDirectory(updateDir);
 		//Download files
+		List<String> downloadedFiles = new ArrayList<String>();
 		for (String filename : files) {
 			SplashUpdater.addProgress(increase);
-			downloadFile(link, filename);
+			boolean downloaded = downloadFile(link, filename);
+			if (downloaded) {
+				downloadedFiles.add(filename);
+			}
 		}
 		//Move updated files to final destination
-		for (String filename : files) {
+		for (String filename : downloadedFiles) {
 			File update = new File(getUpdateDir(filename));
 			File done = new File(getLocalDir(filename));
 			if (done.exists()) { //Delete old file
