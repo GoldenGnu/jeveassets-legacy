@@ -45,10 +45,10 @@ public class ListGetter {
 			while ((str = in.readLine()) != null) {
 				raw.add(str);
 			}
-		} catch (MalformedURLException e) {
-			throw new RuntimeException("Failed to get: " + link);
-		} catch (IOException e) {
-			throw new RuntimeException("Failed to get: " + link);
+		} catch (MalformedURLException ex) {
+			throw new RuntimeException("Failed to get: " + link, ex);
+		} catch (IOException ex) {
+			throw new RuntimeException("Failed to get: " + link, ex);
 		} finally {
 			if (in != null) {
 				try {

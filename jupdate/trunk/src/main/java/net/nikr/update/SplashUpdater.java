@@ -101,9 +101,6 @@ public class SplashUpdater {
 			number = 0;
 		}
 		if (subProgress != number) {
-			if (isVisible() && number < subProgress && number != 0) {
-				throw new RuntimeException("please only move forward... (subProgress)");
-			}
 			subProgress = number;
 			update();
 		}
@@ -126,9 +123,6 @@ public class SplashUpdater {
 			number = 0;
 		}
 		if (progress != number) {
-			if (isVisible() && number < progress) {
-				throw new RuntimeException("please only move forward... (progress)");
-			}
 			progress = number;
 			update();
 		}
@@ -160,14 +154,6 @@ public class SplashUpdater {
 				Dimension size = splash.getSize();
 				g.fillRect(0, 0, size.width, size.height);
 				g.setPaintMode();
-				/*
-				if (Program.isDebug()) {
-					g.setColor(Color.DARK_GRAY);
-					g.drawString("DEBUG", 344, 232);
-					g.setColor(Color.WHITE);
-					g.drawString("DEBUG", 343, 231);
-				}
-				*/
 				if (!text.isEmpty()) {
 					g.setColor(Color.BLACK);
 					g.fillRect(0, 235, 90, 24);

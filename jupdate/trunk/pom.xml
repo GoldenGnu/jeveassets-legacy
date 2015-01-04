@@ -102,7 +102,7 @@
 				<version>1.0-beta-5</version>
 				<executions>
 					<execution>
-						<id>upload-update</id>
+						<id>upload-jwarframe</id>
 						<phase>deploy</phase>
 						<goals>
 							<goal>upload</goal>
@@ -110,6 +110,20 @@
 						<configuration>
 							<fromDir>${project.build.directory}</fromDir>
 							<includes>*.jar,*.md5</includes>
+							<serverId>eve-nikr-net</serverId>
+							<url>ftp://ftp.nikr.net</url>
+							<toDir>warframe.nikr.net/jwarframe/download/update</toDir>
+						</configuration>
+					</execution>
+					<execution>
+						<id>upload-jeveassets</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>upload</goal>
+						</goals>
+						<configuration>
+							<fromDir>${project.build.directory}</fromDir>
+							<includes>jupdate.jar,jupdate.jar.md5</includes>
 							<serverId>eve-nikr-net</serverId>
 							<url>ftp://ftp.nikr.net</url>
 							<toDir>/eve.nikr.net/jeveassets/update/</toDir>
@@ -135,6 +149,21 @@
 			</extension>
 		</extensions>
 	</build>
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.sourceVersion>1.6</project.build.sourceVersion>
+		<targetJdk>1.6</targetJdk>
+		<arg1>-empty</arg1>
+		<arg2>-empty</arg2>
+	</properties>
 </project>
 
 

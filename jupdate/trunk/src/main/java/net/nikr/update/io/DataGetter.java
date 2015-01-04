@@ -40,11 +40,12 @@ public class DataGetter {
 		get(link, out, checksum, 0);
 	}
 
-	public void get(String link, File out, String checksum, int tries) {
+	private void get(String link, File out, String checksum, int tries) {
 		System.out.println("Downloading: " + link + " to: " + out.getAbsolutePath());
 		InputStream input = null;
 		OutputStream output = null;
 		int n;
+		Exception exception = null;
 		try {
 			MessageDigest md = MessageDigest.getInstance("MD5");
 			URL url = new URL(link);
@@ -64,11 +65,11 @@ public class DataGetter {
 				System.out.println(checksum + " is no match for " + sum);
 			}
 		} catch (MalformedInputException ex) {
-			ex.printStackTrace();
+			exception = ex;
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			exception = ex;
 		} catch (NoSuchAlgorithmException ex) {
-			ex.printStackTrace();
+			exception = ex;
 		} finally {
 			if (input != null) {
 				try {
@@ -90,7 +91,12 @@ public class DataGetter {
 			tries++;
 			get(link, out, checksum, tries);
 		} else { //Failed 10 times, I give up...
-			throw new RuntimeException("Failed to download: " + out.getName());
+			if (exception != null) {
+				exception.printStackTrace();
+				throw new RuntimeException("Failed to download: " + out.getName(), exception);
+			} else {
+				throw new RuntimeException("Failed to download: " + out.getName());
+			}
 		}
 	}
 

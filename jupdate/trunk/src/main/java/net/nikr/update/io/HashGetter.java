@@ -50,11 +50,11 @@ public class HashGetter {
 			String sum = getToHex(md.digest());
 			return checksum.equals(sum);
 		} catch (MalformedInputException ex) {
-			ex.printStackTrace();
+			throw new RuntimeException("Failed to hash: " + in.getName(), ex);
 		} catch (IOException ex) {
-			ex.printStackTrace();
+			throw new RuntimeException("Failed to hash: " + in.getName(), ex);
 		} catch (NoSuchAlgorithmException ex) {
-			ex.printStackTrace();
+			throw new RuntimeException("Failed to hash: " + in.getName(), ex);
 		} finally {
 			if (input != null) {
 				try {
@@ -64,7 +64,6 @@ public class HashGetter {
 				}
 			}
 		}
-		throw new RuntimeException("Failed to hash: " + in.getName());
 	}
 
 	private String getToHex(byte[] b) {

@@ -32,12 +32,22 @@ import net.nikr.update.io.ListGetter;
 
 
 public class Program {
+
+	public static final String PROGRAM_VERSION = "1.0.0";
+
+	private boolean test;
 	
 	public Program(final String link, final String jarFile) {
+		this(link, jarFile, false);
+	}
+	public Program(final String link, final String jarFile, final boolean test) {
+		this.test = test;
 		update(link);
 		execute(jarFile);
 		SplashUpdater.hide();
-		System.exit(0);
+		if (!test) {
+			System.exit(0);
+		}
 	}
 
 	private boolean downloadFile(final String link, final String filename) {
@@ -69,7 +79,7 @@ public class Program {
 			file.getParentFile().mkdirs();
 			return file.getAbsolutePath();
 		} catch (URISyntaxException ex) {
-			throw new RuntimeException("Failed to get update directory");
+			throw new RuntimeException("Failed to get update directory", ex);
 		}
 	}
 
@@ -80,7 +90,7 @@ public class Program {
 			file.getParentFile().mkdirs();
 			return file.getAbsolutePath();
 		} catch (URISyntaxException ex) {
-			throw new RuntimeException("Failed to get local directory");
+			throw new RuntimeException("Failed to get local directory", ex);
 		}
 	}
 
@@ -142,9 +152,9 @@ public class Program {
 		String[] commands = {"java", "-jar", jarFile};
 		processBuilder.command(commands);
 		try {
-			Process process = processBuilder.start();
+			processBuilder.start();
 		} catch (IOException ex) {
-			throw new RuntimeException("Failed run restart command");
+			throw new RuntimeException("Failed run restart command", ex);
 		}
 	}
 
