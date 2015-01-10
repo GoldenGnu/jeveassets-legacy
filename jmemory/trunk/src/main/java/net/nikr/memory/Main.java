@@ -28,11 +28,14 @@ import java.net.URISyntaxException;
 
 public final class Main {
 
+	public static final String JAR = "jeveassets.jar";
+	public static final String PROGRAM_VERSION = "1.0.0";
 	/**
 	 * Entry point for jMemory.
 	 * @param args the command line arguments
 	 */
 	public static void main(final String[] args) {
+		NikrUncaughtExceptionHandler.install();
 		Main main = new Main();
 		main.work();
 	}
@@ -40,11 +43,7 @@ public final class Main {
 	private Main() { }
 
 	private void work() {
-		String jarFile = getLocalFile("jeveassets.jar");
-		if (jarFile != null) {
-			execute(jarFile);
-		}
-		System.exit(0);
+		execute(getLocalFile(JAR));
 	}
 
 	private void execute(String jarFile) {
@@ -56,19 +55,22 @@ public final class Main {
 		try {
 			Process process = processBuilder.start();
 		} catch (IOException ex) {
-			ex.printStackTrace();
-			System.exit(-1);
+			throw new RuntimeException(ex.getMessage(), ex);
 		}
 	}
 
 	private String getLocalFile(String filename) {
 		try {
 			File dir = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
-			return dir.getAbsolutePath() + File.separator + filename;
+			String fixedFilename = dir.getAbsolutePath() + File.separator + filename;
+			File file = new File(fixedFilename);
+			if (!file.exists()) {
+				throw new RuntimeException(fixedFilename + " not found");
+			} else {
+				return fixedFilename;
+			}
 		} catch (URISyntaxException ex) {
-			ex.printStackTrace();
-			System.exit(-1);
-			return null;
+			throw new RuntimeException(ex.getMessage(), ex);
 		}
 	}
 
