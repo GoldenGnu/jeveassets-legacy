@@ -33,7 +33,7 @@ import net.nikr.update.io.ListGetter;
 
 public class Program {
 
-	public static final String PROGRAM_VERSION = "1.0.0";
+	public static final String PROGRAM_VERSION = "1.1.0";
 
 	private boolean test;
 	
