@@ -88,7 +88,7 @@ public class NikrUncaughtExceptionHandler implements Thread.UncaughtExceptionHan
 			String urlParameters
 					= "os=" + URLEncoder.encode(System.getProperty("os.name") + " " + System.getProperty("os.version"), "UTF-8")
 					+ "&java=" + URLEncoder.encode(System.getProperty("java.vendor") + " " + System.getProperty("java.version"), "UTF-8")
-					+ "&version=" + URLEncoder.encode("jUpdate " + Main.PROGRAM_VERSION, "UTF-8")
+					+ "&version=" + URLEncoder.encode("jMemory (" + Main.JAR + ") " + Main.PROGRAM_VERSION, "UTF-8")
 					+ "&log=" + URLEncoder.encode(getStackTrace(t), "UTF-8");
 			URL url = new URL(SUBMIT);
 			connection = (HttpURLConnection) url.openConnection();
