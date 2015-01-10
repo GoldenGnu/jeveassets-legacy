@@ -23,6 +23,7 @@ package net.nikr.update;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 
@@ -41,6 +42,7 @@ public final class Main {
 	 */
 	public static void main(final String[] args) {
 		NikrUncaughtExceptionHandler.install();
+		final boolean stop;
 		if (args.length == 2) {
 			//Link
 			if (args[0].endsWith("/")) {
@@ -50,8 +52,9 @@ public final class Main {
 			}
 			System.out.println("Updating from: " + link);
 			jarFile = args[1];
+			stop = false;
 		} else {
-			throw new RuntimeException("Wrong number of arguments");
+			stop = true;
 		}
 		javax.swing.SwingUtilities.invokeLater(
 			new Runnable() {
@@ -64,6 +67,11 @@ public final class Main {
 					}
 					JFrame.setDefaultLookAndFeelDecorated(true);
 					JDialog.setDefaultLookAndFeelDecorated(true);
+
+					if (stop) {
+						JOptionPane.showMessageDialog(null, "jUpdate cannot be run by itself.\r\n\r\nNo worries:\r\nThe main program will automatically check for updates on startup.\r\n\r\n", "Sorry...", JOptionPane.INFORMATION_MESSAGE);
+						System.exit(0);
+					}
 
 					SplashUpdater.start();
 					SplashUpdater.setText("Loading Update");
