@@ -133,11 +133,14 @@ public class Program {
 			File update = new File(getUpdateDir(filename));
 			File done = new File(getLocalDir(filename));
 			if (done.exists()) { //Delete old file
-				done.delete();
+				boolean delete = done.delete();
+				if (!delete) {
+					throw new RuntimeException("Failed to delete file: " + done.getName());
+				}
 			}
 			boolean renamed = update.renameTo(done);
 			if (!renamed) {
-				throw new RuntimeException("Failed to move file");
+				throw new RuntimeException("Failed to move file from: " + update.getAbsolutePath() + " to " + done.getAbsolutePath());
 			}
 		}
 		//Delete update directory
