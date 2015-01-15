@@ -32,7 +32,7 @@ import java.util.List;
 public final class Main {
 
 	public static final String JAR = "jeveassets.jar";
-	public static final String PROGRAM_VERSION = "1.0.0";
+	public static final String PROGRAM_VERSION = "1.1.0";
 
 	/**
 	 * Entry point for jMemory.
