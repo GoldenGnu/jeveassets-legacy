@@ -24,12 +24,16 @@ package net.nikr.memory;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 public final class Main {
 
 	public static final String JAR = "jeveassets.jar";
 	public static final String PROGRAM_VERSION = "1.0.0";
+
 	/**
 	 * Entry point for jMemory.
 	 * @param args the command line arguments
@@ -37,20 +41,26 @@ public final class Main {
 	public static void main(final String[] args) {
 		NikrUncaughtExceptionHandler.install();
 		Main main = new Main();
-		main.work();
+		main.work(args);
 	}
 
 	private Main() { }
 
-	private void work() {
-		execute(getLocalFile(JAR));
+	private void work(final String[] args) {
+		execute(getLocalFile(JAR), args);
 	}
 
-	private void execute(String jarFile) {
+	private void execute(final String jarFile, final String[] args) {
 		ProcessBuilder processBuilder = new ProcessBuilder();
 		processBuilder.redirectErrorStream(true);
 		processBuilder.directory(getJavaHome());
-		String[] commands = {"java", "-Xmx4g", "-jar", jarFile};
+		List<String> commands = new ArrayList<String>();
+		commands.add("java");
+		commands.add("-Xmx4g");
+		commands.add("-jar");
+		commands.add(jarFile);
+		commands.addAll(Arrays.asList(args));
+
 		processBuilder.command(commands);
 		try {
 			Process process = processBuilder.start();
@@ -59,7 +69,7 @@ public final class Main {
 		}
 	}
 
-	private String getLocalFile(String filename) {
+	private String getLocalFile(final String filename) {
 		try {
 			File dir = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParentFile();
 			String fixedFilename = dir.getAbsolutePath() + File.separator + filename;
@@ -74,7 +84,7 @@ public final class Main {
 		}
 	}
 
-	private File getJavaHome() {
+	private static File getJavaHome() {
 		return new File(System.getProperty("java.home") + File.separator + "bin");
 	}
 }
